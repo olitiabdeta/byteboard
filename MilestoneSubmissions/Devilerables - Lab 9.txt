@@ -1,0 +1,20 @@
+﻿1. Team number 2
+2. DivaBytes
+3. Kaitlyn Rapp, Trisha Nookala, Oliti Abdeta, Sumeyye Ustunel, Kaylee Dehncke, Sharon Xiang 
+4. ByteBoard
+5. A social media platform for sharing recipes and food creations. Users can post pictures of the meals they’ve prepared, include the recipe, and tag the date (weekly, daily, or monthly). Friends can interact with the posts by liking, commenting, and saving recipes they want to try. The app creates a community for food enthusiasts to exchange cooking ideas and inspiration.
+6. For home cooks and college students seeking easy, delicious recipes that fit their busy schedules and limited budgets, the ByteBoard is a recipe website that provides a curated collection of simple, budget-friendly recipes. Unlike traditional sites, we offer a delightful user experience that makes cooking fun and offers catered help to assist college students. 
+7. https://github.com/olitiabdeta/byteboard
+8. Agile methodology -> 
+9. Discord and imessage(if necessary)
+10. Weekly Meeting with TA: 5:15 on Wednesday, In person/Remote depending on week, Engineering Center 
+Team Meeting - Thursday at 3-3:15, csel or room with recitation
+11. https://lucid.app/lucidchart/2d3d526e-fefe-4bd3-b63a-8a4a575ba95b/edit?viewport_loc=309%2C52%2C1904%2C1046%2C0_0&invitationId=inv_aebe14c9-d45e-47d3-b91c-72cc5a083bfd 
+12. https://www.figma.com/design/vx6cRJF8DQ1qIUJ8UlyFk0/Untitled?node-id=0-1&t=ecaGwyy17MiOrOMg-1 
+
+
+
+
+
+
+https://cuboulder.zoom.us/j/92365714866
