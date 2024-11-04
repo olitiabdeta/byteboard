@@ -1,0 +1,31 @@
+<div class="container">
+    <h2>Register</h2>
+    <form method="post" action="/register">
+        <div class="form-group">
+            <label for="firstname">First Name</label>
+            <input type="text" id="firstname" name="firstname" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="lastname">Last Name</label>
+            <input type="text" id="lastname" name="lastname" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="username">Email</label>
+            <input type="email" id="email" name="email" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="email" id="username" name="username" class="form-control" required>
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" class="form-control" requried>
+        </div>
+        <div class="form-group">
+            <label for="re-enter">Re-Enter Password</label>
+            <input type="password" id="re-enter" name="re-enter" class="form-control" required>
+        </div>
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>
+    <p>Already have an account? <a href="/login">Login</a></p>
+</div>
