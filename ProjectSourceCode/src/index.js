@@ -74,10 +74,21 @@ app.use(
 // <!-- Section 4 : API Routes -->
 // *****************************************************
 
+// Home page
+app.get('/', (req, res) => {
+  res.render('pages/home');
+});
+
+// Register page
+app.get('/register', (req, res) => {
+  res.render('pages/register');
+});
+
 // Display login page 
 app.get('/login', (req, res) => {
     res.render('pages/login');
   });
+
 
 
 

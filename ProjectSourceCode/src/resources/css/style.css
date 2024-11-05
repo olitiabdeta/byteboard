@@ -1,0 +1,74 @@
+
+ /* we can cahnge but here is a basic layout to get us started */
+
+/* General Styling */
+body {
+    background-color: #ffffff; /* White background for the entire page */
+    color: #333; /* Dark grey text for readability */
+    font-family: Arial, sans-serif; /* clean simple font */
+    margin: 0;
+    padding: 0;
+}
+
+/* Navbar Styling */
+.navbar {
+    background-color: #ffe4e1; /* Light pink background for the navbar */
+    border-bottom: 3px solid #ff69b4; /* Slightly darker pink border */
+}
+
+.navbar a {
+    color: #ff1493; /* Bright pink color for navbar links -- just chose this for now*/
+    padding: 10px 20px;
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition on hover */
+}
+
+.navbar a:hover {
+    background-color: #ff69b4; /* Darker pink on hover */
+    color: white; /* White text on hover */
+}
+
+/* Button Styling */
+.btn-primary {
+    background-color: #ff69b4; /* Dark pink button */
+    border-color: #ff69b4; /* Matching border color */
+    color: white; /* White text */
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #ff1493; /* Brighter pink on hover */
+    border-color: #ff1493;
+    color: white;
+}
+
+/* Link Styling */
+a {
+    color: #ff1493; /* Bright pink for links */
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #ff69b4; /* Darker pink on hover */
+    text-decoration: underline;
+}
+
+/* Footer Styling */
+footer {
+    background-color: #ffe4e1; /* Light pink background for the footer */
+    border-top: 3px solid #ff69b4; /* Slightly darker pink top border */
+    color: #555; /* Medium grey text */
+    padding: 15px;
+    text-align: center;
+    width: 100%;
+    position: relative;
+    bottom: 0;
+}
+
+footer p {
+    margin: 0;
+    font-size: 14px;
+}
