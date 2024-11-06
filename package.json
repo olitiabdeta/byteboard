@@ -1,0 +1,19 @@
+{
+  "name": "byteboard",
+  "version": "1.0.0",
+  "description": "A collaborative recipe-sharing platform where users can share, comment, and interact with recipes.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/olitiabdeta/byteboard.git"
+  },
+  "author": "Kaitlyn Rapp, Trisha Nookala, Oliti Abdeta, Sumeyye Ustunel, Kaylee Dehncke, Sharon Xiang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/olitiabdeta/byteboard/issues"
+  },
+  "homepage": "https://github.com/olitiabdeta/byteboard#readme"
+}
