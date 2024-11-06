@@ -79,6 +79,12 @@ app.use(
 // <!-- Section 4 : API Routes -->
 // *****************************************************
 
+
+//redirect to login when website is loaded
+app.get('/', (req, res) => {
+  res.redirect('/login'); 
+});
+
 // Home page
 app.get('/', (req, res) => {
   res.render('pages/home');
@@ -93,6 +99,7 @@ app.get('/register', (req, res) => {
 app.get('/login', (req, res) => {
     res.render('pages/login');
   });
+
 
 
 
