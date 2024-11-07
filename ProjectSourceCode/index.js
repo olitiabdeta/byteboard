@@ -100,9 +100,18 @@ app.get('/login', (req, res) => {
     res.render('pages/login');
   });
 
-
-
-
+//Friends
+app.get('/friends', (req, res) => {
+  res.render('pages/friends');
+});
+//Saved 
+app.get('/saved', (req, res) => {
+  res.render('pages/saved');
+});
+//Create Recipe
+app.get('/createRecipe', (req, res) => {
+  res.render('pages/createRecipe');
+});
 
 
 
