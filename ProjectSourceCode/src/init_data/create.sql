@@ -34,3 +34,31 @@ CREATE TABLE favorites (
   FOREIGN KEY (images_id) REFERENCES images (image_id)
   -- FOREIGN KEY (images_id) REFERENCES images (image_id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS comments (
+  comment_id SERIAL PRIMARY KEY NOT NULL,
+  recipe_id INT NOT NULL,
+  username VARCHAR(50) NOT NULL,
+  comment_text TEXT NOT NULL,
+  comment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id),
+  -- FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE,
+  FOREIGN KEY (username) REFERENCES users (username)
+  -- FOREIGN KEY (username) REFERENCES users (username) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS ingredients (
+  ingredient_id SERIAL PRIMARY KEY NOT NULL,
+  ingredient_name VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS recipe_ingredients (
+  recipe_id INT NOT NULL,
+  ingredient_id INT NOT NULL,
+  quantity VARCHAR(50),
+  FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id),
+  -- FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE,
+  FOREIGN KEY (ingredient_id) REFERENCES ingredients (ingredient_id),
+  -- FOREIGN KEY (ingredient_id) REFERENCES ingredients (ingredient_id) ON DELETE CASCADE,
+  PRIMARY KEY (recipe_id, ingredient_id)
+);
