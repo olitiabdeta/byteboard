@@ -19,7 +19,7 @@
         </div>
         <div>
             <label for="cookTime">Cook Time:</label>
-            <input type="text" id="cookTime" name="cookTime" class="form-control" requried>
+            <input type="text" id="cookTime" name="cookTime" class="form-control" required>
         </div>
         <div class="form-group">
             <label for="servings">Servings:</label>
@@ -31,16 +31,28 @@
         </div>
          <div class="form-group">
             <label for="instructions">Instructions:</label>
-            <input type="text" id="instructions" name="instructions" class="form-control" required>
+            <textarea id="instructions" name="instructions" class="form-control" required></textarea>
         </div>
         <div class="form-group">
             <label for="image">Image:</label>
-            <input type="image" id="image" name="image" class="form-control">
+            <input type="file" id="image" name="image" class="form-control">
         </div>
          <div class="form-group">
             <label for="notes">Notes:</label>
-            <input type="text" id="notes" name="notes" class="form-control">
+            <textarea id="notes" name="notes" class="form-control"></textarea>
         </div>
+        <!-- We can also use text auto-complete tagging, 
+        here is the code  if we prefer that instead of a dropdown menu:
+        
+        If we want users to type tags freely but also show suggestions, 
+        we should consider using a tagging input library like Tagify or Selectize.js for better user experience
+        - This option would require JavaScript to handle tag separation (like splitting by commas) and suggestions 
+        -->
+        <div class="form-group">
+            <label for="cuisineTags">Cuisine Tag(s):</label>
+            <input type="text" id="cuisineTags" name="cuisineTags" class="form-control" placeholder="e.g., breakfast, vegan, gluten-free">
+        </div>
+        <!--
         <div class="form-group">
             <label for="cuisineTags">Cuisine Tag(s):</label>
             <select id="cuisineTags" name="cuisineTags" multiple class="form-control">
@@ -52,15 +64,6 @@
                 <option value="gluten-free">Gluten-Free</option>
             </select>
         </div>
-        <!-- We can also use text auto-complete tagging, 
-        here is the code  if we prefer that instead of a dropdown menu:
-        <div class="form-group">
-            <label for="cuisineTags">Cuisine Tag(s):</label>
-            <input type="text" id="cuisineTags" name="cuisineTags" class="form-control" placeholder="e.g., breakfast, vegan, gluten-free">
-        </div>
-        If we want users to type tags freely but also show suggestions, 
-        we should consider using a tagging input library like Tagify or Selectize.js for better user experience
-        - This option would require JavaScript to handle tag separation (like splitting by commas) and suggestions
         -->
         
     <button type="submit" class="btn btn-primary">Create Recipe</button>
