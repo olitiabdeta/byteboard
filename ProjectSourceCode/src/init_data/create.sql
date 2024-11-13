@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS recipes (
   recipe_id SERIAL PRIMARY KEY NOT NULL,
   recipe_name VARCHAR(75), 
-  recipe_difficulty VARCHAR(100) CONSTRAINT limited_values CHECK (difficulty in ('easy', 'moderate', 'difficult', 'very_difficult'))
+  recipe_difficulty VARCHAR(100) CONSTRAINT limited_values CHECK (recipe_difficulty in ('easy', 'moderate', 'difficult', 'very_difficult'))
 );
 
 CREATE TABLE IF NOT EXISTS images (
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS images (
 
 CREATE TABLE recipes_to_images (
   image_id INT NOT NULL,
-  review_id INT NOT NULL,
+  recipe_id INT NOT NULL,
   FOREIGN KEY (image_id) REFERENCES images (image_id),
   -- FOREIGN KEY (image_id) REFERENCES images (image_id) ON DELETE CASCADE,
   FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id)
@@ -29,9 +29,9 @@ CREATE TABLE recipes_to_images (
 CREATE TABLE favorites (
   recipe_id INT NOT NULL,
   image_id INT NOT NULL,
-  FOREIGN KEY (recipe_id) REFERENCES recipes (recipes_id),
+  FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id),
   -- FOREIGN KEY (recipe_id) REFERENCES recipes (recipes_id) ON DELETE CASCADE,
-  FOREIGN KEY (images_id) REFERENCES images (image_id)
+  FOREIGN KEY (image_id) REFERENCES images (image_id)
   -- FOREIGN KEY (images_id) REFERENCES images (image_id) ON DELETE CASCADE
 );
 

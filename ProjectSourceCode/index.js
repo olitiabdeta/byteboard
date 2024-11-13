@@ -123,5 +123,30 @@ app.get('/createRecipe', (req, res) => {
 // <!-- Section 5 : Start Server-->
 // *****************************************************
 // starting the server and keeping the connection open to listen for more requests
+
+// Register
+app.post('/register', async (req, res) => {
+  //hash the password using bcrypt library
+  try{
+  const username = req.body.username;
+  const hash = await bcrypt.hash(req.body.password, 10);
+  const email = req.body.email;
+  
+  
+  // To-DO: Insert username and hashed password into the 'users' table
+  let something = await db.any('INSERT INTO users (username, password, email) VALUES($1, $2, $3)', [username, hash, email]);
+  console.log(something);
+  if(something){
+  res.redirect('/login');
+  }
+  } catch{
+  res.redirect('/register');
+  }
+  });
+  app.get('/login', (req, res) => {
+  res.render('pages/login'); // Render login.hbs, no initial message
+  });
+    
+
 app.listen(3000);
 console.log('Server is listening on port 3000');
