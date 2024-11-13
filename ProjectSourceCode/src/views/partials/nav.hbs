@@ -1,41 +1,66 @@
 <header>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
-      <a class="navbar-brand" href="/"></a>
+      <a class="navbar-brand" href="/">ByteBoard</a>
       <ul class="navbar-nav mr-auto">
+        <!-- Home Link -->
         <li class="nav-item">
-          <!-- TODO: For 'Home', Add a <a> tag with class="nav-link" and href='/' API that navigates to home page if logged in, or login page if not -->
           <a class="nav-link" href="/">Home</a>
-          <a class="nav-link" href="/login"></a>
         </li>
-        <li class="nav-item">
-          <!-- TODO: For 'Friends', Add a <a> tag with class="nav-link" and href='/friends' API that navigates to friends page if logged in, or login page if not -->
-          <a class="nav-link" href="/friends">Friends</a>
-          <a class="nav-link" href="/login"></a>
-        </li>
-        <li class="nav-item">
-            <!-- -->
+
+        <!-- Conditionally show 'Friends' if logged in, otherwise show login -->
+        {{#if loggedIn}}
+          <li class="nav-item">
+            <a class="nav-link" href="/friends">Friends</a>
+          </li>
+        {{else}}
+          <li class="nav-item">
+            <a class="nav-link" href="/login">Login</a>
+          </li>
+        {{/if}}
+
+        <!-- Conditionally show 'Saved' if logged in, otherwise show login -->
+        {{#if loggedIn}}
+          <li class="nav-item">
             <a class="nav-link" href="/saved">Saved</a>
-            <a class="nav-link" href="/login"></a>
-        </li>
-        <li class="nav-item">
-            <!-- -->
+          </li>
+        {{else}}
+          <li class="nav-item">
+            <a class="nav-link" href="/login">Login</a>
+          </li>
+        {{/if}}
+
+        <!-- Conditionally show 'Create Recipe' if logged in, otherwise show login -->
+        {{#if loggedIn}}
+          <li class="nav-item">
             <a class="nav-link" href="/createRecipe">Create Recipe</a>
-            <a class="nav-link" href="/login"></a>
-        </li>
+          </li>
+        {{else}}
+          <li class="nav-item">
+            <a class="nav-link" href="/login">Login</a>
+          </li>
+        {{/if}}
       </ul>
 
-      <!-- Add icon to the extreme right -->
+      <!-- Right-aligned icons -->
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-            <a class="nav-link" href="/search">
-                <img src="../../resources/img/search.webp" alt="Icon" style="width: 30px; height: 30px;">
-            </a>
+          <a class="nav-link" href="/search">
+            <img src="../../resources/img/search.webp" alt="Search Icon" style="width: 30px; height: 30px;">
+          </a>
         </li>
+
+        <!-- Profile Picture or Login -->
         <li class="nav-item">
-            <a class="nav-link" href="#">
-                {{ profilePic }}
+          {{#if loggedIn}}
+            <!-- Display the user's profile picture if logged in -->
+            <a class="nav-link" href="/profile">
+              <img src="{{profilePic}}" alt="Profile Picture" class="rounded-circle" style="width: 30px; height: 30px;">
             </a>
+          {{else}}
+            <!-- Otherwise, show a login link -->
+            <a class="nav-link" href="/login">Login</a>
+          {{/if}}
         </li>
       </ul>
     </div>
