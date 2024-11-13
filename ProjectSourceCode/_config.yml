@@ -1,0 +1,24 @@
+# _config.yml
+
+# Site settings
+title: "Byteboard"           # Title of your site
+description: "A collaborative platform for sharing recipes, where users can upload, view, and interact with a diverse range of recipes through images, ingredient recommendations, and comments."     # Description of your site
+url: "https://olitiabdeta.github.io"  # The base URL for your site
+baseurl: "/byteboard"             # Base URL for GitHub Pages repo, if not hosted at the root
+
+# Exclusions
+exclude:
+  - node_modules                       # Prevents Jekyll from processing node_modules
+  - vendor                             # Exclude vendor if you have any third-party assets
+  - README.md                          # Exclude README if you don’t want it processed
+  - .gitignore                         # Exclude .gitignore from the build
+
+# Build settings
+markdown: kramdown                      # Markdown processor (kramdown is default and compatible with GitHub Pages)
+theme: jekyll-theme-minimal             # Theme for GitHub Pages (optional)
+plugins:                                # List of plugins if you are using any (optional)
+  - jekyll-feed                         # Plugin example for RSS feed
+
+# Other settings
+permalink: pretty                       # Cleaner URLs (e.g., /about instead of /about.html)
+show_excerpts: true                     # If you want to show excerpts on the homepage
