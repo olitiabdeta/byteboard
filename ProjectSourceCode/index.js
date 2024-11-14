@@ -88,7 +88,7 @@ app.get('/', (req, res) => {
 });
 
 // Home page
-app.get('/', (req, res) => {
+app.get('/home', (req, res) => {
   res.render('pages/home');
 });
 
@@ -144,57 +144,57 @@ app.post('/register', async (req, res) => {
 
 
 
+  // POST route for login
+  app.post('/login', async (req, res) => {
+    try {
+    const { username, password } = req.body;
+    
+    
+    // Find the user in the database
+    const user = await db.oneOrNone('SELECT * FROM users WHERE username = $1', [username]);
+    console.log(user);
+    if (!user) {
+    // if not found
+    return res.redirect('/register');
+    }
+    
+    
+    // Compare the provided password with the hashed password in the database
+    const match = await bcrypt.compare(password, user.password);
+    
+    
+    if (!match) {
+    //if not corect
+    return res.render('/login', { message: 'Incorrect username or password.' }); // /login ->pages/login
+    } 
+    
+    // Save user details
+    req.session.user = user;
+    req.session.save();
+    
+    
+    // redirect to the home route
+    return res.redirect('/home');
+    } catch (error) {
+    console.error('Login error:', error);
+    return res.render('login', { message: 'An error occurred. Please try again.' });
+    }
+    });
+   
+    // Authentication Middleware.
+    const auth = (req, res, next) => {
+    if (!req.session.user) {
+    // Default to login page.
+    return res.redirect('/login');
+    }
+    next();
+    };
+
+
 // *****************************************************
 // <!-- Section 5 : Start Server-->
 // *****************************************************
 // starting the server and keeping the connection open to listen for more requests
-
-
-
-  // // POST route for login
-  // app.post('/login', async (req, res) => {
-  // try {
-  // const { username, password } = req.body;
-  
-  
-  // // Find the user in the database
-  // const user = await db.oneOrNone('SELECT * FROM users WHERE username = $1', [username]);
-  // if (!user) {
-  // // if not found
-  // return res.redirect('/register');
-  // }
-  
-  
-  // // Compare the provided password with the hashed password in the database
-  // const match = await bcrypt.compare(password, user.password);
-  
-  
-  // if (!match) {
-  // //if not corect
-  // return res.render('pages/login', { message: 'Incorrect username or password.' }); // /login ->pages/login
-  // } 
-  
-  // // Save user details
-  // req.session.user = user;
-  // req.session.save();
-  
-  
-  // // redirect to the home route
-  // return res.redirect('/home');
-  // } catch (error) {
-  // console.error('Login error:', error);
-  // return res.render('login', { message: 'An error occurred. Please try again.' });
-  // }
-  // });
- 
-  // // Authentication Middleware.
-  // const auth = (req, res, next) => {
-  // if (!req.session.user) {
-  // // Default to login page.
-  // return res.redirect('/login');
-  // }
-  // next();
-  // };
   
 
 
