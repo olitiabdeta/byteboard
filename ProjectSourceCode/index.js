@@ -116,14 +116,6 @@ app.get('/createRecipe', (req, res) => {
 });
 
 
-
-
-
-// *****************************************************
-// <!-- Section 5 : Start Server-->
-// *****************************************************
-// starting the server and keeping the connection open to listen for more requests
-
 // Register
 app.post('/register', async (req, res) => {
   //hash the password using bcrypt library
@@ -131,10 +123,13 @@ app.post('/register', async (req, res) => {
   const username = req.body.username;
   const hash = await bcrypt.hash(req.body.password, 10);
   const email = req.body.email;
+  const first_name = req.body.firstname;
+  const last_name = req.body.lastname;
   
   
   // To-DO: Insert username and hashed password into the 'users' table
-  let something = await db.any('INSERT INTO users (username, password, email) VALUES($1, $2, $3)', [username, hash, email]);
+  let something = await db.any('INSERT INTO users (username, password, email, first_name, last_name) VALUES($1, $2, $3, $4, $5)', [username, hash, email, first_name, last_name]);
+
   console.log(something);
   if(something){
   res.redirect('/login');
@@ -146,7 +141,62 @@ app.post('/register', async (req, res) => {
   app.get('/login', (req, res) => {
   res.render('pages/login'); // Render login.hbs, no initial message
   });
-    
+
+
+
+// *****************************************************
+// <!-- Section 5 : Start Server-->
+// *****************************************************
+// starting the server and keeping the connection open to listen for more requests
+
+
+
+  // // POST route for login
+  // app.post('/login', async (req, res) => {
+  // try {
+  // const { username, password } = req.body;
+  
+  
+  // // Find the user in the database
+  // const user = await db.oneOrNone('SELECT * FROM users WHERE username = $1', [username]);
+  // if (!user) {
+  // // if not found
+  // return res.redirect('/register');
+  // }
+  
+  
+  // // Compare the provided password with the hashed password in the database
+  // const match = await bcrypt.compare(password, user.password);
+  
+  
+  // if (!match) {
+  // //if not corect
+  // return res.render('pages/login', { message: 'Incorrect username or password.' }); // /login ->pages/login
+  // } 
+  
+  // // Save user details
+  // req.session.user = user;
+  // req.session.save();
+  
+  
+  // // redirect to the home route
+  // return res.redirect('/home');
+  // } catch (error) {
+  // console.error('Login error:', error);
+  // return res.render('login', { message: 'An error occurred. Please try again.' });
+  // }
+  // });
+ 
+  // // Authentication Middleware.
+  // const auth = (req, res, next) => {
+  // if (!req.session.user) {
+  // // Default to login page.
+  // return res.redirect('/login');
+  // }
+  // next();
+  // };
+  
+
 
 app.listen(3000);
 console.log('Server is listening on port 3000');
