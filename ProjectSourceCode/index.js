@@ -121,7 +121,10 @@ app.get('/saved', (req, res) => {
 app.get('/createRecipe', (req, res) => {
   res.render('pages/createRecipe');
 });
-
+// Create Profile 
+app.get('/createProfile', (req, res) => {
+  res.render('pages/createProfile');
+});
 
 // Register
 app.post('/register', async (req, res) => {
