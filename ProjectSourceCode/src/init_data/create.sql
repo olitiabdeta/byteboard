@@ -1,3 +1,101 @@
+-- -- DROP TABLE IF EXISTS users;
+-- CREATE TABLE IF NOT EXISTS users (
+--   username VARCHAR(50) PRIMARY KEY NOT NULL,
+--   password CHAR(60) NOT NULL,
+--   email VARCHAR(50) UNIQUE NOT NULL,
+--   first_name VARCHAR(50) NOT NULL,
+--   last_name VARCHAR(50) NOT NULL
+-- );
+
+-- CREATE TABLE IF NOT EXISTS recipes (
+--   recipe_id SERIAL PRIMARY KEY NOT NULL,
+--   recipe_name VARCHAR(75) NOT NULL, 
+--   recipe_description TEXT,
+--   recipe_prep_time INT CHECK (recipe_prep_time >= 0) NOT NULL -- time in minutes
+--   -- TODO: display prep time (in min) to user
+--   recipe_difficulty VARCHAR(100) CONSTRAINT limited_values CHECK (recipe_difficulty IN ('easy', 'moderate', 'difficult', 'very_difficult')) NOT NULL,
+--   recipe_cook_time INT CHECK (recipe_cook_time >= 0) NOT NULL-- time in minutes
+--   -- TODO: display cook time (in min) to user
+--   recipe_servings INT CHECK (recipe_servings > 0) NOT NULL,
+--   recipe_notes TEXT
+--   -- TODO: add instructions (should it be it's own table?)
+--   -- TODO: notes (optional for user)
+--   -- TODO: cusine tag(s)
+-- );
+
+-- CREATE TABLE IF NOT EXISTS images (
+--   image_id SERIAL PRIMARY KEY NOT NULL,
+--   image_url VARCHAR(300) NOT NULL,
+--   image_caption VARCHAR(200)
+-- );
+
+-- CREATE TABLE recipes_to_images (
+--   image_id INT NOT NULL,
+--   recipe_id INT NOT NULL,
+--   FOREIGN KEY (image_id) REFERENCES images (image_id),
+--   -- FOREIGN KEY (image_id) REFERENCES images (image_id) ON DELETE CASCADE,
+--   FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id)
+--   -- FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE
+-- );
+
+-- CREATE TABLE IF NOT EXISTS recipe_instructions (
+--   instruction_id SERIAL PRIMARY KEY NOT NULL,
+--   recipe_id INT NOT NULL,
+--   step_number INT NOT NULL CHECK (step_number > 0),
+--   instruction_text TEXT NOT NULL,
+--   FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE
+-- );
+
+-- CREATE TABLE IF NOT EXISTS cuisine_tags (
+--   tag_id SERIAL PRIMARY KEY,
+--   tag_name VARCHAR(50) UNIQUE NOT NULL
+-- );
+
+-- CREATE TABLE IF NOT EXISTS recipe_cuisine_tags (
+--     recipe_id INT NOT NULL,
+--     tag_id INT NOT NULL,
+--     FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE,
+--     FOREIGN KEY (tag_id) REFERENCES cuisine_tags (tag_id) ON DELETE CASCADE,
+--     PRIMARY KEY (recipe_id, tag_id)
+-- );
+
+-- CREATE TABLE favorites (
+--   recipe_id INT NOT NULL,
+--   image_id INT NOT NULL,
+--   FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id),
+--   -- FOREIGN KEY (recipe_id) REFERENCES recipes (recipes_id) ON DELETE CASCADE,
+--   FOREIGN KEY (image_id) REFERENCES images (image_id)
+--   -- FOREIGN KEY (images_id) REFERENCES images (image_id) ON DELETE CASCADE
+-- );
+
+-- CREATE TABLE IF NOT EXISTS comments (
+--   comment_id SERIAL PRIMARY KEY NOT NULL,
+--   recipe_id INT NOT NULL,
+--   username VARCHAR(50) NOT NULL,
+--   comment_text TEXT NOT NULL,
+--   comment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--   FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id),
+--   -- FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE,
+--   FOREIGN KEY (username) REFERENCES users (username)
+--   -- FOREIGN KEY (username) REFERENCES users (username) ON DELETE CASCADE
+-- );
+
+-- CREATE TABLE IF NOT EXISTS ingredients (
+--   ingredient_id SERIAL PRIMARY KEY NOT NULL,
+--   ingredient_name VARCHAR(100) NOT NULL UNIQUE
+-- );
+
+-- CREATE TABLE IF NOT EXISTS recipe_ingredients (
+--   recipe_id INT NOT NULL,
+--   ingredient_id INT NOT NULL,
+--   quantity VARCHAR(50),
+--   FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id),
+--   -- FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE,
+--   FOREIGN KEY (ingredient_id) REFERENCES ingredients (ingredient_id),
+--   -- FOREIGN KEY (ingredient_id) REFERENCES ingredients (ingredient_id) ON DELETE CASCADE,
+--   PRIMARY KEY (recipe_id, ingredient_id)
+-- );
+
 -- DROP TABLE IF EXISTS users;
 CREATE TABLE IF NOT EXISTS users (
   username VARCHAR(50) PRIMARY KEY NOT NULL,
@@ -11,16 +109,11 @@ CREATE TABLE IF NOT EXISTS recipes (
   recipe_id SERIAL PRIMARY KEY NOT NULL,
   recipe_name VARCHAR(75) NOT NULL, 
   recipe_description TEXT,
-  recipe_prep_time INT CHECK (recipe_prep_time >= 0) NOT NULL -- time in minutes
-  -- TODO: display prep time (in min) to user
+  recipe_prep_time INT CHECK (recipe_prep_time >= 0) NOT NULL, -- time in minutes
   recipe_difficulty VARCHAR(100) CONSTRAINT limited_values CHECK (recipe_difficulty IN ('easy', 'moderate', 'difficult', 'very_difficult')) NOT NULL,
-  recipe_cook_time INT CHECK (recipe_cook_time >= 0) NOT NULL-- time in minutes
-  -- TODO: display cook time (in min) to user
+  recipe_cook_time INT CHECK (recipe_cook_time >= 0) NOT NULL, -- time in minutes
   recipe_servings INT CHECK (recipe_servings > 0) NOT NULL,
-  recipe_notes TEXT
-  -- TODO: add instructions (should it be it's own table?)
-  -- TODO: notes (optional for user)
-  -- TODO: cusine tag(s)
+  recipe_notes TEXT -- optional field for general notes
 );
 
 CREATE TABLE IF NOT EXISTS images (
@@ -29,15 +122,15 @@ CREATE TABLE IF NOT EXISTS images (
   image_caption VARCHAR(200)
 );
 
-CREATE TABLE recipes_to_images (
+-- Junction table for associating images with recipes
+CREATE TABLE IF NOT EXISTS recipes_to_images (
   image_id INT NOT NULL,
   recipe_id INT NOT NULL,
-  FOREIGN KEY (image_id) REFERENCES images (image_id),
-  -- FOREIGN KEY (image_id) REFERENCES images (image_id) ON DELETE CASCADE,
-  FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id)
-  -- FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE
+  FOREIGN KEY (image_id) REFERENCES images (image_id) ON DELETE CASCADE,
+  FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE
 );
 
+-- Table to store step-by-step instructions for each recipe
 CREATE TABLE IF NOT EXISTS recipe_instructions (
   instruction_id SERIAL PRIMARY KEY NOT NULL,
   recipe_id INT NOT NULL,
@@ -46,52 +139,70 @@ CREATE TABLE IF NOT EXISTS recipe_instructions (
   FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE
 );
 
+-- Table to store cuisine tags
 CREATE TABLE IF NOT EXISTS cuisine_tags (
   tag_id SERIAL PRIMARY KEY,
   tag_name VARCHAR(50) UNIQUE NOT NULL
 );
 
+-- Junction table for associating cuisine tags with recipes
 CREATE TABLE IF NOT EXISTS recipe_cuisine_tags (
-    recipe_id INT NOT NULL,
-    tag_id INT NOT NULL,
-    FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE,
-    FOREIGN KEY (tag_id) REFERENCES cuisine_tags (tag_id) ON DELETE CASCADE,
-    PRIMARY KEY (recipe_id, tag_id)
+  recipe_id INT NOT NULL,
+  tag_id INT NOT NULL,
+  FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE,
+  FOREIGN KEY (tag_id) REFERENCES cuisine_tags (tag_id) ON DELETE CASCADE,
+  PRIMARY KEY (recipe_id, tag_id)
 );
 
-CREATE TABLE favorites (
+-- Table for favorite recipes with associated images
+CREATE TABLE IF NOT EXISTS favorites (
   recipe_id INT NOT NULL,
   image_id INT NOT NULL,
-  FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id),
-  -- FOREIGN KEY (recipe_id) REFERENCES recipes (recipes_id) ON DELETE CASCADE,
-  FOREIGN KEY (image_id) REFERENCES images (image_id)
-  -- FOREIGN KEY (images_id) REFERENCES images (image_id) ON DELETE CASCADE
+  FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE,
+  FOREIGN KEY (image_id) REFERENCES images (image_id) ON DELETE CASCADE
 );
 
+-- Table for comments on recipes
 CREATE TABLE IF NOT EXISTS comments (
   comment_id SERIAL PRIMARY KEY NOT NULL,
   recipe_id INT NOT NULL,
   username VARCHAR(50) NOT NULL,
   comment_text TEXT NOT NULL,
   comment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id),
-  -- FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE,
-  FOREIGN KEY (username) REFERENCES users (username)
-  -- FOREIGN KEY (username) REFERENCES users (username) ON DELETE CASCADE
+  FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE,
+  FOREIGN KEY (username) REFERENCES users (username) ON DELETE CASCADE
 );
 
+-- Table for ingredients
 CREATE TABLE IF NOT EXISTS ingredients (
   ingredient_id SERIAL PRIMARY KEY NOT NULL,
   ingredient_name VARCHAR(100) NOT NULL UNIQUE
 );
 
+-- Junction table for associating ingredients with recipes
 CREATE TABLE IF NOT EXISTS recipe_ingredients (
   recipe_id INT NOT NULL,
   ingredient_id INT NOT NULL,
   quantity VARCHAR(50),
-  FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id),
-  -- FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE,
-  FOREIGN KEY (ingredient_id) REFERENCES ingredients (ingredient_id),
-  -- FOREIGN KEY (ingredient_id) REFERENCES ingredients (ingredient_id) ON DELETE CASCADE,
+  FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE,
+  FOREIGN KEY (ingredient_id) REFERENCES ingredients (ingredient_id) ON DELETE CASCADE,
   PRIMARY KEY (recipe_id, ingredient_id)
 );
+
+-- Table for user-specific notes on recipes
+CREATE TABLE IF NOT EXISTS user_notes (
+  note_id SERIAL PRIMARY KEY,
+  username VARCHAR(50) NOT NULL,
+  recipe_id INT NOT NULL,
+  note_text TEXT,
+  FOREIGN KEY (username) REFERENCES users (username) ON DELETE CASCADE,
+  FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE
+);
+
+-- Populate cuisine_tags with sample initial values
+INSERT INTO cuisine_tags (tag_name) VALUES 
+  ('Italian'), 
+  ('Mexican'), 
+  ('Chinese'), 
+  ('Indian')
+ON CONFLICT DO NOTHING; -- Prevents duplicate entries if run multiple times
