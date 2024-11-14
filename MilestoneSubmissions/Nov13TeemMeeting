@@ -1,2 +1,6 @@
 Team Meeting Log - November 13th 
     - Post Lab 11 Week
+
+Went through local server functions that currently are working.
+Discussed how to fix our GET and POST methods currently. Thinking trouble follows with the .json and making our local host public. 
+Once resolved - working on what's next - being the home page and profile page as a priority
