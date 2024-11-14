@@ -14,7 +14,7 @@ const bcrypt = require('bcryptjs'); //  To hash passwords
 const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part C.
 app.use(express.static('public'));
 app.use(express.static(path.join(__dirname, 'src', 'resources')));
-
+app.use(express.static(__dirname + '/'));
 
 // *****************************************************
 // <!-- Section 2 : Connect to DB -->
