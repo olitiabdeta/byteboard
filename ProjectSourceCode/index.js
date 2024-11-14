@@ -136,7 +136,7 @@ app.post('/register', async (req, res) => {
   
   // To-DO: Insert username and hashed password into the 'users' table
   let something = await db.any('INSERT INTO users (username, password, email, first_name, last_name) VALUES($1, $2, $3, $4, $5)', [username, hash, email, first_name, last_name]);
-
+    console.log(hash);
   console.log(something);
   if(something){
   res.redirect('/login');
@@ -172,7 +172,7 @@ app.post('/register', async (req, res) => {
     
     if (!match) {
     //if not corect
-    return res.render('/login', { message: 'Incorrect username or password.' }); // /login ->pages/login
+    return res.render('pages/login', { message: 'Incorrect username or password.' }); // /login ->pages/login
     } 
     
     // Save user details
@@ -184,7 +184,7 @@ app.post('/register', async (req, res) => {
     return res.redirect('/home');
     } catch (error) {
     console.error('Login error:', error);
-    return res.render('login', { message: 'An error occurred. Please try again.' });
+    return res.render('pages/login', { message: 'An error occurred. Please try again.' });
     }
     });
    
@@ -196,6 +196,19 @@ app.post('/register', async (req, res) => {
     }
     next();
     };
+
+
+  // Logout route
+  app.get('/logout', (req, res) => {
+  // Destroy the session
+  req.session.destroy((err) => {
+  if (err) {
+  console.error('Session destruction error:', err);
+  return res.redirect('/');
+  }
+  res.render('pages/logout', { message: 'Logged out Successfully' });
+  });
+  });
 
 
 // *****************************************************
