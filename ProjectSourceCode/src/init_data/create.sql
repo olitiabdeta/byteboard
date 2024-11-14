@@ -1,14 +1,26 @@
 -- DROP TABLE IF EXISTS users;
 CREATE TABLE IF NOT EXISTS users (
-  username VARCHAR(50) PRIMARY KEY,
+  username VARCHAR(50) PRIMARY KEY NOT NULL,
   password CHAR(60) NOT NULL,
-  email VARCHAR(50)
+  email VARCHAR(50) UNIQUE NOT NULL
+  first_name VARCHAR(50) NOT NULL,
+  last_name VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS recipes (
   recipe_id SERIAL PRIMARY KEY NOT NULL,
-  recipe_name VARCHAR(75), 
-  recipe_difficulty VARCHAR(100) CONSTRAINT limited_values CHECK (recipe_difficulty in ('easy', 'moderate', 'difficult', 'very_difficult'))
+  recipe_name VARCHAR(75) NOT NULL, 
+  recipe_description TEXT,
+  recipe_prep_time INT CHECK (recipe_prep_time >= 0) NOT NULL -- time in minutes
+  -- TODO: display prep time (in min) to user
+  recipe_difficulty VARCHAR(100) CONSTRAINT limited_values CHECK (recipe_difficulty IN ('easy', 'moderate', 'difficult', 'very_difficult')) NOT NULL,
+  recipe_cook_time INT CHECK (recipe_cook_time >= 0) NOT NULL-- time in minutes
+  -- TODO: display cook time (in min) to user
+  recipe_servings INT CHECK (recipe_servings > 0) NOT NULL,
+  recipe_notes TEXT
+  -- TODO: add instructions (should it be it's own table?)
+  -- TODO: notes (optional for user)
+  -- TODO: cusine tag(s)
 );
 
 CREATE TABLE IF NOT EXISTS images (
@@ -24,6 +36,27 @@ CREATE TABLE recipes_to_images (
   -- FOREIGN KEY (image_id) REFERENCES images (image_id) ON DELETE CASCADE,
   FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id)
   -- FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS recipe_instructions (
+  instruction_id SERIAL PRIMARY KEY NOT NULL,
+  recipe_id INT NOT NULL,
+  step_number INT NOT NULL CHECK (step_number > 0),
+  instruction_text TEXT NOT NULL,
+  FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS cuisine_tags (
+  tag_id SERIAL PRIMARY KEY,
+  tag_name VARCHAR(50) UNIQUE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS recipe_cuisine_tags (
+    recipe_id INT NOT NULL,
+    tag_id INT NOT NULL,
+    FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES cuisine_tags (tag_id) ON DELETE CASCADE,
+    PRIMARY KEY (recipe_id, tag_id)
 );
 
 CREATE TABLE favorites (
