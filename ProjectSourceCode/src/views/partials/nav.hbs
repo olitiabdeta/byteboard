@@ -1,4 +1,4 @@
-<header>
+{{!-- <header>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
       <a class="navbar-brand" href="/">ByteBoard</a>
@@ -59,6 +59,79 @@
             </a>
           {{else}}
             <!-- Otherwise, show a login link -->
+            <a class="nav-link" href="/login">Login</a>
+          {{/if}}
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header> --}}
+
+<header>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+      <!-- Left side (Brand name and links) -->
+      <a class="navbar-brand" href="/">ByteBoard</a>
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/">Home</a>
+        </li>
+        <!-- Conditionally show 'Friends' if logged in, otherwise show login -->
+        {{#if loggedIn}}
+          <li class="nav-item">
+            <a class="nav-link" href="/friends">Friends</a>
+          </li>
+        {{else}}
+          <li class="nav-item">
+            <a class="nav-link" href="/login">Login</a>
+          </li>
+        {{/if}}
+
+        <!-- Conditionally show 'Saved' if logged in, otherwise show login -->
+        {{#if loggedIn}}
+          <li class="nav-item">
+            <a class="nav-link" href="/saved">Saved</a>
+          </li>
+        {{else}}
+          <li class="nav-item">
+            <a class="nav-link" href="/login">Login</a>
+          </li>
+        {{/if}}
+
+        <!-- Conditionally show 'Create Recipe' if logged in, otherwise show login -->
+        {{#if loggedIn}}
+          <li class="nav-item">
+            <a class="nav-link" href="/createRecipe">Create Recipe</a>
+          </li>
+        {{else}}
+          <li class="nav-item">
+            <a class="nav-link" href="/login">Login</a>
+          </li>
+        {{/if}}
+      </ul>
+    </div>
+
+    <!-- Center logo -->
+    <div class="mx-auto order-0">
+      <a class="navbar-brand mx-auto" href="/">
+        <img src="src/resources/img/ByteBLogo.PNG" alt="ByteBoard Logo" style="width: 50px; height: 50px;">
+      </a>
+    </div>
+
+    <!-- Right side (Icons and Profile) -->
+    <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/search">
+            <img src="../../resources/img/search.webp" alt="Search Icon" style="width: 30px; height: 30px;">
+          </a>
+        </li>
+        <li class="nav-item">
+          {{#if loggedIn}}
+            <a class="nav-link" href="/profile">
+              <img src="{{profilePic}}" alt="Profile Picture" class="rounded-circle" style="width: 30px; height: 30px;">
+            </a>
+          {{else}}
             <a class="nav-link" href="/login">Login</a>
           {{/if}}
         </li>
