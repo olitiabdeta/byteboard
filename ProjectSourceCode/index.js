@@ -87,6 +87,13 @@ app.get('/', (req, res) => {
   res.redirect('/login'); 
 });
 
+// Middleware to set the loggedIn flag in your Handlebars template
+app.use((req, res, next) => {
+  res.locals.loggedIn = req.session.user ? true : false;
+  res.locals.profilePic = req.session.user ? req.session.user.profilePic : '';
+  next();
+});
+
 // Home page
 app.get('/home', (req, res) => {
   res.render('pages/home');
