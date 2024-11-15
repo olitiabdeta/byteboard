@@ -203,14 +203,14 @@ app.post('/register', async (req, res) => {
 
   // Logout route
   app.get('/logout', (req, res) => {
-  // Destroy the session
-  req.session.destroy((err) => {
-  if (err) {
-  console.error('Session destruction error:', err);
-  return res.redirect('/');
-  }
-  res.render('pages/logout', { message: 'Logged out Successfully' });
-  });
+    // Destroy the session
+    req.session.destroy((err) => {
+    if (err) {
+    console.error('Session destruction error:', err);
+    return res.redirect('/');
+    }
+    res.render('pages/logout', { message: 'Logged out Successfully' });
+    });
   });
 
 
