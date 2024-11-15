@@ -110,6 +110,17 @@
             <a class="nav-link" href="/login"></a>
           </li>
         {{/if}}
+                 <!-- Conditionally show 'Logout' if logged in, otherwise show login -->
+        {{#if loggedIn}}
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">Logout</a>
+          </li>
+        {{else}}
+          <li class="nav-item">
+            <a class="nav-link" href="/login"></a>
+          </li>
+        {{/if}}
+
       </ul>
     </div>
 
@@ -126,7 +137,6 @@
             <a class="nav-link" href="/profile">
               <img src="{{profilePic}}" alt="Profile Picture" class="rounded-circle" style="width: 30px; height: 30px;">
             </a>
-             <a class="nav-link" href="/logout">Logout</a>
           {{else}}
             <a class="nav-link" href="/login">Login</a>
           {{/if}}
