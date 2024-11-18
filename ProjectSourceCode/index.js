@@ -17,6 +17,8 @@ app.use(express.static('public'));
 app.use(express.static(path.join(__dirname, 'src', 'resources')));
 app.use(express.static(__dirname + '/'));
 
+
+
 // *****************************************************
 // <!-- Section 2 : Connect to DB -->
 // *****************************************************
@@ -53,6 +55,8 @@ db.connect()
     console.log('ERROR:', error.message || error);
   });
 
+
+
 // *****************************************************
 // <!-- Section 3 : App Settings -->
 // *****************************************************
@@ -77,6 +81,8 @@ app.use(
     extended: true,
   })
 );
+
+
 
 // *****************************************************
 // <!-- Section 4 : API Routes -->
@@ -141,44 +147,6 @@ app.post('/login', async (req,res) =>{
   }
 });
 
-// POST route for login
-/*app.post('/login', async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    
-    // Find the user in the database
-    const user = await db.oneOrNone('SELECT * FROM users WHERE username = $1', [username]);
-    console.log(user);
-    if (!user) 
-    {
-      // if not found
-      return res.render('pages/login', {message: "Incorrect username or password.", error: true});
-    }
-    
-    // Compare the provided password with the hashed password in the database
-    const match = await bcrypt.compare(password, user.password);
-    
-    
-    if (!match) 
-    {
-      //if not corect
-      return res.render('pages/login', { message: 'Incorrect username or password.' }); // /login ->pages/login
-    } 
-    
-    // Save user details
-    req.session.user = user;
-    req.session.save();
-    
-    
-    // redirect to the home route
-    return res.redirect('/home');
-    } 
-    catch (error) 
-    {
-      console.error('Login error:', error);
-      return res.render('pages/login', { message: 'An error occurred. Please try again.' });
-    }
-    });*/
 
 //GET Register page
 app.get('/register', (req, res) => {
@@ -203,7 +171,6 @@ app.post('/register', async (req, res) => {
     const registeredUserQuery = `SELECT * FROM users WHERE username = $1 OR email = $2`;
     const registeredUser = await db.oneOrNone(existingUserQuery, [username, email]);
     
-    // const registeredUser = await db.none(query, values);
     
     // console.log(hashedPassword);
     // console.log(registeredUser);
@@ -278,17 +245,8 @@ app.get('logout', (req,res) => {
     console.error('Error logging out:', error);
   }
 })
-/*app.get('/logout', (req, res) => {
-  // Destroy the session
-  req.session.destroy((err) => {
-    if (err) 
-    {
-      console.error('Session destruction error:', err);
-      return res.redirect('/');
-    }
-    res.render('pages/logout', { message: 'Logged out Successfully' });
-    });
-});*/
+
+
 
 
 // *****************************************************
@@ -296,7 +254,5 @@ app.get('logout', (req,res) => {
 // *****************************************************
 // starting the server and keeping the connection open to listen for more requests
   
-
-
 app.listen(3000);
 console.log('Server is listening on port 3000');
