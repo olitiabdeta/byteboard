@@ -41,6 +41,16 @@
             <a class="nav-link" href="/login"></a>
           </li>
         {{/if}}
+        <!-- Conditionally show 'Create Profile' if logged in, otherwise show login -->
+        {{#if loggedIn}}
+          <li class="nav-item">
+            <a class="nav-link" href="/createProfile">Create Profile</a>
+          </li>
+        {{else}}
+          <li class="nav-item">
+            <a class="nav-link" href="/login"></a>
+          </li>
+        {{/if}}
                  <!-- Conditionally show 'Logout' if logged in, otherwise show login -->
         {{#if loggedIn}}
           <li class="nav-item">

@@ -232,6 +232,10 @@ app.get('/createRecipe', (req, res) => {
   res.render('pages/createRecipe');
 });
 
+//Create Profile 
+app.get('/createProfile', (req, res) => {
+  res.render('pages/createProfile');
+});
 
 // Logout route
 app.get('/logout', (req,res) => {
