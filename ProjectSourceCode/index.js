@@ -199,25 +199,39 @@ app.post('/register', async (req, res) => {
     
     // To-DO: Insert username and hashed password into the 'users' table
     //let something = await db.any('INSERT INTO users (username, password, email, first_name, last_name) VALUES($1, $2, $3, $4, $5)', [username, hash, email, first_name, last_name]);
-    const query = `INSERT INTO users (username, password, email, first_name, last_name) VALUES($1, $2, $3, $4, $5)`;
-    const values = [username, hashedPassword, email, first_name, last_name];
     
-    const registeredUser = await db.none(query, values);
+    const registeredUserQuery = `SELECT * FROM users WHERE username = $1 OR email = $2`;
+    const registeredUser = await db.oneOrNone(existingUserQuery, [username, email]);
     
-    console.log(hashedPassword);
-    console.log(registeredUser);
+    // const registeredUser = await db.none(query, values);
+    
+    // console.log(hashedPassword);
+    // console.log(registeredUser);
     if(registeredUser)
     {
-      res.redirect('/login');
+      return res.render('pages/register', 
+      {
+        message: 'An account with this username or email already exists. Please log in.',
+        error: true
+      });
     }
+
+    const query = `INSERT INTO users (username, password, email, first_name, last_name) VALUES($1, $2, $3, $4, $5)`;
+    const values = [username, hashedPassword, email, first_name, last_name];
+    await db.none(query, values);
+
+    res.redirect('/login');
   } 
-  
   catch(error)
   {
     console.error("Error inserting user:", error);
 
     //if insertion failsm reirect back to the register page
-    res.redirect('/register');
+    res.render('pages/register', 
+    {
+      message: 'An error occurred during registration. Please try again.',
+      error: true
+    });
   }
 });
 
