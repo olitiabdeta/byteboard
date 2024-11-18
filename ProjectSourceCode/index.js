@@ -234,7 +234,7 @@ app.get('/createRecipe', (req, res) => {
 
 
 // Logout route
-app.get('logout', (req,res) => {
+app.get('/logout', (req,res) => {
   try
   {
     req.session.destroy();
