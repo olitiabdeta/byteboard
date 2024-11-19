@@ -169,7 +169,7 @@ app.post('/register', async (req, res) => {
     //let something = await db.any('INSERT INTO users (username, password, email, first_name, last_name) VALUES($1, $2, $3, $4, $5)', [username, hash, email, first_name, last_name]);
     
     const registeredUserQuery = `SELECT * FROM users WHERE username = $1 OR email = $2`;
-    const registeredUser = await db.oneOrNone(existingUserQuery, [username, email]);
+    const registeredUser = await db.oneOrNone(registeredUserQuery, [username, email]);
     
     
     // console.log(hashedPassword);
