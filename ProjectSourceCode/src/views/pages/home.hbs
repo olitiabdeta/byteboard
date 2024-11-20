@@ -1,15 +1,34 @@
-<h2 class="text-center">Home</h2>
-<div class="row" id="discover">
-    {{#each results}}
-        <div class="col-sm-3 mb-3 mb-sm-0 ms-5 mt-4">
-          <div class="card" style="width: 18rem;" id="home-card-1">
-            <img src="{{#if image}} {{image}} {{else}} 'default-recipe-image.jpg' {{/if}}" class="card-img-top" alt="{{name}}" style="width: 18rem; height: 12rem;">
-            <div class="card-body">
-              <h5 class="card-title">{{name}}</h5>
-              <p class="text-center">Total Time: {{totalTime}}</p>
-              <a href="{{recipeURL}}" class="btn btn-primary">View Recipe</a>
-            </div>
-          </div>
+<div class="container mt-5">
+  <h1>Welcome to the Recipe Sharing Platform!</h1>
+  <p>Discover, create, and share your favorite recipes.</p>
+
+  <div class="row mt-4">
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Explore Recipes</h5>
+          <p class="card-text">Browse through a collection of curated recipes from around the world.</p>
+          <a href="/saved" class="btn btn-primary">Browse Recipes</a>
         </div>
-    {{/each}}
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Create a Recipe</h5>
+          <p class="card-text">Share your unique recipes with the community.</p>
+          <a href="/createRecipe" class="btn btn-primary">Create Recipe</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Connect with Friends</h5>
+          <p class="card-text">See what your friends are cooking and share ideas!</p>
+          <a href="/friends" class="btn btn-primary">View Friends</a>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
