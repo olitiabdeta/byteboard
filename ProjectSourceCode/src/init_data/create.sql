@@ -107,7 +107,7 @@ INSERT INTO cuisine_tags (tag_name) VALUES
   ('Mexican'), 
   ('Chinese'), 
   ('Indian')
-ON DUPLICATE DO NOTHING; -- Prevents duplicate entries if run multiple times
+ON CONFLICT (tag_name) DO NOTHING; -- Prevents duplicate entries if run multiple times
 
 CREATE TABLE IF NOT EXISTS profiles (
   user_id VARCHAR(50) PRIMARY KEY NOT NULL REFERENCES users(username) ON DELETE CASCADE,
