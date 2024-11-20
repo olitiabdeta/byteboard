@@ -1,8 +1,10 @@
 <div class = "container">
+    {{!-- <h2>Edit Profile {{username}}</h2>
+    <form method = "post" action="/createProfile"> --}}
     <h2>Edit Profile, {{username}}</h2>
      {{#if error}}
     <div class="alert alert-danger">{{message}}</div>
-  {{else}}
+    {{else}}
     <form method = "post" action="/createProfile">
 
     <div class = "form-group">
@@ -55,5 +57,5 @@
 
         <button type="submit" class="btn btn-primary">Save Profile</button>
     </form>
-    {{/if}}
+     {{/if}}
 </div>
