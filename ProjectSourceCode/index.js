@@ -215,7 +215,12 @@ const auth = (req, res, next) => {
 app.use(auth);
 
 // Home page
-app.get('/home', async(req, res) => {
+app.get('/home', (req, res) => {
+  res.render('pages/home')
+});
+
+//discover page
+app.get('/discover', async(req, res) => {
   try
   {
     //fetching a list of recipes
@@ -283,12 +288,12 @@ app.get('/home', async(req, res) => {
     }));
 
     //render page with detailed recipes
-    res.render('pages/home', { results });
+    res.render('pages/discover', { results });
   }
   catch(error)
   {
     console.error('Error fetching recipes:', error.message);
-    res.render('pages/home', {
+    res.render('pages/discover', {
       results: [],
       message: 'Error fetching recipe. Please try again later.',
     });
