@@ -213,7 +213,6 @@ const auth = (req, res, next) => {
 };
 
 app.use(auth);
-
 // Create Profile page
 app.get('/createProfile', auth, (req, res) => {
   res.render('pages/createProfile', { username: req.session.user.username });
@@ -280,7 +279,9 @@ app.get('/profile', auth, async (req, res) => {
 
 // Home page
 app.get('/home', (req, res) => {
-  res.render('pages/home')
+  //display username if logged in, display guest if not
+  const username = req.session?.user?.username || 'Guest';
+  res.render('pages/home', {username})
 });
 
 //discover page
