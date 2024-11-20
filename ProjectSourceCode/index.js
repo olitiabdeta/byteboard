@@ -215,8 +215,84 @@ const auth = (req, res, next) => {
 app.use(auth);
 
 // Home page
-app.get('/home', (req, res) => {
-  res.render('pages/home');
+app.get('/home', async(req, res) => {
+  try
+  {
+    //fetching a list of recipes
+    const searchResponse = await axios({
+      url: `https://api.spoonacular.com/recipes/complexSearch`,
+      method: 'GET',
+      headers: 
+      {
+        'Accept-Encoding': 'application/json',
+      },
+      params: 
+      {
+        apiKey: process.env.API_KEY,
+        query: 'pasta', //example query
+        number: 10, //number of recipes to fetch
+      },
+    });
+
+    //extract recipe IDs from the search results
+    const recipeIds = searchResponse.data.results.map(recipe => recipe.id);
+
+    //fetching detailed information for each recipe using its ID
+    const detailedRecipes = await Promise.all(
+      recipeIds.map(async id => {
+        try
+        {
+          const detailedResponse = await axios({
+            url: `https://api.spoonacular.com/recipes/${id}/information`,
+            method: 'GET',
+            headers:
+            {
+              'Accept-Encoding': 'application/json',
+            },
+            params:
+            {
+              apiKey: process.env.API_KEY,
+            },
+          });
+          return detailedResponse.data; //return the full recipe details
+        }
+        catch(error)
+        {
+          console.error('Error fetching detals for recipe ID ${id}:', error.message);
+          return null; //handle errors gracefully be skipping the recipe
+        }
+      })
+    );
+
+    //filter out null responses
+    const results = detailedRecipes.filter(recipe => recipe != null).map(recipe => ({
+      name: recipe.title,
+      description: recipe.summary || 'No description available',
+      prepTime: recipe.preparationMinutes || '0',
+      //TODO: no difficulty in API
+      cookTime: recipe.cookingMinutes || '0',
+      servings: recipe.servings || 'N/A',
+      ingredients: recipe.extendedIngredients.map(ing => ing.original) || [], // list of ingredients
+      instructions: recipe.instructions || 'No instructions available.',
+      image: recipe.image || '/default-recipe-image.jpg', //TODO: make a default photo
+      cuisineTags: recipe.cuisines?.join(', ') || 'No cuisine info available.',
+      diets: recipe.diets.join(', ') || 'No diet info available.',
+      allergens: recipe.cuisines.join(', ') || 'No allergen info available.',
+      totalTime: recipe.readyInMinutes || 'N/A',
+      recipeURL: recipe.spoonacularSourceUrl
+    }));
+
+    //render page with detailed recipes
+    res.render('pages/home', { results });
+  }
+  catch(error)
+  {
+    console.error('Error fetching recipes:', error.message);
+    res.render('pages/home', {
+      results: [],
+      message: 'Error fetching recipe. Please try again later.',
+    });
+  }
 });
 
 //Friends
