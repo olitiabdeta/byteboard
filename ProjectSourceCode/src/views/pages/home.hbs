@@ -1,1 +1,15 @@
-<h1>home</h1>
+<h2 class="text-center">Home</h2>
+<div class="row" id="discover">
+    {{#each results}}
+        <div class="col-sm-3 mb-3 mb-sm-0 ms-5 mt-4">
+          <div class="card" style="width: 18rem;" id="home-card-1">
+            <img src="{{#if image}} {{image}} {{else}} 'default-recipe-image.jpg' {{/if}}" class="card-img-top" alt="{{name}}" style="width: 18rem; height: 12rem;">
+            <div class="card-body">
+              <h5 class="card-title">{{name}}</h5>
+              <p class="text-center">Total Time: {{totalTime}}</p>
+              <a href="{{recipeURL}}" class="btn btn-primary">View Recipe</a>
+            </div>
+          </div>
+        </div>
+    {{/each}}
+</div>
