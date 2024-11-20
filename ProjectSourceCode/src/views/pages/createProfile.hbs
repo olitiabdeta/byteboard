@@ -1,49 +1,55 @@
 <div class = "container">
-<h2>Create Profile {{username}}</h2>
+<h2>Edit Profile {{username}}</h2>
 <form method = "POST" action="/createProfile">
+
 <div class = "form-group">
     <label for="bio">Add a bio</label>
     <input type="text" id = "bio" name = "bio" class = "form-control">
 </div>
+
 <div class = "form-group">
     <label for="profilePic">Add a Profile Image</label>
     <input type="file" id = "profilePic" name = "profilePic" class = "form-control">
 </div>
+
 <div class = "form-group">
     <label for="favCuisine">Share your favorite cuisines or add your own below!</label>
     <select id = "favCuisine" name = "favCuisine" multiple class = "form-control">
-     <option value="american">American</option>
-      <option value="mexican">Mexican</option>
-     <option value="chinese">Chinese</option>
-     <option value="thai">Thai</option>
-     <option value="italian">Italian</option>
-   <option value="indian">Indian</option>
-   <option value="french">French</option>
-   <option value="japanese">Japanese</option>
-</select>
+        <option value="american">American</option>
+        <option value="mexican">Mexican</option>
+        <option value="chinese">Chinese</option>
+        <option value="thai">Thai</option>
+        <option value="italian">Italian</option>
+        <option value="indian">Indian</option>
+        <option value="french">French</option>
+        <option value="japanese">Japanese</option>
+    </select>
 </div>
-    <div class="form-group">
-     <label for="customCuisine">Add Your Own Cuisines:</label>
+
+<div class="form-group">
+    <label for="customCuisine">Add Your Own Cuisines:</label>
     <input type="text" id="customCuisine" name="customCuisine" class="form-control"  placeholder="separate tags with commas">
-    </div>
+</div>
 
 <div class = "form-group">
     <label for="dietaryPref">Share your dietary preferences or add your own below!</label>
     <select id = "dietaryPref" name = "dietaryPref" multiple class = "form-control">
-     <option value="vegetarian">Vegetarian</option>
-      <option value="vegan">Vegan</option>
-     <option value="pescetarian">Pescetarian</option>
-     <option value="gf">Gluten-Free</option>
-     <option value="dairyFree">Dairy-Free</option>
-   <option value="keto">Keto</option>
-   <option value="kosher">Kosher</option>
-   <option value="halal">Halal</option>
-</select>
+        <option value="vegetarian">Vegetarian</option>
+        <option value="vegan">Vegan</option>
+        <option value="pescetarian">Pescetarian</option>
+        <option value="gf">Gluten-Free</option>
+        <option value="dairyFree">Dairy-Free</option>
+        <option value="keto">Keto</option>
+        <option value="kosher">Kosher</option>
+        <option value="halal">Halal</option>
+    </select>
 </div>
-    <div class="form-group">
-     <label for="customPref">Add Your Own Preferences:</label>
+
+<div class="form-group">
+    <label for="customPref">Add Your Own Preferences:</label>
     <input type="text" id="customPref" name="customPref" class="form-control"  placeholder="separate tags with commas">
-    </div>
-       <button type="submit" class="btn btn-primary">Create Profile</button>
+</div>
+
+    <button type="submit" class="btn btn-primary">Save Profile</button>
 </form>
 </div>

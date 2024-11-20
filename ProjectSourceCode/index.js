@@ -91,7 +91,7 @@ app.use(
 
 //redirect to login when website is loaded
 app.get('/', (req, res) => {
-  res.redirect('/login'); 
+  res.redirect('/home'); 
 });
 
 // Middleware to set the loggedIn flag in your Handlebars template
@@ -169,7 +169,7 @@ app.post('/register', async (req, res) => {
     //let something = await db.any('INSERT INTO users (username, password, email, first_name, last_name) VALUES($1, $2, $3, $4, $5)', [username, hash, email, first_name, last_name]);
     
     const registeredUserQuery = `SELECT * FROM users WHERE username = $1 OR email = $2`;
-    const registeredUser = await db.oneOrNone(existingUserQuery, [username, email]);
+    const registeredUser = await db.oneOrNone(registeredUserQuery, [username, email]);
     
     
     // console.log(hashedPassword);
@@ -214,9 +214,154 @@ const auth = (req, res, next) => {
 
 app.use(auth);
 
+// Create Profile page
+app.get('/createProfile', auth, (req, res) => {
+  res.render('pages/createProfile', { username: req.session.user.username });
+});
+
+app.post('/createProfile', auth, async (req, res) => {
+  try {
+    const userId = req.session.user.id;
+    const { bio, favCuisine, customCuisine, dietaryPref, customPref } = req.body;
+
+    const profilePic = req.body.profilePic; // Adjust if using file upload handling
+    const favoriteCuisines = Array.isArray(favCuisine) ? favCuisine.join(', ') : favCuisine || '';
+    const dietaryPreferences = Array.isArray(dietaryPref) ? dietaryPref.join(', ') : dietaryPref || '';
+
+    await db.none(
+      `INSERT INTO profiles (user_id, bio, profile_pic, favorite_cuisines, custom_cuisines, dietary_preferences, custom_preferences)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [userId, bio, profilePic, favoriteCuisines, customCuisine, dietaryPreferences, customPref]
+    );
+
+    res.redirect('/home');
+  } catch (error) {
+    console.error('Profile creation error:', error);
+    res.render('pages/createProfile', {
+      message: 'An error occurred while creating your profile. Please try again.',
+      error: true,
+    });
+  }
+});
+
+// Profile page
+// Profile page
+app.get('/profile', auth, async (req, res) => {
+  try {
+    const userId = req.session.user.id;
+
+    const profileQuery = `
+      SELECT u.username, u.email, p.bio, p.profile_pic, p.favorite_cuisines, p.custom_cuisines, p.dietary_preferences, p.custom_preferences
+      FROM users u
+      LEFT JOIN profiles p ON u.id = p.user_id
+      WHERE u.id = $1
+    `;
+
+    const profile = await db.oneOrNone(profileQuery, [userId]);
+
+    if (!profile) {
+      // If no profile exists, render a message to the user
+      return res.render('pages/profile', {
+        message: 'No profile found. Please create one!',
+        error: true,
+      });
+    }
+
+    // Render the profile page with retrieved data
+    res.render('pages/profile', { profile });
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    res.render('pages/profile', {
+      message: 'An error occurred while fetching your profile.',
+      error: true,
+    });
+  }
+});
+
 // Home page
 app.get('/home', (req, res) => {
-  res.render('pages/home');
+  res.render('pages/home')
+});
+
+//discover page
+app.get('/discover', async(req, res) => {
+  try
+  {
+    //fetching a list of recipes
+    const searchResponse = await axios({
+      url: `https://api.spoonacular.com/recipes/complexSearch`,
+      method: 'GET',
+      headers: 
+      {
+        'Accept-Encoding': 'application/json',
+      },
+      params: 
+      {
+        apiKey: process.env.API_KEY,
+        query: 'pasta', //example query
+        number: 10, //number of recipes to fetch
+      },
+    });
+
+    //extract recipe IDs from the search results
+    const recipeIds = searchResponse.data.results.map(recipe => recipe.id);
+
+    //fetching detailed information for each recipe using its ID
+    const detailedRecipes = await Promise.all(
+      recipeIds.map(async id => {
+        try
+        {
+          const detailedResponse = await axios({
+            url: `https://api.spoonacular.com/recipes/${id}/information`,
+            method: 'GET',
+            headers:
+            {
+              'Accept-Encoding': 'application/json',
+            },
+            params:
+            {
+              apiKey: process.env.API_KEY,
+            },
+          });
+          return detailedResponse.data; //return the full recipe details
+        }
+        catch(error)
+        {
+          console.error('Error fetching detals for recipe ID ${id}:', error.message);
+          return null; //handle errors gracefully be skipping the recipe
+        }
+      })
+    );
+
+    //filter out null responses
+    const results = detailedRecipes.filter(recipe => recipe != null).map(recipe => ({
+      name: recipe.title,
+      description: recipe.summary || 'No description available',
+      prepTime: recipe.preparationMinutes || '0',
+      //TODO: no difficulty in API
+      cookTime: recipe.cookingMinutes || '0',
+      servings: recipe.servings || 'N/A',
+      ingredients: recipe.extendedIngredients.map(ing => ing.original) || [], // list of ingredients
+      instructions: recipe.instructions || 'No instructions available.',
+      image: recipe.image || '/default-recipe-image.jpg', //TODO: make a default photo
+      cuisineTags: recipe.cuisines?.join(', ') || 'No cuisine info available.',
+      diets: recipe.diets.join(', ') || 'No diet info available.',
+      allergens: recipe.cuisines.join(', ') || 'No allergen info available.',
+      totalTime: recipe.readyInMinutes || 'N/A',
+      recipeURL: recipe.spoonacularSourceUrl
+    }));
+
+    //render page with detailed recipes
+    res.render('pages/discover', { results });
+  }
+  catch(error)
+  {
+    console.error('Error fetching recipes:', error.message);
+    res.render('pages/discover', {
+      results: [],
+      message: 'Error fetching recipe. Please try again later.',
+    });
+  }
 });
 
 //Friends
@@ -232,23 +377,17 @@ app.get('/createRecipe', (req, res) => {
   res.render('pages/createRecipe');
 });
 
-//Create Profile 
-app.get('/createProfile', (req, res) => {
-  res.render('pages/createProfile');
-});
-
 // Logout route
-app.get('/logout', (req,res) => {
-  try
-  {
-    req.session.destroy();
-    res.render('pages/logout');
-  }
-  catch(error)
-  {
+app.get('/logout', (req, res) => {
+  try {
+    req.session.destroy(() => {
+      res.redirect('/login');
+    });
+  } catch (error) {
     console.error('Error logging out:', error);
+    res.redirect('/home');
   }
-})
+});
 
 
 
