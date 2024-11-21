@@ -1,11 +1,12 @@
 <div class = "container">
     {{!-- <h2>Edit Profile {{username}}</h2>
     <form method = "post" action="/createProfile"> --}}
-    <h2>Edit Profile, {{username}}</h2>
-     {{#if error}}
+<h2>Edit Profile</h2>
+<h5>@{{username}}</h5>
+{{#if error}}
     <div class="alert alert-danger">{{message}}</div>
-    {{else}}
-    <form method = "post" action="/createProfile">
+{{/if}}
+<form method = "post" action="/createProfile" enctype="multipart/form-data">
 
     <div class = "form-group">
         <label for="bio">Add a bio</label>
@@ -17,7 +18,7 @@
         <input type="file" id = "profilePic" name = "profilePic" class = "form-control">
     </div>
 
-    <div class = "form-group">
+    <!--<div class = "form-group">
         <label for="favCuisine">Share your favorite cuisines or add your own below!</label>
         <select id = "favCuisine" name = "favCuisine" multiple class = "form-control">
             <option value="american">American</option>
@@ -29,14 +30,14 @@
             <option value="french">French</option>
             <option value="japanese">Japanese</option>
         </select>
-    </div>
+    </div>-->
 
-    <div class="form-group">
+    <!--<div class="form-group">
         <label for="customCuisine">Add Your Own Cuisines:</label>
         <input type="text" id="customCuisine" name="customCuisine" class="form-control"  placeholder="separate tags with commas">
-    </div>
+    </div>-->
 
-    <div class = "form-group">
+    <!--<div class = "form-group">
         <label for="dietaryPref">Share your dietary preferences or add your own below!</label>
         <select id = "dietaryPref" name = "dietaryPref" multiple class = "form-control">
             <option value="vegetarian">Vegetarian</option>
@@ -48,14 +49,114 @@
             <option value="kosher">Kosher</option>
             <option value="halal">Halal</option>
         </select>
+    </div>-->
+
+    <!--Dietary Prefernces-->
+    <div class="form-group">
+        <label for="dietaryPref">Select your dietary preferences:</label>
+        <div id="dietaryPref">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="gf" name="dietaryPref[]" value="gf" {{#if user.dietaryPref.gf}}checked{{/if}}>
+                <label class="form-check-label" for="gf">Gluten-Free</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="keto" name="dietaryPref[]" value="keto" {{#if user.dietaryPref.keto}}checked{{/if}}>
+                <label class="form-check-label" for="keto">Keto</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="vegetarian" name="dietaryPref[]" value="vegetarian" {{#if user.dietaryPref.vegetarian}}checked{{/if}}>
+                <label class="form-check-label" for="vegetarian">Vegetarian</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="lacto-vegetarian" name="dietaryPref[]" value="lacto-vegetarian" {{#if user.dietaryPref.lacto-vegetarian}}checked{{/if}}>
+                <label class="form-check-label" for="lacto-vegetarian">Lacto-Vegetarian</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="ovo-vegetarian" name="dietaryPref[]" value="ovo-vegetarian" {{#if user.dietaryPref.ovo-vegetarian}}checked{{/if}}>
+                <label class="form-check-label" for="ovo-vegetarian">Ovo-Vegetarian</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="vegan" name="dietaryPref[]" value="vegan" {{#if user.dietaryPref.vegan}}checked{{/if}}>
+                <label class="form-check-label" for="vegan">Vegan</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="pescetarian" name="dietaryPref[]" value="pescetarian" {{#if user.dietaryPref.pescetarian}}checked{{/if}}>
+                <label class="form-check-label" for="pescetarian">Pescetarian</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="paleo" name="dietaryPref[]" value="paleo" {{#if user.dietaryPref.paleo}}checked{{/if}}>
+                <label class="form-check-label" for="paelo">Paleo</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="primal" name="dietaryPref[]" value="primal" {{#if user.dietaryPref.primal}}checked{{/if}}>
+                <label class="form-check-label" for="primal">Primal</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="lowFODMAP" name="dietaryPref[]" value="lowFODMAP" {{#if user.dietaryPref.lowFODMAP}}checked{{/if}}>
+                <label class="form-check-label" for="lowFODMAP">Low FODMAP</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="whole30" name="dietaryPref[]" value="whole30" {{#if user.dietaryPref.whole30}}checked{{/if}}>
+                <label class="form-check-label" for="whole30">Whole 30</label>
+            </div>   
+        </div>
     </div>
 
     <div class="form-group">
+        <label for="intolerances">Select your intolerances:</label>
+        <div id="intolerances">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="dairy" name="intolerances[]" value="dairy" {{#if user.intolerances.dairy}}checked{{/if}}>
+                <label class="form-check-label" for="dairy">Dairy</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="egg" name="intolerances[]" value="egg" {{#if user.intolerances.egg}}checked{{/if}}>
+                <label class="form-check-label" for="egg">Egg</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="gluten" name="intolerances[]" value="gluten" {{#if user.intolerances.gluten}}checked{{/if}}>
+                <label class="form-check-label" for="gluten">Gluten</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="grain" name="intolerances[]" value="grain" {{#if user.intolerances.grain}}checked{{/if}}>
+                <label class="form-check-label" for="grain">Grain</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="peanut" name="intolerances[]" value="peanut" {{#if user.intolerances.peanut}}checked{{/if}}>
+                <label class="form-check-label" for="peanut">Peanut</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="seafood" name="intolerances[]" value="seafood" {{#if user.intolerances.seafood}}checked{{/if}}>
+                <label class="form-check-label" for="seafood">Seafood</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="shellfish" name="intolerances[]" value="shellfish" {{#if user.intolerances.shellfish}}checked{{/if}}>
+                <label class="form-check-label" for="shellfish">Shellfish</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="soy" name="intolerances[]" value="soy" {{#if user.intolerances.soy}}checked{{/if}}>
+                <label class="form-check-label" for="soy">Soy</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="sulfite" name="intolerances[]" value="sulfite" {{#if user.intolerances.sulfite}}checked{{/if}}>
+                <label class="form-check-label" for="sulfite">Sulfite</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="treenut" name="intolerances[]" value="treenut" {{#if user.intolerances.treenut}}checked{{/if}}>
+                <label class="form-check-label" for="treenut">Tree Nut</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="wheat" name="intolerances[]" value="wheat" {{#if user.intolerances.wheat}}checked{{/if}}>
+                <label class="form-check-label" for="wheat">Wheat</label>
+            </div>
+        </div>
+    </div>
+
+    <!--<div class="form-group">
         <label for="customPref">Add Your Own Preferences:</label>
         <input type="text" id="customPref" name="customPref" class="form-control"  placeholder="separate tags with commas">
-    </div>
+    </div>-->
 
         <button type="submit" class="btn btn-primary">Save Profile</button>
     </form>
-     {{/if}}
 </div>
