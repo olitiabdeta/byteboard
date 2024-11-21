@@ -406,10 +406,61 @@ app.get('/friends', (req, res) => {
 app.get('/saved', (req, res) => {
   res.render('pages/saved');
 });
-//Create Recipe
+// Get Create Recipe
 app.get('/createRecipe', (req, res) => {
   res.render('pages/createRecipe');
 });
+
+//Post Create Recipe 
+app.post('/createRecipe', auth,  async (req, res) => {
+  try 
+  {
+    const recipeName = req.body.recipeName;
+    const description = req.body.description;
+    const prepTime = req.body.prepTime;
+    const difficulty = req.body.difficulty;
+    const cookTime = req.body.cookTime;
+    const servings = req.body.servings;
+    const notes = req.body.notes;
+    const ingredients = req.body.ingredients;
+    const instructions = req.body.instructions;
+
+      //insert new recipe
+const recipeQuery = 
+      `INSERT INTO recipes (recipe_name, recipe_description ,
+        recipe_prep_time ,
+        recipe_difficulty,
+        recipe_cook_time, 
+        recipe_servings,
+        recipe_notes,
+        ingredients, 
+        instructions )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        RETURNING recipe_id;`
+      ;
+      const newRecipe =  [recipeName, description, prepTime, difficulty, cookTime, servings, notes, ingredients, instructions]
+      const result = await db.query(recipeQuery, newRecipe);
+
+       const newRecipeId = result[0].recipe_id;
+      res.render('pages/saved', {
+        message: 'Recipe created successfully!',
+        recipeId: newRecipeId,
+      });
+  } //docker-compose logs web
+  catch (error) 
+  {
+    console.error('Invalid Recipe Submission:', error);
+    res.render('pages/createRecipe', 
+    {
+      error: true,
+      message: 'Error creating recipe, try again'
+  });
+  }
+});
+
+
+
+
 
 // Logout route
 app.get('/logout', (req, res) => {
