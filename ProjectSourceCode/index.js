@@ -213,32 +213,65 @@ const auth = (req, res, next) => {
 };
 
 app.use(auth);
+
 // Create Profile page
 app.get('/createProfile', auth, (req, res) => {
-  res.render('pages/createProfile', { username: req.session.user.username });
+  res.render('pages/createProfile', { 
+    username: req.session.user.username,
+    dietaryPref: req.session.user.dietaryPref,
+    intolerances: req.session.user.intolerances});
 });
 
-app.post('/createProfile', auth, async (req, res) => {
-  try {
-    const userId = req.session.user.id;
-    const { bio, favCuisine, customCuisine, dietaryPref, customPref } = req.body;
+const multer = require('multer');
+// Configure multer to store uploaded files
+const upload = multer({ dest: 'uploads/' }); // Adjust the destination as needed
 
-    const profilePic = req.body.profilePic; // Adjust if using file upload handling
+app.post('/createProfile', auth, upload.single('profilePic'), async (req, res) => {
+  try 
+  {
+    const {bio} = req.body;
+    const profilePic = req.file ? req.file.filename : null; //get the filename of the uploaded image
+    const userId = req.session.user.username;
+    //const { bio, favCuisine, customCuisine, dietaryPref, customPref } = req.body;
+
+    /*const profilePic = req.body.profilePic; // Adjust if using file upload handling
     const favoriteCuisines = Array.isArray(favCuisine) ? favCuisine.join(', ') : favCuisine || '';
-    const dietaryPreferences = Array.isArray(dietaryPref) ? dietaryPref.join(', ') : dietaryPref || '';
+    const dietaryPreferences = Array.isArray(dietaryPref) ? dietaryPref.join(', ') : dietaryPref || '';*/
+    const dietaryPref = Array.isArray(req.body.dietaryPref) ? req.body.dietaryPref.join(', ') : req.body.dietaryPref;
+    const intolerances = Array.isArray(req.body.intolerances) ? req.body.intolerances.join(', ') : req.body.intolerances;
 
-    await db.none(
-      `INSERT INTO profiles (user_id, bio, profile_pic, favorite_cuisines, custom_cuisines, dietary_preferences, custom_preferences)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-      [userId, bio, profilePic, favoriteCuisines, customCuisine, dietaryPreferences, customPref]
-    );
 
-    res.redirect('/home');
-  } catch (error) {
+    //check if user already has a profile
+    const result = await db.query('SELECT * FROM profiles WHERE user_id = $1', [userId]);
+    
+    if(result.rows.length > 0)
+    {
+      await db.query(
+      `UPDATE profiles
+      SET bio = $1, profile_pic = $2, dietary_preferences = $3, intolerances = $4
+      WHERE user_id = $5`,
+      [bio, profilePic, dietaryPref, intolerances, userId]);
+
+      res.redirect('/profile');
+    }
+    else
+    {
+      //insert new profile
+      await db.query(
+      `INSERT INTO profiles (user_id, bio, profile_pic, dietary_preferences, intolerances)
+      VALUES ($1, $2, $3, $4, $5)`, 
+      [userId, bio, profilePic, dietaryPref, intolerances]);
+      
+      res.redirect('/profile')
+    }
+  } 
+  catch (error) 
+  {
     console.error('Profile creation error:', error);
-    res.render('pages/createProfile', {
-      message: 'An error occurred while creating your profile. Please try again.',
+    res.render('pages/createProfile', 
+    {
       error: true,
+      message: 'An error occurred while creating your profile. Please try again.'
     });
   }
 });

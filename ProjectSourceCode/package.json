@@ -4,16 +4,17 @@
     "description": "A collaborative recipe-sharing platform where users can share, comment, and interact with recipes.",
     "main": "index.js",
     "dependencies": {
-            "axios": "^1.1.3",
-            "bcryptjs": "^2.4.0",
-            "body-parser": "1.20.0",
-            "express-handlebars": "^7.1.2",
-            "express": "^4.6.1",
-            "express-session": "1.17.3",
-            "pg-promise": "^10.11.1",
-            "nodemon": "2.0.20"
-        },
-    "scripts": {        
+        "axios": "^1.1.3",
+        "bcryptjs": "^2.4.0",
+        "body-parser": "^1.20.3",
+        "express": "^4.6.1",
+        "express-handlebars": "^7.1.2",
+        "express-session": "^1.18.1",
+        "multer": "^1.4.5-lts.1",
+        "nodemon": "^3.1.7",
+        "pg-promise": "^10.11.1"
+    },
+    "scripts": {
         "prestart": "npm install",
         "start": "node index.js"
     },

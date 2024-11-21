@@ -113,8 +113,9 @@ CREATE TABLE IF NOT EXISTS profiles (
   user_id VARCHAR(50) PRIMARY KEY NOT NULL REFERENCES users(username) ON DELETE CASCADE,
   bio TEXT,
   profile_pic VARCHAR(300),
-  favorite_cuisines TEXT[],
-  custom_cuisines TEXT[],
+  -- favorite_cuisines TEXT[],
+  -- custom_cuisines TEXT[],
   dietary_preferences TEXT[],
-  custom_preferences TEXT[]
+  -- custom_preferences TEXT[]
+  intolerances TEXT[]
 );
