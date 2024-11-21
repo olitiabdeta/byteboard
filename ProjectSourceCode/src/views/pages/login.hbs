@@ -1,4 +1,4 @@
-<div class= "container">
+{{!-- <div class= "container">
     <h2>Login</h2>
 <form method="POST" action="/login">
 <div class="form-group"> 
@@ -12,5 +12,24 @@
     <button type="submit" class="btn btn-primary">Login</button>
 </form>
 <p>Don't have an account yet? <br> <a href="/register">Create an Account</a></p>
+</div> --}}
+
+
+<div class="container" style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; background-color: #f9f9f9; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+  <h2 style="text-align: center; color: #44edc9; margin-bottom: 20px;">Login</h2>
+  <form method="POST" action="/login">
+    <div class="form-group" style="margin-bottom: 15px;">
+      <label for="username" style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">Username</label>
+      <input type="text" id="username" name="username" class="form-control" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+    </div>
+    <div class="form-group" style="margin-bottom: 15px;">
+      <label for="password" style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">Password</label>
+      <input type="password" id="password" name="password" class="form-control" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+    </div>
+    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 10px; background-color: #ff69b4; color: white; border: none; border-radius: 5px; font-size: 16px; font-weight: bold;">Login</button>
+  </form>
+  <p style="text-align: center; margin-top: 15px;">Don't have an account yet? <br> 
+    <a href="/register" style="color: #44edc9; text-decoration: none;">Create an Account</a>
+  </p>
 </div>
 
