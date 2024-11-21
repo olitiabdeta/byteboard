@@ -1,4 +1,4 @@
-<div class="container">
+{{!-- <div class="container">
     <h2>Register</h2>
     <form method="post" action="/register">
         <div class="form-group">
@@ -28,4 +28,36 @@
     <button type="submit" class="btn btn-primary">Register</button>
 </form>
     <p>Already have an account? <a href="/login">Login</a></p>
+</div> --}}
+
+<div class="container" style="max-width: 600px; margin: 50px auto; padding: 20px; background-color: #f9f9f9; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    <h2 style="text-align: center; color: #f193caf9; margin-bottom: 20px;">Register</h2>
+    <form method="post" action="/register">
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label for="firstname" style="color: #333; font-weight: bold;">First Name</label>
+            <input type="text" id="firstname" name="firstname" class="form-control" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; width: 100%;">
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label for="lastname" style="color: #333; font-weight: bold;">Last Name</label>
+            <input type="text" id="lastname" name="lastname" class="form-control" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; width: 100%;">
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label for="email" style="color: #333; font-weight: bold;">Email</label>
+            <input type="email" id="email" name="email" class="form-control" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; width: 100%;">
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label for="username" style="color: #333; font-weight: bold;">Username</label>
+            <input type="text" id="username" name="username" class="form-control" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; width: 100%;">
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label for="password" style="color: #333; font-weight: bold;">Password</label>
+            <input type="password" id="password" name="password" class="form-control" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; width: 100%;">
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label for="re-enter" style="color: #333; font-weight: bold;">Re-Enter Password</label>
+            <input type="password" id="re-enter" name="re-enter" class="form-control" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; width: 100%;">
+        </div>
+        <button type="submit" class="btn btn-primary" style="background-color: #f193caf9; border-color: #f193caf9; color: white; padding: 10px 20px; border-radius: 5px; width: 100%;">Register</button>
+    </form>
+    <p style="text-align: center; margin-top: 20px; color: #333;">Already have an account? <a href="/login" style="color: #44edc9; text-decoration: none;">Login</a></p>
 </div>
