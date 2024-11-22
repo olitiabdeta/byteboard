@@ -1,49 +1,135 @@
-{{!-- <header>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+{{!-- 
+
+<head>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Optional Bootstrap JS (Required for dropdown functionality) -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+  <header>
+    <nav class="navbar navbar-expand-lg" style="background-color: #ebf6f5; border-bottom: 3px solid #ebf6f5; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+      <div class="container-fluid">
+        <!-- Left side: Brand and Home -->
+        <a class="navbar-brand" href="/" style="display: flex; align-items: center;">
+          <img src="src/resources/img/ByteBLogo.PNG" alt="ByteBoard Logo" style="width: 100px; height: 50px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" style="border: none;">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Main navigation links -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/home" style="color: #5cbdb9; font-weight: bold; padding: 10px 15px; transition: color 0.3s, background-color 0.3s; border-radius: 5px;">
+                Home
+              </a>
+            </li>
+            {{#if loggedIn}}
+              <li class="nav-item">
+                <a class="nav-link" href="/friends" style="color: #ff1493; font-weight: bold; padding: 10px 15px; transition: color 0.3s, background-color 0.3s; border-radius: 5px;">
+                  Friends
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/saved" style="color: #ff1493; font-weight: bold; padding: 10px 15px; transition: color 0.3s, background-color 0.3s; border-radius: 5px;">
+                  Saved
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/createRecipe" style="color: #ff1493; font-weight: bold; padding: 10px 15px; transition: color 0.3s, background-color 0.3s; border-radius: 5px;">
+                  Create Recipe
+                </a>
+              </li>
+            {{/if}}
+          </ul>
+
+          <!-- Right side: Search and Profile -->
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/search" style="padding: 10px;">
+                <img src="src/resources/img/search.webp" alt="Search Icon" style="width: 30px; height: 30px; transition: transform 0.3s;">
+              </a>
+            </li>
+            
+            <li class="nav-item dropdown">
+              {{#if loggedIn}}
+                <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 10px;">
+                  <img 
+                    src="{{#if profilePic}}{{profilePic}}{{else}}src/resources/img/default_profile.jpg{{/if}}"  
+                    alt="Profile Picture"
+                    class="rounded-circle" 
+                    style="width: 30px; height: 30px; border: 2px solid #ff69b4; transition: border-color 0.3s;"
+                  >
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown" style="background-color: #ffe4e1; border-radius: 5px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                  <li><a class="dropdown-item" href="/profile" style="color: #ff1493; transition: background-color 0.3s, color 0.3s;">View Profile</a></li>
+                  <li><a class="dropdown-item" href="/createProfile" style="color: #ff1493; transition: background-color 0.3s, color 0.3s;">Edit Profile</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="/logout" style="color: #ff1493; transition: background-color 0.3s, color 0.3s;">Logout</a></li>
+                </ul>
+              {{else}}
+                <a class="nav-link" href="/login" style="color: #ff1493; font-weight: bold;">Login</a>
+              {{/if}}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+</body> --}}
+
+
+
+
+<header>
+  <nav class="navbar navbar-expand-lg" style="background-color: #fa9d66; border-bottom: 3px solid #fa9d66; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
     <div class="container-fluid">
-      <!-- Left side: Brand and Home -->
-      <a class="navbar-brand" href="/">
-        <img src="src/resources/img/ByteBLogo.PNG" alt="ByteBoard Logo" style="width: 100px; height: 50px;">
+      <!-- Brand Logo -->
+      <a class="navbar-brand" href="/" style="display: flex; align-items: center;">
+        <img src="src/resources/img/ByteBLogo.PNG" alt="ByteBoard Logo" style="width: 100px; height: 50px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
       </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <!-- Navbar Toggler -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" style="border: none;">
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <!-- Main navigation links -->
+      <!-- Navbar Links -->
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <a class="nav-link" href="/home">Home</a>
+            <a class="nav-link" href="/home" style="color: #4A4A4A;">Home</a>
           </li>
+          <!-- Other Links -->
           {{#if loggedIn}}
-            <li class="nav-item">
-              <a class="nav-link" href="/friends">Friends</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/saved">Saved</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/createRecipe">Create Recipe</a>
-            </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/friends" style="color: #4A4A4A;">Friends</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/saved" style="color: #4A4A4A;">Saved</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/createRecipe" style="color: #4A4A4A;">Create Recipe</a>
+          </li>
           {{/if}}
         </ul>
 
-        <!-- Right side: Search and Profile -->
+        <!-- Right Side: Search and Profile -->
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
-            <a class="nav-link" href="/search">
-              <img src="src/resources/img/search.webp" alt="Search Icon" style="width: 30px; height: 30px;">
+            <a class="nav-link" href="/search" style="color: #4A4A4A;">
+              <img src="src/resources/img/search.webp" alt="Search Icon" style="width: 30px; height: 30px; transition: transform 0.3s;">
             </a>
           </li>
           <li class="nav-item dropdown">
             {{#if loggedIn}}
-              <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <img 
-                  src="{{#if profilePic}}{{profilePic}}{{else}}src/resources/img/default_profile.jpg{{/if}}"  
-                  alt="Profile Picture"
-                  class="rounded-circle" 
-                  style="width: 30px; height: 30px;"
-                >
+              <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #4A4A4A;">
+                <img src="{{#if profilePic}}{{profilePic}}{{else}}src/resources/img/default_profile.jpg{{/if}}" alt="Profile Picture" class="rounded-circle" style="width: 30px; height: 30px; border: 2px solid #FF6347; transition: border-color 0.3s;">
               </a>
               <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                 <li><a class="dropdown-item" href="/profile">View Profile</a></li>
@@ -52,79 +138,7 @@
                 <li><a class="dropdown-item" href="/logout">Logout</a></li>
               </ul>
             {{else}}
-              <a class="nav-link" href="/login">Login</a>
-            {{/if}}
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-</header> --}}
-
-
-<header>
-  <nav class="navbar navbar-expand-lg" style="background-color: #ebf6f5; border-bottom: 3px solid #ebf6f5; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-    <div class="container-fluid">
-      <!-- Left side: Brand and Home -->
-      <a class="navbar-brand" href="/" style="display: flex; align-items: center;">
-        <img src="src/resources/img/ByteBLogo.PNG" alt="ByteBoard Logo" style="width: 100px; height: 50px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" style="border: none;">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <!-- Main navigation links -->
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="/home" style="color: #5cbdb9; font-weight: bold; padding: 10px 15px; transition: color 0.3s, background-color 0.3s; border-radius: 5px;">
-              Home
-            </a>
-          </li>
-          {{#if loggedIn}}
-            <li class="nav-item">
-              <a class="nav-link" href="/friends" style="color: #ff1493; font-weight: bold; padding: 10px 15px; transition: color 0.3s, background-color 0.3s; border-radius: 5px;">
-                Friends
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/saved" style="color: #ff1493; font-weight: bold; padding: 10px 15px; transition: color 0.3s, background-color 0.3s; border-radius: 5px;">
-                Saved
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/createRecipe" style="color: #ff1493; font-weight: bold; padding: 10px 15px; transition: color 0.3s, background-color 0.3s; border-radius: 5px;">
-                Create Recipe
-              </a>
-            </li>
-          {{/if}}
-        </ul>
-
-        <!-- Right side: Search and Profile -->
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="/search" style="padding: 10px;">
-              <img src="src/resources/img/search.webp" alt="Search Icon" style="width: 30px; height: 30px; transition: transform 0.3s;">
-            </a>
-          </li>
-          <li class="nav-item dropdown">
-            {{#if loggedIn}}
-              <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 10px;">
-                <img 
-                  src="{{#if profilePic}}{{profilePic}}{{else}}src/resources/img/default_profile.jpg{{/if}}"  
-                  alt="Profile Picture"
-                  class="rounded-circle" 
-                  style="width: 30px; height: 30px; border: 2px solid #ff69b4; transition: border-color 0.3s;"
-                >
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown" style="background-color: #ffe4e1; border-radius: 5px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                <li><a class="dropdown-item" href="/profile" style="color: #ff1493; transition: background-color 0.3s, color 0.3s;">View Profile</a></li>
-                <li><a class="dropdown-item" href="/createProfile" style="color: #ff1493; transition: background-color 0.3s, color 0.3s;">Edit Profile</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="/logout" style="color: #ff1493; transition: background-color 0.3s, color 0.3s;">Logout</a></li>
-              </ul>
-            {{else}}
-              <a class="nav-link" href="/login" style="color: #ff1493; font-weight: bold;">Login</a>
+              <a class="nav-link" href="/login" style="color: #4A4A4A;">Login</a>
             {{/if}}
           </li>
         </ul>
@@ -132,3 +146,99 @@
     </div>
   </nav>
 </header>
+
+<!-- Include Bootstrap JS and Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<style>
+/* Hover Effect on Links */
+.navbar-nav .nav-item .nav-link {
+  position: relative;
+  color: #4A4A4A;
+  font-weight: bold;
+  padding: 10px 15px;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.navbar-nav .nav-item .nav-link:hover {
+  color: #FF6347; /* Coral color for hover effect */
+  transform: scale(1.1);
+}
+
+.navbar-nav .nav-item .nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  background-color: #FF6347; /* Coral color for underline */
+  bottom: 0;
+  left: 50%;
+  transition: width 0.3s ease, left 0.3s ease;
+}
+
+.navbar-nav .nav-item .nav-link:hover::after {
+  width: 100%;
+  left: 0;
+}
+
+/* Smooth Slide-in for the entire Navbar */
+@keyframes slideIn {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.navbar {
+  animation: slideIn 0.5s ease-out;
+}
+
+/* Dropdown Menu Slide and Fade */
+@keyframes dropdownSlide {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.navbar .nav-item.dropdown .dropdown-menu {
+  animation: dropdownSlide 0.3s ease-out;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 5px 10px;
+}
+
+/* Search Icon Zoom */
+.navbar-nav .nav-item img {
+  transition: transform 0.3s ease;
+}
+
+.navbar-nav .nav-item img:hover {
+  transform: scale(1.2);
+}
+
+/* Profile Image Border Color Change on Hover */
+.navbar-nav .nav-item img.rounded-circle {
+  transition: border-color 0.3s ease;
+  border: none; /* Ensure no border is applied */
+  box-shadow: none; /* Remove shadow if it's adding extra space */
+}
+
+.navbar-nav .nav-item img.rounded-circle:hover {
+  border-color: #FF6347; /* Only on hover, change border color */
+}
+
+/* Remove the dropdown arrow */
+.navbar .nav-item.dropdown .dropdown-toggle::after {
+  display: none; /* This removes the arrow (caret) from the dropdown */
+}
+
+</style>

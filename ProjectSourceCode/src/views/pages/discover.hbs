@@ -1,4 +1,5 @@
-<h2 class="text-center">Discover</h2>
+<h2 class="text-center" style="font-family: 'Poppins', sans-serif; color: #f0f0f0;">Discover</h2>
+
 <div class="row" id="discover">
     {{#each results}}
         <div class="col-sm-3 mb-3 mb-sm-0 ms-5 mt-4">
@@ -15,6 +16,27 @@
 </div>
 
 <style>
+    /* gradient animation to background */
+    body {
+        background: linear-gradient(45deg,  #FFB84D, #FF6F61, #FFD700);
+        background-size: 400% 400%;
+        animation: gradientBackground 10s ease infinite;
+        min-height: 100vh;
+        margin: 0;
+    }
+
+    /* Keyframes for background gradient animation */
+    @keyframes gradientBackground {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
     /* Overall container */
     #discover {
         display: flex;
@@ -59,7 +81,7 @@
     }
 
     .btn-primary {
-        background-color: #007bff;
+        background-color: #FF6F61;
         color: white;
         padding: 10px 20px;
         font-size: 16px;
@@ -70,7 +92,7 @@
     }
 
     .btn-primary:hover {
-        background-color: #0056b3;
+        background-color: #FF6F61;
     }
 
     @media (max-width: 768px) {
@@ -83,5 +105,38 @@
         .col-sm-3 {
             flex: 0 0 100%; /* 1 card per row on small screens */
         }
+    }
+
+
+    /* gradient  to the title - discover */
+    h2.text-center {
+        font-size: 3rem;
+        font-weight: bold;
+        background: linear-gradient(45deg, #ff69b4, #44edc9);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        text-align: center;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        animation: shine 3s ease-in-out infinite;
+    }
+
+    /* Animation for the gradient effect */
+    @keyframes shine {
+        0% {
+        background-position: 0% 50%;
+        }
+        50% {
+        background-position: 100% 50%;
+        }
+        100% {
+        background-position: 0% 50%;
+        }
+    }
+
+    /* shadow  to discover */
+    h2.text-center {
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
     }
 </style>
