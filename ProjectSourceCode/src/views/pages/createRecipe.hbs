@@ -1,18 +1,25 @@
 <div class="container">
     <h2>Create Recipe</h2>
-    <form method="POST" action="/createRecipe">
+    <form method="POST" action="/createRecipe" enctype="multipart/form-data">
+        <!-- Recipe Name Section -->
         <div class="form-group">
             <label for="recipeName">Recipe Name:</label>
             <input type="text" id="recipeName" name="recipeName" class="form-control" required>
         </div>
+
+         <!-- Description Section -->
         <div class="form-group">
             <label for="description">Description:</label>
             <input type="text" id="description" name="description" class="form-control">
         </div>
+
+        <!-- Prep Time Section -->
         <div class="form-group">
             <label for="prepTime">Prep Time:</label>
             <input type="text" id="prepTime" name="prepTime" class="form-control"  placeholder="Enter time in minutes" required>
         </div>
+
+         <!-- Difficulty Section -->
         <div class="form-group">
              <label for="difficulty">Difficulty:</label>
              <select id="difficulty" name="difficulty" class="form-control" required>
@@ -23,25 +30,74 @@
              <option value="very_difficult">Very Difficult</option>
              </select>
         </div>
+
+        <!-- Cook Time Section -->
         <div>
             <label for="cookTime">Cook Time:</label>
             <input type="text" id="cookTime" name="cookTime" class="form-control" placeholder="Enter time in minutes" required>
         </div>
+
+        <!-- Servings Section -->
         <div class="form-group">
             <label for="servings">Servings:</label>
             <input type="text" id="servings" name="servings" class="form-control" required>
         </div>
-           <div class="form-group">
+
+        <!--<div class="form-group">
             <label for="ingredients">Ingredients:</label>
             <input type="text" id="ingredients" name="ingredients" class="form-control" required>
-        </div> 
-         <div class="form-group">
+        </div> -->
+         <!-- Ingredient Section -->
+        <div class="form-group">
+            <label>Ingredients:</label>
+            <div id="ingredients-container">
+                <!-- Ingredient Row -->
+                <div class="ingredient-row d-flex align-items-center mb-2">
+                    <input type="text" name="amount[]" class="form-control me-2" placeholder="Amount (e.g., 2)">
+                    <select name="unit[]" class="form-control me-2">
+                        <option value="">Unit</option>
+                        <option value="cup">Cup</option>
+                        <option value="tbsp">Tbsp</option>
+                        <option value="tsp">Tsp</option>
+                        <option value="g">Grams</option>
+                        <option value="kg">Kilograms</option>
+                        <option value="ml">Milliliters</option>
+                        <option value="l">Liters</option>
+                        <option value="oz">Ounces</option>
+                        <option value="lb">Pounds</option>
+                    </select>
+                    <input type="text" name="ingredient[]" class="form-control me-2" placeholder="Ingredient (e.g., Sugar)">
+                    <button type="button" class="btn btn-danger btn-sm remove-ingredient">Remove</button>
+                </div>
+            </div>
+            <button type="button" id="add-ingredient" class="btn btn-secondary mt-2">Add Ingredient</button>
+        </div>
+        <!--<div class="form-group">
             <label for="instructions">Instructions:</label>
             <textarea id="instructions" name="instructions" class="form-control" required></textarea>
-        </div> 
+        </div> -->
 
-         <div class="form-group">
-            <label for="notes">Notes:</label>
+        <!-- Instructions Section -->
+        <div class="form-group">
+            <label>Instructions:</label>
+            <div id="instructions-container">
+                <!-- Instruction Row -->
+                <div class="instruction-row d-flex align-items-center mb-2">
+                    <input type="text" name="instructions[]" class="form-control me-2" placeholder="Enter instruction"></input>
+                    <button type="button" class="btn btn-danger btn-sm remove-instruction">Remove</button>
+                </div>
+            </div>
+            <button type="button" id="add-instruction" class="btn btn-secondary mt-2">Add Instruction</button>
+        </div>
+
+        <!-- Image(s) Section -->
+        <div class="form-group">
+            <label for="recipe_images">Upload Recipe Image(s):</label>
+            <input type="file" id="recipe_image" name="recipe_image" accept="image/*" multiple>
+        </div>
+        <!-- Notes Section -->
+        <div class="form-group">
+            <label for="notes">Notes: (optional)</label>
             <textarea id="notes" name="notes" class="form-control"></textarea>
         </div>
 
@@ -49,8 +105,6 @@
     <button type="submit" class="btn btn-primary">Create Recipe</button>
 </form>
 </div>
-
-
 
 <style>
     /* Add gradient animation to the background */
@@ -146,4 +200,82 @@
     button[type="submit"]:hover {
         background-color: #FF6F61;
     }
+    .ingredient-row {
+        display: flex;
+        gap: 10px;
+    }
+
+    .ingredient-row input, .ingredient-row select {
+        flex: 1;
+    }
+
+    #add-ingredient {
+        background-color: #FF6F61;
+        color: white;
+    }
+
+    #add-instruction {
+        background-color: #FF6F61;
+        color: white;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border: none;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
 </style>
+
+<script>
+    //JavaScript for dynamic ingredient fields
+    document.getElementById('add-ingredient').addEventListener('click', function () {
+        const container = document.getElementById('ingredients-container');
+        const newRow = document.createElement('div');
+        newRow.classList.add('ingredient-row', 'd-flex', 'align-items-center', 'mb-2');
+        newRow.innerHTML = `
+            <input type="text" name="amount[]" class="form-control me-2" placeholder="Amount (e.g., 2)">
+            <select name="unit[]" class="form-control me-2">
+                <option value="">Unit</option>
+                <option value="cup">Cup</option>
+                <option value="tbsp">Tbsp</option>
+                <option value="tsp">Tsp</option>
+                <option value="g">Grams</option>
+                <option value="kg">Kilograms</option>
+                <option value="ml">Milliliters</option>
+                <option value="l">Liters</option>
+                <option value="oz">Ounces</option>
+                <option value="lb">Pounds</option>
+            </select>
+            <input type="text" name="ingredient[]" class="form-control me-2" placeholder="Ingredient (e.g., Sugar)">
+            <button type="button" class="btn btn-danger btn-sm remove-ingredient">Remove</button>
+        `;
+        container.appendChild(newRow);
+    });
+
+    document.getElementById('ingredients-container').addEventListener('click', function (e) {
+        if (e.target && e.target.classList.contains('remove-ingredient')) {
+            e.target.parentElement.remove();
+        }
+    });
+
+    // JavaScript for dynamic instruction fields
+    document.getElementById('add-instruction').addEventListener('click', function () {
+        const container = document.getElementById('instructions-container');
+        const newRow = document.createElement('div');
+        newRow.classList.add('instruction-row', 'd-flex', 'align-items-center', 'mb-2');
+        newRow.innerHTML = `
+            <textarea name="instructions[]" class="form-control me-2" rows="2" placeholder="Enter instruction"></textarea>
+            <button type="button" class="btn btn-danger btn-sm remove-instruction">Remove</button>
+        `;
+        container.appendChild(newRow);
+    });
+
+    document.getElementById('instructions-container').addEventListener('click', function (e) {
+        if (e.target && e.target.classList.contains('remove-instruction')) {
+            e.target.parentElement.remove();
+        }
+    });
+</script>

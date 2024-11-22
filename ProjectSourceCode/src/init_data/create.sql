@@ -15,9 +15,7 @@ CREATE TABLE IF NOT EXISTS recipes (
   recipe_difficulty VARCHAR(100) CONSTRAINT limited_values CHECK (recipe_difficulty IN ('easy', 'moderate', 'difficult', 'very_difficult')) NOT NULL,
   recipe_cook_time INT CHECK (recipe_cook_time >= 0) NOT NULL, -- time in minutes
   recipe_servings INT CHECK (recipe_servings > 0) NOT NULL,
-  recipe_notes TEXT, -- optional field for general notes
-  ingredients TEXT NOT NULL,
-  instructions TEXT NOT NULL
+  recipe_notes TEXT -- optional field for general notes
 );
 
 CREATE TABLE IF NOT EXISTS images (
@@ -87,7 +85,8 @@ CREATE TABLE IF NOT EXISTS ingredients (
 CREATE TABLE IF NOT EXISTS recipe_ingredients (
   recipe_id INT NOT NULL,
   ingredient_id INT NOT NULL,
-  quantity VARCHAR(50),
+  quantity DECIMAL(10,2), --changed to demical(10,2)
+  unit VARCHAR(20), --added
   FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE,
   FOREIGN KEY (ingredient_id) REFERENCES ingredients (ingredient_id) ON DELETE CASCADE,
   PRIMARY KEY (recipe_id, ingredient_id)
