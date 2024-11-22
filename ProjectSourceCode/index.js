@@ -293,7 +293,7 @@ app.post('/createProfile', auth, upload.single('profilePic'), async (req, res) =
 
     // saving the uploaded file locally once inserted
     if (profilePicFile) {
-      profilePicPath = path.join(__dirname, '/uploads', profilePicFile.originalname);
+      profilePicPath = path.join('uploads', profilePicFile.originalname);
       fs.writeFileSync(profilePicPath, profilePicFile.buffer);
     }
 
