@@ -285,37 +285,39 @@ const upload = multer({ storage: multer.memoryStorage() }); // Use memory storag
 
 app.post('/createProfile', auth, upload.single('profilePic'), async (req, res) => {
   try {
-    const { bio, dietaryPref, intolerances } = req.body; // Get data from the request body
-    const profilePicFile = req.file; // Get the uploaded file
-    const userId = req.session.user.username; // Get the user ID from the session
+    const { bio, dietaryPref, intolerances } = req.body; 
+    const profilePicFile = req.file;
+    const userId = req.session.user.username; 
 
     let profilePicPath = null;
 
-    // Save the uploaded file locally if provided
+    // saving the uploaded file locally once inserted
     if (profilePicFile) {
       profilePicPath = path.join(__dirname, '/uploads', profilePicFile.originalname);
       fs.writeFileSync(profilePicPath, profilePicFile.buffer);
     }
 
-    // Convert dietaryPref and intolerances into PostgreSQL array literals
+    // converting them into arrays for Postgres to read
     const bioArray = Array.isArray(bio) ? `{${bio.join(',')}}` : `{${bio}}`;
     const dietaryPreferences = Array.isArray(dietaryPref) ? `{${dietaryPref.join(',')}}` : `{${dietaryPref || ''}}`;
     const intoleranceArray = Array.isArray(intolerances) ? `{${intolerances.join(',')}}` : `{${intolerances || ''}}`;
+    const existingProfile = await db.oneOrNone('SELECT * FROM profiles WHERE user_id = $1', [userId]);
 
-    // Check if the user already has a profile
-    const result = await db.query('SELECT * FROM profiles WHERE user_id = $1', [userId]);
-
-    if (result && result.rows && result.rows.length > 0) {
-      // Update the existing profile
+    if (existingProfile) {
+      // to update an existing profle 
       await db.query(
         `UPDATE profiles
-        SET bio = $1, profile_pic = $2, dietary_preferences = $3, intolerances = $4
+        SET bio = COALESCE($1, bio),
+            profile_pic = COALESCE($2, profile_pic),
+            dietary_preferences = COALESCE($3, dietary_preferences),
+            intolerances = COALESCE($4, intolerances)
         WHERE user_id = $5`,
         [bioArray, profilePicPath, dietaryPreferences, intoleranceArray, userId]
       );
+      console.log('Profile updated for user:', userId);
       res.redirect('/profile');
     } else {
-      // Insert a new profile
+      // insert a new profile
       await db.query(
         `INSERT INTO profiles (user_id, bio, profile_pic, dietary_preferences, intolerances)
         VALUES ($1, $2, $3, $4, $5)`,
