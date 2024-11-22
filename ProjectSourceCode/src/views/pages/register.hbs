@@ -1,34 +1,4 @@
-{{!-- <div class="container">
-    <h2>Register</h2>
-    <form method="post" action="/register">
-        <div class="form-group">
-            <label for="firstname">First Name</label>
-            <input type="text" id="firstname" name="firstname" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label for="lastname">Last Name</label>
-            <input type="text" id="lastname" name="lastname" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label for="username">Email</label>
-            <input type="email" id="email" name="email" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input type="username" id="username" name="username" class="form-control" required>
-        </div>
-        <div>
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" class="form-control" requried>
-        </div>
-        <div class="form-group">
-            <label for="re-enter">Re-Enter Password</label>
-            <input type="password" id="re-enter" name="re-enter" class="form-control" required>
-        </div>
-    <button type="submit" class="btn btn-primary">Register</button>
-</form>
-    <p>Already have an account? <a href="/login">Login</a></p>
-</div> --}}
+{{!-- 
 
 <div class="container" style="max-width: 600px; margin: 50px auto; padding: 20px; background-color: #f9f9f9; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
     <h2 style="text-align: center; color: #f193caf9; margin-bottom: 20px;">Register</h2>
@@ -60,4 +30,128 @@
         <button type="submit" class="btn btn-primary" style="background-color: #f193caf9; border-color: #f193caf9; color: white; padding: 10px 20px; border-radius: 5px; width: 100%;">Register</button>
     </form>
     <p style="text-align: center; margin-top: 20px; color: #333;">Already have an account? <a href="/login" style="color: #44edc9; text-decoration: none;">Login</a></p>
+</div> --}}
+
+
+<div 
+  style="background: linear-gradient(120deg, #FFB84D, #FF6F61, #FFD700);
+         background-size: 300% 300%;
+         animation: gradient-animation 8s ease infinite;
+         min-height: 100vh; 
+         display: flex; 
+         justify-content: center; 
+         align-items: center; 
+         padding: 20px;">
+  <div class="container" 
+       style="max-width: 400px; 
+              margin: auto; 
+              padding: 20px; 
+              border: 1px solid #ccc; 
+              border-radius: 10px; 
+              background-color: rgba(255, 255, 255, 0.9); 
+              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    <h2 style="text-align: center; color: #FF6F61; margin-bottom: 20px;">Register</h2>
+    <form method="POST" action="/register">
+      <div class="form-group" style="margin-bottom: 15px;">
+        <label for="firstname" 
+               style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">First Name</label>
+        <input type="text" 
+               id="firstname" 
+               name="firstname" 
+               class="form-control" 
+               required 
+               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+      </div>
+      <div class="form-group" style="margin-bottom: 15px;">
+        <label for="lastname" 
+               style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">Last Name</label>
+        <input type="text" 
+               id="lastname" 
+               name="lastname" 
+               class="form-control" 
+               required 
+               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+      </div>
+      <div class="form-group" style="margin-bottom: 15px;">
+        <label for="email" 
+               style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">Email</label>
+        <input type="email" 
+               id="email" 
+               name="email" 
+               class="form-control" 
+               required 
+               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+      </div>
+      <div class="form-group" style="margin-bottom: 15px;">
+        <label for="username" 
+               style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">Username</label>
+        <input type="text" 
+               id="username" 
+               name="username" 
+               class="form-control" 
+               required 
+               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+      </div>
+      <div class="form-group" style="margin-bottom: 15px;">
+        <label for="password" 
+               style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">Password</label>
+        <input type="password" 
+               id="password" 
+               name="password" 
+               class="form-control" 
+               required 
+               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+      </div>
+      <div class="form-group" style="margin-bottom: 15px;">
+        <label for="re-enter" 
+               style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">Re-Enter Password</label>
+        <input type="password" 
+               id="re-enter" 
+               name="re-enter" 
+               class="form-control" 
+               required 
+               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+      </div>
+      <button type="submit" 
+              class="btn btn-primary" 
+              style="width: 100%; 
+                     padding: 10px; 
+                     background-color: #FF6F61; 
+                     color: white; 
+                     border: none; 
+                     border-radius: 5px; 
+                     font-size: 16px; 
+                     font-weight: bold;">Register</button>
+    </form>
+    <p style="text-align: center; margin-top: 15px;">
+      Already have an account? <br> 
+      <a href="/login" style="color: #FFB84D; text-decoration: none;">Login</a>
+    </p>
+  </div>
 </div>
+
+<style>
+  /* Gradient animation */
+  @keyframes gradient-animation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Button hover effect */
+  .btn-primary:hover {
+    background-color: #FF8C71; /* Lighter warm color on hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+  }
+
+  /* Link hover effect */
+  a:hover {
+    text-decoration: underline;
+    color: #FF6F61; /* Deep red on hover */
+  }
+</style>
+
+
+
+
+

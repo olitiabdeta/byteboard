@@ -1,35 +1,84 @@
-{{!-- <div class= "container">
-    <h2>Login</h2>
-<form method="POST" action="/login">
-<div class="form-group"> 
-     <label for="username">Username</label>
-    <input type= "text" id = "username" name="username" class="form-control" required >
+<div 
+  style="background: linear-gradient(120deg, #FFB84D, #FF6F61, #FFD700);
+         background-size: 300% 300%;
+         animation: gradient-animation 8s ease infinite;
+         min-height: 100vh; 
+         display: flex; 
+         justify-content: center; 
+         align-items: center; 
+         padding: 20px;
+         position: relative;">
+  <div class="container" 
+       style="max-width: 400px; 
+              margin: auto; 
+              padding: 20px; 
+              border: 1px solid #ccc; 
+              border-radius: 10px; 
+              background-color: rgba(255, 255, 255, 0.9); /* Slight transparency for the container */
+              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    <h2 style="text-align: center; color: #FF6F61; margin-bottom: 20px;">Login</h2>
+    <form method="POST" action="/login">
+      <div class="form-group" style="margin-bottom: 15px;">
+        <label for="username" 
+               style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">Username</label>
+        <input type="text" 
+               id="username" 
+               name="username" 
+               class="form-control" 
+               required 
+               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+      </div>
+      <div class="form-group" style="margin-bottom: 15px;">
+        <label for="password" 
+               style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">Password</label>
+        <input type="password" 
+               id="password" 
+               name="password" 
+               class="form-control" 
+               required 
+               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+      </div>
+      <button type="submit" 
+              class="btn btn-primary" 
+              style="width: 100%; 
+                     padding: 10px; 
+                     background-color: #FF6F61; 
+                     color: white; 
+                     border: none; 
+                     border-radius: 5px; 
+                     font-size: 16px; 
+                     font-weight: bold;">Login</button>
+    </form>
+    <p style="text-align: center; margin-top: 15px;">
+      Don't have an account yet? <br> 
+      <a href="/register" style="color: #FFB84D; text-decoration: none;">Create an Account</a>
+    </p>
+  </div>
 </div>
-   <div class="form-group"> 
-     <label for="password">Password</label>
-    <input type= "password" id="password" name="password" class="form-control" required>
-    </div>
-    <button type="submit" class="btn btn-primary">Login</button>
-</form>
-<p>Don't have an account yet? <br> <a href="/register">Create an Account</a></p>
-</div> --}}
+
+<style>
+
+  /* Gradient animation */
+  @keyframes gradient-animation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Button hover effect */
+  .btn-primary:hover {
+    background-color: #FF8C71; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); 
+  }
+
+  /* Link hover effect */
+  a:hover {
+    text-decoration: underline;
+    color: #FF6F61; 
+  }
+
+</style>
 
 
-<div class="container" style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; background-color: #f9f9f9; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-  <h2 style="text-align: center; color: #44edc9; margin-bottom: 20px;">Login</h2>
-  <form method="POST" action="/login">
-    <div class="form-group" style="margin-bottom: 15px;">
-      <label for="username" style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">Username</label>
-      <input type="text" id="username" name="username" class="form-control" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
-    </div>
-    <div class="form-group" style="margin-bottom: 15px;">
-      <label for="password" style="display: block; font-weight: bold; margin-bottom: 5px; color: #333;">Password</label>
-      <input type="password" id="password" name="password" class="form-control" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
-    </div>
-    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 10px; background-color: #ff69b4; color: white; border: none; border-radius: 5px; font-size: 16px; font-weight: bold;">Login</button>
-  </form>
-  <p style="text-align: center; margin-top: 15px;">Don't have an account yet? <br> 
-    <a href="/register" style="color: #44edc9; text-decoration: none;">Create an Account</a>
-  </p>
-</div>
+
 

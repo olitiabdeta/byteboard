@@ -17,39 +17,6 @@
         <input type="file" id = "profilePic" name = "profilePic" class = "form-control">
     </div>
 
-    <!--<div class = "form-group">
-        <label for="favCuisine">Share your favorite cuisines or add your own below!</label>
-        <select id = "favCuisine" name = "favCuisine" multiple class = "form-control">
-            <option value="american">American</option>
-            <option value="mexican">Mexican</option>
-            <option value="chinese">Chinese</option>
-            <option value="thai">Thai</option>
-            <option value="italian">Italian</option>
-            <option value="indian">Indian</option>
-            <option value="french">French</option>
-            <option value="japanese">Japanese</option>
-        </select>
-    </div>-->
-
-    <!--<div class="form-group">
-        <label for="customCuisine">Add Your Own Cuisines:</label>
-        <input type="text" id="customCuisine" name="customCuisine" class="form-control"  placeholder="separate tags with commas">
-    </div>-->
-
-    <!--<div class = "form-group">
-        <label for="dietaryPref">Share your dietary preferences or add your own below!</label>
-        <select id = "dietaryPref" name = "dietaryPref" multiple class = "form-control">
-            <option value="vegetarian">Vegetarian</option>
-            <option value="vegan">Vegan</option>
-            <option value="pescetarian">Pescetarian</option>
-            <option value="gf">Gluten-Free</option>
-            <option value="dairyFree">Dairy-Free</option>
-            <option value="keto">Keto</option>
-            <option value="kosher">Kosher</option>
-            <option value="halal">Halal</option>
-        </select>
-    </div>-->
-
     <!--Dietary Prefernces-->
     <div class="form-group">
         <label for="dietaryPref">Select your dietary preferences:</label>
@@ -160,6 +127,28 @@
       
 
 <style>
+    /* gradient animation to background */
+    body {
+        background: linear-gradient(45deg,  #FFB84D, #FF6F61, #FFD700);
+        background-size: 400% 400%;
+        animation: gradientBackground 10s ease infinite;
+        min-height: 100vh;
+        margin: 0;
+    }
+
+    /* Keyframes for background gradient animation */
+    @keyframes gradientBackground {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
     /* Styling for the page container */
     .container {
         background-color: white;
@@ -218,7 +207,7 @@
     }
 
     button[type="submit"] {
-        background-color: #5c6bc0;
+        background-color: #FF6F61;
         color: white;
         padding: 12px 30px;
         font-size: 16px;
@@ -229,6 +218,6 @@
     }
 
     button[type="submit"]:hover {
-        background-color: #3f4a9d;
+        background-color: #FF6F61;
     }
 </style>
