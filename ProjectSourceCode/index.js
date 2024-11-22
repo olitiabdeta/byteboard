@@ -333,7 +333,6 @@ app.post('/createProfile', auth, upload.single('profilePic'), async (req, res) =
 });
 
 
-
 // Profile page
 app.get('/profile', auth, async (req, res) => {
   try {
