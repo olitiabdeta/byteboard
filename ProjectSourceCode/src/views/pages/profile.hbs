@@ -7,12 +7,10 @@
     <div class="card mt-3">
       <div class="card-body">
         <h4 class="card-title">{{profile.username}}</h4>
-        <p class="card-text"><strong>Email:</strong> {{profile.email}}</p>
+        <p class="card-text"><strong>Username:</strong> {{profile.user_id}}</p>
         <p class="card-text"><strong>Bio:</strong> {{profile.bio}}</p>
-        <p class="card-text"><strong>Favorite Cuisines:</strong> {{profile.favorite_cuisines}}</p>
-        <p class="card-text"><strong>Custom Cuisines:</strong> {{profile.custom_cuisines}}</p>
         <p class="card-text"><strong>Dietary Preferences:</strong> {{profile.dietary_preferences}}</p>
-        <p class="card-text"><strong>Custom Preferences:</strong> {{profile.custom_preferences}}</p>
+        <p class="card-text"><strong>Intolerances:</strong> {{profile.intolerances}}</p>
         {{#if profile.profile_pic}}
           <img src="{{profile.profile_pic}}" alt="Profile Picture" class="rounded" style="max-width: 150px;">
         {{/if}}
