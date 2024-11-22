@@ -279,11 +279,12 @@ app.post('/createProfile', auth, upload.single('profilePic'), async (req, res) =
 // Profile page
 // Profile page
 app.get('/profile', auth, async (req, res) => {
+  res.render('pages/profile');
   try {
     const userId = req.session.user.id;
 
     const profileQuery = `
-      SELECT u.username, u.email, p.bio, p.profile_pic, p.favorite_cuisines, p.custom_cuisines, p.dietary_preferences, p.custom_preferences
+      SELECT u.user_id, p.bio, p.profile_pic, p.dietary_preferences, p.intolerances
       FROM users u
       LEFT JOIN profiles p ON u.id = p.user_id
       WHERE u.id = $1
@@ -406,6 +407,13 @@ app.get('/friends', (req, res) => {
 app.get('/saved', (req, res) => {
   res.render('pages/saved');
 });
+
+//searchResults
+app.get('/search', (req, res) => {
+  res.render('pages/searchResults')
+});
+
+
 // Get Create Recipe
 app.get('/createRecipe', (req, res) => {
   res.render('pages/createRecipe');
