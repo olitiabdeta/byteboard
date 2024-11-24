@@ -54,6 +54,8 @@ db.connect()
   })
   .catch(error => {
     console.log('ERROR:', error.message || error);
+    console.error('Stack:', error.stack);
+    console.error('Error code:', error.code);
   });
 
 
