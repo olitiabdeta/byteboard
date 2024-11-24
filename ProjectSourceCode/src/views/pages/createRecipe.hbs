@@ -267,7 +267,7 @@
         const newRow = document.createElement('div');
         newRow.classList.add('instruction-row', 'd-flex', 'align-items-center', 'mb-2');
         newRow.innerHTML = `
-            <textarea name="instructions[]" class="form-control me-2" rows="2" placeholder="Enter instruction"></textarea>
+            <input type="text" name="instructions[]" class="form-control me-2" placeholder="Enter instruction"></input>
             <button type="button" class="btn btn-danger btn-sm remove-instruction">Remove</button>
         `;
         container.appendChild(newRow);
