@@ -1,4 +1,4 @@
- <h1 class="text-center">Search</h1> 
+ {{!-- <h1 class="text-center">Search</h1>  --}}
 <!--<div classs="topnav">
     <style>
         input {
@@ -14,3 +14,175 @@
         <button type="submit"></button>
     </form>
 </div> -->
+
+<h2 class="text-center" style="font-family: 'Poppins', sans-serif; color: #f0f0f0;">Search</h2>
+<div class="topnav">
+
+  <form action="/search" method="GET" class="search-bar">
+    <input type="text" name="query" placeholder="Search for a recipe" required>
+    <button type="submit">Search</button>
+  </form>
+</div>
+
+{{!-- <h1 class="text-center">Search</h1> --}}
+
+<h2 class="text-center" style="font-family: 'Poppins', sans-serif; color: #f0f0f0;">Search Results</h2>
+<div class="container">
+  {{#if message}}
+    <p class="text-center">{{message}}</p>
+  {{else}}
+    <ul>
+      {{#each recipes}}
+        <li>
+          <h2>{{this.recipe_name}}</h2>
+          <p>{{this.recipe_description}}</p>
+          <p><strong>Prep Time:</strong> {{this.recipe_prep_time}} minutes</p>
+          <p><strong>Cook Time:</strong> {{this.recipe_cook_time}} minutes</p>
+          <p><strong>Difficulty:</strong> {{this.recipe_difficulty}}</p>
+          <p><strong>Servings:</strong> {{this.recipe_servings}}</p>
+        </li>
+      {{/each}}
+    </ul>
+  {{/if}}
+</div>
+
+ <style>
+    .search-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 20px 0;
+    }
+
+    .search-bar input {
+      width: 70%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+
+    .search-bar button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .search-bar button:hover {
+      background-color: #0056b3;
+    }
+
+  /* Ensure full height for html and body */
+  html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Background styling with gradient animation */
+  body {
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(120deg, #FFB84D, #FF6F61, #FFD700);
+    background-size: 300% 300%;
+    animation: gradient-animation 8s ease infinite;
+    color: white;
+    flex: 1;  /* Allow body to take up all available space */
+  }
+
+  /* Gradient animation */
+  @keyframes gradient-animation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Container styling to center content and ensure footer stays at bottom */
+  .container {
+    flex: 1; /* Makes the container take all available space */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px; /* Add some padding to the container */
+  }
+
+  /* Card styling */
+  .card {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  .card-title {
+    color: #FF6F61;
+  }
+
+  /* Button styling */
+  .btn-primary {
+    background-color: #FF6F61;
+    border: none;
+    transition: background-color 0.3s;
+  }
+
+  .btn-primary:hover {
+    background-color: #FF8C71;
+  }
+
+  /* Footer styling */
+  footer {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    position: relative;
+    width: 100%;
+    margin-top: auto; /* Push footer to the bottom */
+  }
+
+    /* gradient  to the title - discover */
+    h2.text-center {
+        font-size: 3rem;
+        font-weight: bold;
+        background: linear-gradient(45deg, #ff69b4, #44edc9);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        text-align: center;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        animation: shine 3s ease-in-out infinite;
+    }
+
+    /* Animation for the gradient effect */
+    @keyframes shine {
+        0% {
+        background-position: 0% 50%;
+        }
+        50% {
+        background-position: 100% 50%;
+        }
+        100% {
+        background-position: 0% 50%;
+        }
+    }
+
+    /* shadow  to discover */
+    h2.text-center {
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+  </style>
+
+

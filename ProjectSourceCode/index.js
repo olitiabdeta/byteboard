@@ -439,10 +439,82 @@ app.get('/saved', (req, res) => {
   res.render('pages/saved');
 });
 
-//searchResults
-app.get('/search', (req, res) => {
-  res.render('pages/searchResults')
+// //searchResults
+// app.get('/search', (req, res) => {
+//   res.render('pages/searchResults')
+// });
+
+
+// app.get('/search', async (req, res) => {
+//   try {
+//     const query = req.query.query; // Get the search term from the query string
+
+//     if (!query) {
+//       return res.render('pages/searchResults', {
+//         recipes: [],
+//         message: 'Please enter a search term.',
+//       });
+//     }
+
+//     // Query the database for recipes that match the search term
+//     const searchQuery = `
+//       SELECT * FROM recipes 
+//       WHERE recipe_name ILIKE $1 OR recipe_description ILIKE $1
+//     `;
+//     const values = [`%${query}%`];
+//     const result = await db.query(searchQuery, values);
+
+//     res.render('pages/searchResults', {
+//       recipes: result.rows,
+//       message: result.rows.length ? null : 'No recipes found.',
+//     });
+//   } catch (error) {
+//     console.error('Error during search:', error);
+//     res.render('pages/searchResults', {
+//       recipes: [],
+//       message: 'Error fetching search results. Please try again later.',
+//     });
+//   }
+// });
+app.get('/search', async (req, res) => {
+  try {
+    const query = req.query.query;
+
+    if (!query) {
+      return res.render('pages/searchResults', {
+        recipes: [],
+        message: 'Please enter a search term.',
+      });
+    }
+
+    const searchQuery = `
+      SELECT * FROM recipes 
+      WHERE recipe_name ILIKE $1 OR recipe_description ILIKE $1
+    `;
+    const values = [`%${query}%`];
+    const result = await db.query(searchQuery, values);
+
+    if (!result || !result.rows) {
+      return res.render('pages/searchResults', {
+        recipes: [],
+        message: 'No recipes found.',
+      });
+    }
+
+    res.render('pages/searchResults', {
+      recipes: result.rows,
+      message: result.rows.length ? null : 'No recipes found.',
+    });
+  } catch (error) {
+    console.error('Error during search:', error);
+    res.render('pages/searchResults', {
+      recipes: [],
+      message: 'Error fetching search results. Please try again later.',
+    });
+  }
 });
+
+
 
 
 // Get Create Recipe
