@@ -36,7 +36,7 @@ app.use(express.static(path.join(__dirname, 'resources')));
 
 // database configuration
 const dbConfig = {
-  host: 'db', // the database server
+  host: process.env.POSTGRES_HOST || 'db', // the database server
   port: 5432, // the database port
   database: process.env.POSTGRES_DB, // the database name
   user: process.env.POSTGRES_USER, // the user account to connect with
