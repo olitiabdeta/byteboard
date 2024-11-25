@@ -34,11 +34,10 @@ console.log(__dirname, path.join(__dirname, 'src', 'views'))
 app.set('views', path.join(__dirname, 'src', 'views'));
 app.use(express.static(path.join(__dirname, 'resources'))); 
 
-require('dotenv').config(); 
 // database configuration
 const dbConfig = {
-  host: process.env.POSTGRES_HOST || 'db', // the database server
-  port: process.env.POSTGRES_PORT || 5432, // the database port
+  host: 'db', // the database server
+  port: 5432, // the database port
   database: process.env.POSTGRES_DB, // the database name
   user: process.env.POSTGRES_USER, // the user account to connect with
   password: process.env.POSTGRES_PASSWORD, // the password of the user account
@@ -54,8 +53,6 @@ db.connect()
   })
   .catch(error => {
     console.log('ERROR:', error.message || error);
-    console.error('Stack:', error.stack);
-    console.error('Error code:', error.code);
   });
 
 
@@ -230,23 +227,8 @@ app.get('/createProfile', auth, (req, res) => {
 const fs = require('fs'); // To work with the file system
 const multer = require('multer');
 
-// Set up multer for file upload
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public/resources/img'); // Specify the folder to store uploaded files
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname); // Ensure unique filenames
-  },
-});
-
-const upload = multer({ storage: storage }); // Set up multer with storage configuration
-
-// Example of a route to serve static files like images
-app.use('/uploads', express.static(path.join(__dirname, 'resourses/img')));
-
 // Configure multer to store uploaded files in memory
-//const upload = multer({ storage: multer.memoryStorage() }); // Use memory storage to access file buffer
+const upload = multer({ storage: multer.memoryStorage() }); // Use memory storage to access file buffer
 
 app.post('/createProfile', auth, upload.single('profilePic'), async (req, res) => {
   try {
@@ -273,33 +255,28 @@ app.post('/createProfile', auth, upload.single('profilePic'), async (req, res) =
 
     const existingProfile = await db.oneOrNone('SELECT * FROM profiles WHERE user_id = $1', [userId]);
 
-    if (existingProfile) 
-    {
+    if (existingProfile) {
       // Dynamically build the update query
       const updates = [];
       const values = [];
       let idx = 1;
 
-      if (bioArray !== null) 
-      {
+      if (bioArray !== null) {
         updates.push(`bio = $${idx}`);
         values.push(bioArray);
         idx++;
       }
-      if (profilePicPath !== null) 
-      {
+      if (profilePicPath !== null) {
         updates.push(`profile_pic = $${idx}`);
         values.push(profilePicPath);
         idx++;
       }
-      if (dietaryPreferences !== null) 
-      {
+      if (dietaryPreferences !== null) {
         updates.push(`dietary_preferences = $${idx}`);
         values.push(dietaryPreferences);
         idx++;
       }
-      if (intoleranceArray !== null) 
-      {
+      if (intoleranceArray !== null) {
         updates.push(`intolerances = $${idx}`);
         values.push(intoleranceArray);
         idx++;
@@ -311,9 +288,7 @@ app.post('/createProfile', auth, upload.single('profilePic'), async (req, res) =
       await db.query(query, values);
       console.log('Profile updated for user:', userId);
       res.redirect('/profile');
-    } 
-    else 
-    {
+    } else {
       // Insert a new profile
       await db.query(
         `INSERT INTO profiles (user_id, bio, profile_pic, dietary_preferences, intolerances)
@@ -322,9 +297,7 @@ app.post('/createProfile', auth, upload.single('profilePic'), async (req, res) =
       );
       res.redirect('/profile');
     }
-  } 
-  catch (error) 
-  {
+  } catch (error) {
     console.error('Profile creation error:', error);
     res.render('pages/createProfile', {
       error: true,
@@ -337,8 +310,7 @@ app.post('/createProfile', auth, upload.single('profilePic'), async (req, res) =
 
 // Profile page
 app.get('/profile', auth, async (req, res) => {
-  try 
-  {
+  try {
     const userId = req.session.user.username; // Get the username from the session
 
     const profileQuery = `
@@ -350,8 +322,7 @@ app.get('/profile', auth, async (req, res) => {
 
     const profile = await db.oneOrNone(profileQuery, [userId]);
 
-    if (!profile) 
-    {
+    if (!profile) {
       // If no profile exists, render a message to the user
       return res.render('pages/profile', {
         message: 'No profile found. Please create one!',
@@ -361,9 +332,7 @@ app.get('/profile', auth, async (req, res) => {
 
     // Render the profile page with retrieved data
     res.render('pages/profile', { profile });
-  } 
-  catch (error) 
-  {
+  } catch (error) {
     console.error('Error fetching profile:', error);
     res.render('pages/profile', {
       message: 'An error occurred while fetching your profile.',
@@ -465,23 +434,49 @@ app.get('/discover', async(req, res) => {
 app.get('/friends', (req, res) => {
   res.render('pages/friends');
 });
-//My Recipes
-app.get('/myRecipes', (req, res) => {
-  try
-  {
-    
-  }
-  catch(error)
-  {
-
-  }
-  res.render('pages/myRecipes');
+//Saved 
+app.get('/saved', (req, res) => {
+  res.render('pages/saved');
 });
 
-//searchResults
-app.get('/search', (req, res) => {
-  res.render('pages/searchResults')
-});
+// //searchResults
+// app.get('/search', (req, res) => {
+//   res.render('pages/searchResults')
+// });
+
+
+// app.get('/search', async (req, res) => {
+//   try {
+//     const query = req.query.query; // Get the search term from the query string
+
+//     if (!query) {
+//       return res.render('pages/searchResults', {
+//         recipes: [],
+//         message: 'Please enter a search term.',
+//       });
+//     }
+
+//     // Query the database for recipes that match the search term
+//     const searchQuery = `
+//       SELECT * FROM recipes 
+//       WHERE recipe_name ILIKE $1 OR recipe_description ILIKE $1
+//     `;
+//     const values = [`%${query}%`];
+//     const result = await db.query(searchQuery, values);
+
+//     res.render('pages/searchResults', {
+//       recipes: result.rows,
+//       message: result.rows.length ? null : 'No recipes found.',
+//     });
+//   } catch (error) {
+//     console.error('Error during search:', error);
+//     res.render('pages/searchResults', {
+//       recipes: [],
+//       message: 'Error fetching search results. Please try again later.',
+//     });
+//   }
+// });
+
 
 
 // Get Create Recipe
@@ -490,7 +485,7 @@ app.get('/createRecipe', (req, res) => {
 });
 
 //Post Create Recipe 
-app.post('/createRecipe', auth, upload.array('recipe_images', 5), async (req, res) => {
+app.post('/createRecipe', auth,  async (req, res) => {
   try 
   {
     const recipeName = req.body.recipeName;
@@ -503,51 +498,27 @@ app.post('/createRecipe', auth, upload.array('recipe_images', 5), async (req, re
     const ingredients = req.body.ingredients;
     const instructions = req.body.instructions;
 
-    // Handle uploaded images
-    const recipeImages = req.files; // This will contain an array of uploaded files
-
-    // Prepare image URLs (relative paths to store in DB)
-    const imageUrls = recipeImages.map(file => `/resources/img/${file.filename}`);
-
       //insert new recipe
-    const recipeQuery = 
-      `INSERT INTO recipes (
-      recipe_name, 
-      recipe_description,
-      recipe_prep_time,
-      recipe_difficulty,
-      recipe_cook_time, 
-      recipe_servings,
-      recipe_notes)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
-      RETURNING recipe_id;`
-    ;
-    const newRecipe =  [recipeName, description, prepTime, difficulty, cookTime, servings, notes, ingredients, instructions]
-    const result = await db.query(recipeQuery, newRecipe);
+const recipeQuery = 
+      `INSERT INTO recipes (recipe_name, recipe_description ,
+        recipe_prep_time ,
+        recipe_difficulty,
+        recipe_cook_time, 
+        recipe_servings,
+        recipe_notes,
+        ingredients, 
+        instructions )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        RETURNING recipe_id;`
+      ;
+      const newRecipe =  [recipeName, description, prepTime, difficulty, cookTime, servings, notes, ingredients, instructions]
+      const result = await db.query(recipeQuery, newRecipe);
 
-    const newRecipeId = result[0].recipe_id;
-
-    // Insert images into the 'images' table and associate them with the new recipe
-    for (const imageUrl of imageUrls) {
-      const imageQuery = `
-        INSERT INTO images (image_url) 
-        VALUES ($1) RETURNING image_id;
-      `;
-      const imageResult = await db.query(imageQuery, [imageUrl]);
-      const imageId = imageResult[0].image_id;
-
-      // Associate the image with the recipe in the 'recipes_to_images' table
-      const assocQuery = `
-        INSERT INTO recipes_to_images (recipe_id, image_id)
-        VALUES ($1, $2);
-      `;
-      await db.query(assocQuery, [newRecipeId, imageId]);
-    }
-
-    res.render('pages/myRecipes', {
-      message: 'Recipe created successfully!',
-      recipeId: newRecipeId,
-    });
+       const newRecipeId = result[0].recipe_id;
+      res.render('pages/saved', {
+        message: 'Recipe created successfully!',
+        recipeId: newRecipeId,
+      });
   } //docker-compose logs web
   catch (error) 
   {
@@ -559,6 +530,9 @@ app.post('/createRecipe', auth, upload.array('recipe_images', 5), async (req, re
   });
   }
 });
+
+
+
 
 
 // Logout route
@@ -580,8 +554,6 @@ app.get('/logout', (req, res) => {
 // <!-- Section 5 : Start Server-->
 // *****************************************************
 // starting the server and keeping the connection open to listen for more requests
-const port = process.env.PORT || 3000;
-
-app.listen(port, () => {
-  console.log(`Server is listening on port ${port}`)
-})
+  
+app.listen(3000);
+console.log('Server is listening on port 3000');
