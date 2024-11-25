@@ -15,6 +15,9 @@ CREATE TABLE IF NOT EXISTS recipes (
   recipe_difficulty VARCHAR(100) CONSTRAINT limited_values CHECK (recipe_difficulty IN ('easy', 'moderate', 'difficult', 'very_difficult')) NOT NULL,
   recipe_cook_time INT CHECK (recipe_cook_time >= 0) NOT NULL, -- time in minutes
   recipe_servings INT CHECK (recipe_servings > 0) NOT NULL,
+  ingredients TEXT NOT NULL,
+  instructions TEXT NOT NULL
+  
   recipe_notes TEXT -- optional field for general notes
 );
 

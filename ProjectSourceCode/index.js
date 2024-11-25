@@ -37,7 +37,7 @@ require('dotenv').config();
 // database configuration
 const dbConfig = {
   host: process.env.POSTGRES_HOST || 'db', // the database server
-  port: 5432, // the database port
+  port: process.env.POSTGRES_PORT || 5432, // the database port
   database: process.env.POSTGRES_DB, // the database name
   user: process.env.POSTGRES_USER, // the user account to connect with
   password: process.env.POSTGRES_PASSWORD, // the password of the user account
@@ -434,15 +434,28 @@ app.get('/discover', async(req, res) => {
 app.get('/friends', (req, res) => {
   res.render('pages/friends');
 });
-//Saved 
-app.get('/saved', (req, res) => {
-  res.render('pages/saved');
+
+//My Recipes
+app.get('/myRecipes', (req, res) => {
+  try
+  {
+    
+  }
+  catch(error)
+  {
+  }
+  res.render('pages/myRecipes');
+});
+// //Saved 
+// app.get('/saved', (req, res) => {
+//   res.render('pages/saved');
+// });
+
+//searchResults
+app.get('/search', (req, res) => {
+  res.render('pages/searchResults')
 });
 
-// //searchResults
-// app.get('/search', (req, res) => {
-//   res.render('pages/searchResults')
-// });
 
 
 // app.get('/search', async (req, res) => {
@@ -485,7 +498,7 @@ app.get('/createRecipe', (req, res) => {
 });
 
 //Post Create Recipe 
-app.post('/createRecipe', auth,  async (req, res) => {
+app.post('/createRecipe', auth, upload.array('recipe_images', 5), async (req, res) => {
   try 
   {
     const recipeName = req.body.recipeName;
@@ -499,26 +512,45 @@ app.post('/createRecipe', auth,  async (req, res) => {
     const instructions = req.body.instructions;
 
       //insert new recipe
-const recipeQuery = 
-      `INSERT INTO recipes (recipe_name, recipe_description ,
-        recipe_prep_time ,
-        recipe_difficulty,
-        recipe_cook_time, 
-        recipe_servings,
-        recipe_notes,
-        ingredients, 
-        instructions )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-        RETURNING recipe_id;`
-      ;
-      const newRecipe =  [recipeName, description, prepTime, difficulty, cookTime, servings, notes, ingredients, instructions]
-      const result = await db.query(recipeQuery, newRecipe);
-
-       const newRecipeId = result[0].recipe_id;
-      res.render('pages/saved', {
-        message: 'Recipe created successfully!',
-        recipeId: newRecipeId,
-      });
+   // Handle uploaded images
+   const recipeImages = req.files; // This will contain an array of uploaded files
+   // Prepare image URLs (relative paths to store in DB)
+   const imageUrls = recipeImages.map(file => `/resources/img/${file.filename}`);
+     //insert new recipe
+   const recipeQuery = 
+     `INSERT INTO recipes (
+     recipe_name, 
+     recipe_description,
+     recipe_prep_time,
+     recipe_difficulty,
+     recipe_cook_time, 
+     recipe_servings,
+     recipe_notes)
+     VALUES ($1, $2, $3, $4, $5, $6, $7)
+     RETURNING recipe_id;`
+   ;
+   const newRecipe =  [recipeName, description, prepTime, difficulty, cookTime, servings, notes, ingredients, instructions]
+   const result = await db.query(recipeQuery, newRecipe);
+   const newRecipeId = result[0].recipe_id;
+   // Insert images into the 'images' table and associate them with the new recipe
+   for (const imageUrl of imageUrls) {
+     const imageQuery = `
+       INSERT INTO images (image_url) 
+       VALUES ($1) RETURNING image_id;
+     `;
+     const imageResult = await db.query(imageQuery, [imageUrl]);
+     const imageId = imageResult[0].image_id;
+     // Associate the image with the recipe in the 'recipes_to_images' table
+     const assocQuery = `
+       INSERT INTO recipes_to_images (recipe_id, image_id)
+       VALUES ($1, $2);
+     `;
+     await db.query(assocQuery, [newRecipeId, imageId]);
+   }
+   res.render('pages/myRecipes', {
+     message: 'Recipe created successfully!',
+     recipeId: newRecipeId,
+   });
   } //docker-compose logs web
   catch (error) 
   {
@@ -550,10 +582,16 @@ app.get('/logout', (req, res) => {
 
 
 
+
 // *****************************************************
 // <!-- Section 5 : Start Server-->
 // *****************************************************
 // starting the server and keeping the connection open to listen for more requests
-  
-app.listen(3000);
-console.log('Server is listening on port 3000');
+const port = process.env.PORT || 3000;
+
+app.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
+});
+
+// app.listen(3000);
+// console.log('Server is listening on port 3000');
