@@ -1,22 +1,27 @@
-
 <h2 class="text-center" style="font-family: 'Poppins', sans-serif; color: #f0f0f0;">My Recipes</h2>
-{{!-- <div class="row" id="discover">
-    {{#each results}}
-        <div class="col-sm-3 mb-3 mb-sm-0 ms-5 mt-4">
-          <div class="card" style="width: 18rem;" id="saved-card-1">
-            <img src="{{#if image}} {{image}} {{else}} 'concert.jpeg' {{/if}}" class="card-img-top" alt="{{name}}" style="width: 18rem; height: 12rem;">
-            <div class="card-body">
-              <h5 class="card-title">{{name}}</h5>
-              <p class="text-center">{{date}} at {{time}}</p>
-              <a href="{{bookingUrl}}" class="btn btn-primary">Book Now</a>
-            </div>
+{{#if recipes.length}}
+      <div class="recipe-grid">
+        {{#each recipes}}
+          <div class="recipe-card">
+            <img src="{{this.image_url}}" alt="{{this.recipe_name}}" onerror="this.src='/images/default-recipe.jpg';">
+            <h2>{{this.recipe_name}}</h2>
+            <p>{{this.recipe_description}}</p>
+            <p><strong>Prep Time:</strong> {{this.recipe_prep_time}} minutes</p>
+            <p><strong>Cook Time:</strong> {{this.recipe_cook_time}} minutes</p>
+            <p><strong>Servings:</strong> {{this.recipe_servings}}</p>
+            <a href="/viewRecipe/{{this.recipe_id}}" class="btn btn-primary">View Recipe</a>
           </div>
-        </div>
-    {{/each}}
-</div> --}}
+        {{/each}}
+      </div>
+    {{else}}
+      <p>No recipes found. <a href="/createRecipe">Create your first recipe!</a></p>
+    {{/if}}
 
+<!-- Include only necessary scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/resources/js/script.js"></script>
 
-<style>
+<!--<style>
   /* Ensure full height for html and body */
   html, body {
     height: 100%;
@@ -124,4 +129,4 @@
     h2.text-center {
         text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
     }
-</style>
+</style>-->

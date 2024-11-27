@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS recipes (
+  username VARCHAR(50) NOT NULL,
   recipe_id SERIAL PRIMARY KEY NOT NULL,
   recipe_name VARCHAR(75) NOT NULL, 
   recipe_description TEXT,
@@ -15,10 +16,8 @@ CREATE TABLE IF NOT EXISTS recipes (
   recipe_difficulty VARCHAR(100) CONSTRAINT limited_values CHECK (recipe_difficulty IN ('easy', 'moderate', 'difficult', 'very_difficult')) NOT NULL,
   recipe_cook_time INT CHECK (recipe_cook_time >= 0) NOT NULL, -- time in minutes
   recipe_servings INT CHECK (recipe_servings > 0) NOT NULL,
-  ingredients TEXT NOT NULL,
-  instructions TEXT NOT NULL
-  
-  recipe_notes TEXT -- optional field for general notes
+  recipe_notes TEXT, -- optional field for general notes
+  FOREIGN KEY (username) REFERENCES users (username) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS images (
