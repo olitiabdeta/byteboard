@@ -238,7 +238,7 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: storage }); // Set up multer with storage configuration
+// const upload = multer({ storage: storage }); // Set up multer with storage configuration
 
 // Example of a route to serve static files like images
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
