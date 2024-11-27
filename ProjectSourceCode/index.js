@@ -230,17 +230,18 @@ const multer = require('multer');
 // Set up multer for file upload
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'public/resources/img'); // Specify the folder to store uploaded files
+    cb(null, 'public/uploads'); // Specify the folder to store uploaded files
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname); // Ensure unique filenames
+    const uniqueName = `${Date.now()}-${file.originalname}`;
+    cb(null, uniqueName);
   },
 });
 
 const upload = multer({ storage: storage }); // Set up multer with storage configuration
 
 // Example of a route to serve static files like images
-app.use('/uploads', express.static(path.join(__dirname, 'resourses/img')));
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
 // Configure multer to store uploaded files in memory
 //const upload = multer({ storage: multer.memoryStorage() }); // Use memory storage to access file buffer
@@ -463,16 +464,32 @@ app.get('/friends', (req, res) => {
   res.render('pages/friends');
 });
 //My Recipes
-app.get('/myRecipes', (req, res) => {
+app.get('/myRecipes',auth, async (req, res) => {
   try
   {
-    
+    const username = req.session.user.username;
+    const recipeQuery = 
+    `SELECT r.recipe_id, 
+    r.recipe_name, r.recipe_description, 
+    r.recipe_prep_time, r.recipe_cook_time, 
+    r.recipe_servings, r.recipe_notes, i.image_url
+    FROM recipes r
+    LEFT JOIN recipes_to_images ri ON r.recipe_id = ri.recipe_id
+    LEFT JOIN images i ON ri.image_id = i.image_id
+    WHERE r.username = $1
+    ORDER BY r.recipe_id DESC;`;
+
+    const recipes = await db.query(recipeQuery, [username]);
+    res.render('pages/myRecipes', {recipes});
   }
   catch(error)
   {
-
+    console.error('Error fetching recipes: ', error);
+    res.status(500).render('pages/myRecipes', {
+      error: true,
+      message: 'Error fetching recipes, lease try again later.',
+    });
   }
-  res.render('pages/myRecipes');
 });
 
 //searchResults
@@ -487,9 +504,10 @@ app.get('/createRecipe', (req, res) => {
 });
 
 //Post Create Recipe 
-app.post('/createRecipe', auth, upload.array('recipe_images', 5), async (req, res) => {
+app.post('/createRecipe', auth, upload.array('recipe_image', 5), async (req, res) => {
   try 
   {
+    const username = req.session.user.username; // Get the username from the session
     const recipeName = req.body.recipeName;
     const description = req.body.description;
     const prepTime = req.body.prepTime;
@@ -499,16 +517,17 @@ app.post('/createRecipe', auth, upload.array('recipe_images', 5), async (req, re
     const notes = req.body.notes;
     const ingredients = req.body.ingredients;
     const instructions = req.body.instructions;
-
+    
     // Handle uploaded images
     const recipeImages = req.files; // This will contain an array of uploaded files
 
     // Prepare image URLs (relative paths to store in DB)
-    const imageUrls = recipeImages.map(file => `/resources/img/${file.filename}`);
+    const imageUrls = recipeImages.map(file => `/uploads/${file.filename}`);
 
       //insert new recipe
     const recipeQuery = 
       `INSERT INTO recipes (
+      username
       recipe_name, 
       recipe_description,
       recipe_prep_time,
@@ -516,13 +535,38 @@ app.post('/createRecipe', auth, upload.array('recipe_images', 5), async (req, re
       recipe_cook_time, 
       recipe_servings,
       recipe_notes)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING recipe_id;`
     ;
-    const newRecipe =  [recipeName, description, prepTime, difficulty, cookTime, servings, notes, ingredients, instructions]
+    const newRecipe =  [username, recipeName, description, prepTime, difficulty, cookTime, servings, notes];
     const result = await db.query(recipeQuery, newRecipe);
-
     const newRecipeId = result[0].recipe_id;
+    
+    //insert new recipe ingredient(s)
+    if (ingredients && Array.isArray(ingredients)) 
+    {
+      for (const ingredient of ingredients) 
+      {
+        const ingredientQuery = `
+          INSERT INTO ingredients (recipe_id, ingredient_name)
+          VALUES ($1, $2);
+        `;
+        await db.query(ingredientQuery, [newRecipeId, ingredient]);
+      }
+    }
+
+    //insert instruction(s)
+    if (instructions && Array.isArray(instructions)) {
+      let stepNumber = 1; // Instructions should have an order
+      for (const instruction of instructions) {
+        const instructionQuery = `
+          INSERT INTO recipe_instructions (recipe_id, step_number, instruction_text)
+          VALUES ($1, $2, $3);
+        `;
+        await db.query(instructionQuery, [newRecipeId, stepNumber, instruction]);
+        stepNumber++;
+      }
+    }
 
     // Insert images into the 'images' table and associate them with the new recipe
     for (const imageUrl of imageUrls) {
@@ -548,13 +592,23 @@ app.post('/createRecipe', auth, upload.array('recipe_images', 5), async (req, re
   } //docker-compose logs web
   catch (error) 
   {
-    console.error('Invalid Recipe Submission:', error);
+    /*console.error('Invalid Recipe Submission:', error);
     res.render('pages/createRecipe', 
     {
       error: true,
       message: 'Error creating recipe, try again'
-  });
+  });*/
+  if (err instanceof multer.MulterError) {
+    console.error('Multer Error:', err);
+    res.render('pages/createRecipe', {
+      error: true,
+      message: `Upload Error: ${err.message}`
+    });
+  } else {
+    next(err); // Pass other errors to the default error handler
   }
+  }
+  
 });
 
 
