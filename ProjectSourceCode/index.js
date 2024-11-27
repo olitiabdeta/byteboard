@@ -33,11 +33,11 @@ const hbs = handlebars.create({
 console.log(__dirname, path.join(__dirname, 'src', 'views'))
 app.set('views', path.join(__dirname, 'src', 'views'));
 app.use(express.static(path.join(__dirname, 'resources'))); 
-
+require('dotenv').config();
 // database configuration
 const dbConfig = {
-  host: 'db', // the database server
-  port: 5432, // the database port
+  host: process.env.POSTGRES_HOST || 'db', // the database server
+  port: process.env.POSTGRES_PORT || 5432, // the database port
   database: process.env.POSTGRES_DB, // the database name
   user: process.env.POSTGRES_USER, // the user account to connect with
   password: process.env.POSTGRES_PASSWORD, // the password of the user account
@@ -244,7 +244,7 @@ const upload = multer({ storage: storage }); // Set up multer with storage confi
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
 // Configure multer to store uploaded files in memory
-//const upload = multer({ storage: multer.memoryStorage() }); // Use memory storage to access file buffer
+const upload = multer({ storage: multer.memoryStorage() }); // Use memory storage to access file buffer
 
 app.post('/createProfile', auth, upload.single('profilePic'), async (req, res) => {
   try {
@@ -271,33 +271,28 @@ app.post('/createProfile', auth, upload.single('profilePic'), async (req, res) =
 
     const existingProfile = await db.oneOrNone('SELECT * FROM profiles WHERE user_id = $1', [userId]);
 
-    if (existingProfile) 
-    {
+    if (existingProfile) {
       // Dynamically build the update query
       const updates = [];
       const values = [];
       let idx = 1;
 
-      if (bioArray !== null) 
-      {
+      if (bioArray !== null) {
         updates.push(`bio = $${idx}`);
         values.push(bioArray);
         idx++;
       }
-      if (profilePicPath !== null) 
-      {
+      if (profilePicPath !== null) {
         updates.push(`profile_pic = $${idx}`);
         values.push(profilePicPath);
         idx++;
       }
-      if (dietaryPreferences !== null) 
-      {
+      if (dietaryPreferences !== null) {
         updates.push(`dietary_preferences = $${idx}`);
         values.push(dietaryPreferences);
         idx++;
       }
-      if (intoleranceArray !== null) 
-      {
+      if (intoleranceArray !== null) {
         updates.push(`intolerances = $${idx}`);
         values.push(intoleranceArray);
         idx++;
@@ -309,9 +304,7 @@ app.post('/createProfile', auth, upload.single('profilePic'), async (req, res) =
       await db.query(query, values);
       console.log('Profile updated for user:', userId);
       res.redirect('/profile');
-    } 
-    else 
-    {
+    } else {
       // Insert a new profile
       await db.query(
         `INSERT INTO profiles (user_id, bio, profile_pic, dietary_preferences, intolerances)
@@ -320,9 +313,7 @@ app.post('/createProfile', auth, upload.single('profilePic'), async (req, res) =
       );
       res.redirect('/profile');
     }
-  } 
-  catch (error) 
-  {
+  } catch (error) {
     console.error('Profile creation error:', error);
     res.render('pages/createProfile', {
       error: true,
@@ -335,8 +326,7 @@ app.post('/createProfile', auth, upload.single('profilePic'), async (req, res) =
 
 // Profile page
 app.get('/profile', auth, async (req, res) => {
-  try 
-  {
+  try {
     const userId = req.session.user.username; // Get the username from the session
 
     const profileQuery = `
@@ -348,8 +338,7 @@ app.get('/profile', auth, async (req, res) => {
 
     const profile = await db.oneOrNone(profileQuery, [userId]);
 
-    if (!profile) 
-    {
+    if (!profile) {
       // If no profile exists, render a message to the user
       return res.render('pages/profile', {
         message: 'No profile found. Please create one!',
@@ -359,9 +348,7 @@ app.get('/profile', auth, async (req, res) => {
 
     // Render the profile page with retrieved data
     res.render('pages/profile', { profile });
-  } 
-  catch (error) 
-  {
+  } catch (error) {
     console.error('Error fetching profile:', error);
     res.render('pages/profile', {
       message: 'An error occurred while fetching your profile.',
@@ -463,6 +450,7 @@ app.get('/discover', async(req, res) => {
 app.get('/friends', (req, res) => {
   res.render('pages/friends');
 });
+
 //My Recipes
 app.get('/myRecipes',auth, async (req, res) => {
   try
@@ -491,11 +479,50 @@ app.get('/myRecipes',auth, async (req, res) => {
     });
   }
 });
+// //Saved 
+// app.get('/saved', (req, res) => {
+//   res.render('pages/saved');
+// });
 
 //searchResults
 app.get('/search', (req, res) => {
   res.render('pages/searchResults')
 });
+
+
+
+// app.get('/search', async (req, res) => {
+//   try {
+//     const query = req.query.query; // Get the search term from the query string
+
+//     if (!query) {
+//       return res.render('pages/searchResults', {
+//         recipes: [],
+//         message: 'Please enter a search term.',
+//       });
+//     }
+
+//     // Query the database for recipes that match the search term
+//     const searchQuery = `
+//       SELECT * FROM recipes 
+//       WHERE recipe_name ILIKE $1 OR recipe_description ILIKE $1
+//     `;
+//     const values = [`%${query}%`];
+//     const result = await db.query(searchQuery, values);
+
+//     res.render('pages/searchResults', {
+//       recipes: result.rows,
+//       message: result.rows.length ? null : 'No recipes found.',
+//     });
+//   } catch (error) {
+//     console.error('Error during search:', error);
+//     res.render('pages/searchResults', {
+//       recipes: [],
+//       message: 'Error fetching search results. Please try again later.',
+//     });
+//   }
+// });
+
 
 
 // Get Create Recipe
@@ -612,6 +639,9 @@ app.post('/createRecipe', auth, upload.array('recipe_image', 5), async (req, res
 });
 
 
+
+
+
 // Logout route
 app.get('/logout', (req, res) => {
   try {
@@ -627,10 +657,16 @@ app.get('/logout', (req, res) => {
 
 
 
+
 // *****************************************************
 // <!-- Section 5 : Start Server-->
 // *****************************************************
 // starting the server and keeping the connection open to listen for more requests
-  
-app.listen(3000);
-console.log('Server is listening on port 3000');
+const port = process.env.PORT || 3000;
+
+app.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
+});
+
+// app.listen(3000);
+// console.log('Server is listening on port 3000');
