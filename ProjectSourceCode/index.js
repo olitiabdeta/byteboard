@@ -531,7 +531,7 @@ app.get('/createRecipe', (req, res) => {
 });
 
 //Post Create Recipe 
-app.post('/createRecipe', auth, upload.array('recipe_image', 5), async (req, res) => {
+app.post('/createRecipe', auth, upload.array('recipe_image', 5), async (req, res, next) => {
   try 
   {
     const username = req.session.user.username; // Get the username from the session
