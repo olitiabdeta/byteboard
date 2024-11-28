@@ -617,7 +617,7 @@ app.post('/createRecipe', auth, upload.array('recipe_image', 5), async (req, res
       recipeId: newRecipeId,
     });
   } //docker-compose logs web
-  catch (error) 
+  catch (err) 
   {
     /*console.error('Invalid Recipe Submission:', error);
     res.render('pages/createRecipe', 
