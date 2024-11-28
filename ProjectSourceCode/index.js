@@ -554,7 +554,7 @@ app.post('/createRecipe', auth, upload.array('recipe_image', 5), async (req, res
       //insert new recipe
     const recipeQuery = 
       `INSERT INTO recipes (
-      username
+      username,
       recipe_name, 
       recipe_description,
       recipe_prep_time,
