@@ -17,21 +17,35 @@ CREATE TABLE IF NOT EXISTS recipes (
   recipe_servings INT CHECK (recipe_servings > 0) NOT NULL,
   recipe_notes TEXT, -- optional field for general notes
   ingredients TEXT NOT NULL,
-  instructions TEXT NOT NULL
+  instructions TEXT NOT NULL,
+  recipe_notes TEXT -- optional field for general notes
 );
 
+-- CREATE TABLE IF NOT EXISTS images (
+--   image_id SERIAL PRIMARY KEY NOT NULL,
+--   image_url VARCHAR(300) NOT NULL,
+--   image_caption VARCHAR(200)
+-- );
+
+-- Create the 'images' table to store image file paths
 CREATE TABLE IF NOT EXISTS images (
   image_id SERIAL PRIMARY KEY NOT NULL,
-  image_url VARCHAR(300) NOT NULL,
-  image_caption VARCHAR(200)
+  image_url VARCHAR(300) NOT NULL -- The URL or path to the image
 );
 
--- Junction table for associating images with recipes
+-- -- Junction table for associating images with recipes
+-- CREATE TABLE IF NOT EXISTS recipes_to_images (
+--   image_id INT NOT NULL,
+--   recipe_id INT NOT NULL,
+--   FOREIGN KEY (image_id) REFERENCES images (image_id) ON DELETE CASCADE,
+--   FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE
+-- );
+
+-- Create the 'recipes_to_images' join table to associate images with recipes
 CREATE TABLE IF NOT EXISTS recipes_to_images (
-  image_id INT NOT NULL,
-  recipe_id INT NOT NULL,
-  FOREIGN KEY (image_id) REFERENCES images (image_id) ON DELETE CASCADE,
-  FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE
+  recipe_id INT REFERENCES recipes(recipe_id) ON DELETE CASCADE,
+  image_id INT REFERENCES images(image_id) ON DELETE CASCADE,
+  PRIMARY KEY (recipe_id, image_id)
 );
 
 -- Table to store step-by-step instructions for each recipe

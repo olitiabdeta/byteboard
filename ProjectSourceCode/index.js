@@ -477,51 +477,240 @@ app.get('/createRecipe', (req, res) => {
 });
 
 //Post Create Recipe 
-app.post('/createRecipe', auth,  async (req, res) => {
-  try 
-  {
-    const recipeName = req.body.recipeName;
-    const description = req.body.description;
-    const prepTime = req.body.prepTime;
-    const difficulty = req.body.difficulty;
-    const cookTime = req.body.cookTime;
-    const servings = req.body.servings;
-    const notes = req.body.notes;
-    const ingredients = req.body.ingredients;
-    const instructions = req.body.instructions;
+// app.post('/createRecipe', auth, upload.array('recipe_images', 5), async (req, res) => {
+//   try 
+//   {
+//     const recipeName = req.body.recipeName;
+//     const description = req.body.description;
+//     const prepTime = req.body.prepTime;
+//     const difficulty = req.body.difficulty;
+//     const cookTime = req.body.cookTime;
+//     const servings = req.body.servings;
+//     const notes = req.body.notes;
+//     const ingredients = req.body.ingredients;
+//     const instructions = req.body.instructions;
 
-      //insert new recipe
-const recipeQuery = 
-      `INSERT INTO recipes (recipe_name, recipe_description ,
-        recipe_prep_time ,
-        recipe_difficulty,
-        recipe_cook_time, 
-        recipe_servings,
-        recipe_notes,
-        ingredients, 
-        instructions )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-        RETURNING recipe_id;`
-      ;
-      const newRecipe =  [recipeName, description, prepTime, difficulty, cookTime, servings, notes, ingredients, instructions]
-      const result = await db.query(recipeQuery, newRecipe);
+//       //insert new recipe
+//    // Handle uploaded images
+//    const recipeImages = req.files; // This will contain an array of uploaded files
+//    // Prepare image URLs (relative paths to store in DB)
+//    const imageUrls = recipeImages.map(file => `/resources/img/${file.filename}`);
+//      //insert new recipe
+//    const recipeQuery = 
+//      `INSERT INTO recipes (
+//      recipe_name, 
+//      recipe_description,
+//      recipe_prep_time,
+//      recipe_difficulty,
+//      recipe_cook_time, 
+//      recipe_servings,
+//      recipe_notes)
+//      VALUES ($1, $2, $3, $4, $5, $6, $7)
+//      RETURNING recipe_id;`
+//    ;
+//    const newRecipe =  [recipeName, description, prepTime, difficulty, cookTime, servings, notes, ingredients, instructions]
+//    const result = await db.query(recipeQuery, newRecipe);
+//    const newRecipeId = result[0].recipe_id;
+//    // Insert images into the 'images' table and associate them with the new recipe
+//    for (const imageUrl of imageUrls) {
+//      const imageQuery = `
+//        INSERT INTO images (image_url) 
+//        VALUES ($1) RETURNING image_id;
+//      `;
+//      const imageResult = await db.query(imageQuery, [imageUrl]);
+//      const imageId = imageResult[0].image_id;
+//      // Associate the image with the recipe in the 'recipes_to_images' table
+//      const assocQuery = `
+//        INSERT INTO recipes_to_images (recipe_id, image_id)
+//        VALUES ($1, $2);
+//      `;
+//      await db.query(assocQuery, [newRecipeId, imageId]);
+//    }
+//    res.render('pages/myRecipes', {
+//      message: 'Recipe created successfully!',
+//      recipeId: newRecipeId,
+//    });
+//   } //docker-compose logs web
+//   catch (error) 
+//   {
+//     console.error('Invalid Recipe Submission:', error);
+//     res.render('pages/createRecipe', 
+//     {
+//       error: true,
+//       message: 'Error creating recipe, try again'
+//   });
+//   }
+// });
 
-       const newRecipeId = result[0].recipe_id;
-      res.render('pages/saved', {
-        message: 'Recipe created successfully!',
-        recipeId: newRecipeId,
+
+// app.post('/createRecipe', auth, upload.array('recipe_images', 5), async (req, res) => {
+//   try {
+//     const { recipeName, description, prepTime, difficulty, cookTime, servings, notes, ingredients, instructions } = req.body;
+
+//     // Handle uploaded images
+//     const recipeImages = req.files; // Array of uploaded files
+//     const imagePaths = []; // Array to store image paths
+
+//     // Save each uploaded image locally and prepare its path for database storage
+//     if (recipeImages && recipeImages.length > 0) {
+//       recipeImages.forEach((file) => {
+//         const imagePath = path.join('uploads', file.originalname); // Define file path
+//         fs.writeFileSync(imagePath, file.buffer); // Save the file to the local file system
+//         imagePaths.push(imagePath); // Store the image path in the array
+//       });
+//     }
+
+//     // Check if ingredients and instructions are provided, otherwise default to empty arrays
+//     const ingredientsArray = ingredients ? ingredients.split(',').map(item => item.trim()) : [];
+//     const instructionsArray = instructions ? instructions.split(',').map(item => item.trim()) : [];
+
+//     // Prepare the SQL query to insert the new recipe into the database
+//     const recipeQuery = `
+//       INSERT INTO recipes (
+//         recipe_name, 
+//         recipe_description, 
+//         recipe_prep_time, 
+//         recipe_difficulty, 
+//         recipe_cook_time, 
+//         recipe_servings,
+//         ingredients, 
+//         instructions, 
+//         recipe_notes
+//       )
+//       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+//       RETURNING recipe_id;
+//     `;
+//     const newRecipeValues = [
+//       recipeName,
+//       description,
+//       prepTime,
+//       difficulty,
+//       cookTime,
+//       servings,
+//       notes,
+//       ingredients, // Assumed ingredients is a string (or you can format as array if needed)
+//       instructions // Assumed instructions is a string (or you can format as array if needed)
+//     ];
+
+//     const result = await db.query(recipeQuery, newRecipeValues);
+//     const newRecipeId = result[0].recipe_id; // Get the new recipe ID from the result
+
+//     // Insert the images into the 'images' table and associate them with the new recipe
+//     for (const imagePath of imagePaths) {
+//       const imageQuery = `
+//         INSERT INTO images (image_url) 
+//         VALUES ($1) RETURNING image_id;
+//       `;
+//       const imageResult = await db.query(imageQuery, [imagePath]);
+//       const imageId = imageResult[0].image_id;
+
+//       // Associate the image with the recipe in the 'recipes_to_images' table
+//       const assocQuery = `
+//         INSERT INTO recipes_to_images (recipe_id, image_id)
+//         VALUES ($1, $2);
+//       `;
+//       await db.query(assocQuery, [newRecipeId, imageId]);
+//     }
+
+//     // Redirect the user to the 'myRecipes' page with a success message
+//     res.render('pages/myRecipes', {
+//       message: 'Recipe created successfully!',
+//       recipeId: newRecipeId
+//     });
+//   } catch (error) {
+//     console.error('Error creating recipe:', error);
+//     res.render('pages/createRecipe', {
+//       error: true,
+//       message: 'Error creating recipe, please try again.'
+//     });
+//   }
+// });
+
+
+app.post('/createRecipe', auth, upload.array('recipe_images', 5), async (req, res) => {
+  try {
+    const { recipeName, description, prepTime, difficulty, cookTime, servings, notes, ingredients, instructions } = req.body;
+
+    console.log('Request body:', req.body); // Check if instructions are correctly passed
+
+    // Format ingredients and instructions for database storage
+    const formattedIngredients = Array.isArray(ingredients)
+      ? ingredients.join(', ') // Convert to string
+      : ingredients;
+
+    const formattedInstructions = Array.isArray(instructions)
+      ? instructions.join('. ') // Convert to string
+      : (instructions || '');    // Default to an empty string if instructions are missing or null
+
+    if (!formattedInstructions) {
+      return res.render('pages/createRecipe', {
+        error: true,
+        message: 'Instructions are required.'
       });
-  } //docker-compose logs web
-  catch (error) 
-  {
-    console.error('Invalid Recipe Submission:', error);
-    res.render('pages/createRecipe', 
-    {
+    }
+
+    // Insert recipe details into the database
+    const recipeQuery = `
+      INSERT INTO recipes (
+        recipe_name, recipe_description, recipe_prep_time, recipe_difficulty,
+        recipe_cook_time, recipe_servings, ingredients, instructions, recipe_notes
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      RETURNING recipe_id;
+    `;
+    const newRecipeValues = [
+      recipeName, description, prepTime, difficulty, cookTime,
+      servings, notes, formattedIngredients, formattedInstructions
+    ];
+
+    const result = await db.query(recipeQuery, newRecipeValues);
+    const newRecipeId = result.rows[0].recipe_id; // Get the new recipe ID
+
+    // Handle uploaded images
+    const recipeImages = req.files; // Array of uploaded files
+    const imagePaths = []; // Array to store image paths
+
+    if (recipeImages && recipeImages.length > 0) {
+      for (const file of recipeImages) {
+        const uploadPath = path.join(__dirname, 'uploads', file.originalname); // Define file path
+        fs.writeFileSync(uploadPath, file.buffer); // Save the file to the local file system
+        imagePaths.push(uploadPath); // Store the image path
+      }
+
+      // Insert each image into the 'images' table and associate with the recipe
+      for (const imagePath of imagePaths) {
+        const imageQuery = `
+          INSERT INTO images (image_url)
+          VALUES ($1)
+          RETURNING image_id;
+        `;
+        const imageResult = await db.query(imageQuery, [imagePath]);
+        const imageId = imageResult.rows[0].image_id; // Get the new image ID
+
+        // Associate the image with the recipe in the 'recipes_to_images' table
+        const assocQuery = `
+          INSERT INTO recipes_to_images (recipe_id, image_id)
+          VALUES ($1, $2);
+        `;
+        await db.query(assocQuery, [newRecipeId, imageId]);
+      }
+    }
+
+    // Render success response
+    res.render('pages/myRecipes', {
+      message: 'Recipe created successfully!',
+      recipeId: newRecipeId
+    });
+  } catch (error) {
+    console.error('Error creating recipe:', error);
+    res.render('pages/createRecipe', {
       error: true,
-      message: 'Error creating recipe, try again'
-  });
+      message: 'Error creating recipe, please try again.'
+    });
   }
 });
+
+
 
 
 
@@ -546,6 +735,11 @@ app.get('/logout', (req, res) => {
 // <!-- Section 5 : Start Server-->
 // *****************************************************
 // starting the server and keeping the connection open to listen for more requests
-  
-app.listen(3000);
-console.log('Server is listening on port 3000');
+const port = process.env.PORT || 3000;
+
+app.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
+});
+
+// app.listen(3000);
+// console.log('Server is listening on port 3000');
