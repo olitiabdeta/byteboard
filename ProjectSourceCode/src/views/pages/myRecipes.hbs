@@ -1,27 +1,47 @@
 <h2 class="text-center" style="font-family: 'Poppins', sans-serif; color: #f0f0f0;">My Recipes</h2>
-{{#if recipes.length}}
-      <div class="recipe-grid">
-        {{#each recipes}}
-          <div class="recipe-card">
-            <img src="{{this.image_url}}" alt="{{this.recipe_name}}" onerror="this.src='/images/default-recipe.jpg';">
-            <h2>{{this.recipe_name}}</h2>
-            <p>{{this.recipe_description}}</p>
-            <p><strong>Prep Time:</strong> {{this.recipe_prep_time}} minutes</p>
-            <p><strong>Cook Time:</strong> {{this.recipe_cook_time}} minutes</p>
-            <p><strong>Servings:</strong> {{this.recipe_servings}}</p>
-            <a href="/viewRecipe/{{this.recipe_id}}" class="btn btn-primary">View Recipe</a>
-          </div>
-        {{/each}}
-      </div>
-    {{else}}
-      <p>No recipes found. <a href="/createRecipe">Create your first recipe!</a></p>
-    {{/if}}
 
-<!-- Include only necessary scripts -->
+{{#if recipes.length}}
+  <div class="recipe-grid">
+    {{#each recipes}}
+      <div class="recipe-card">
+        <h2>{{this.recipe_name}}</h2>
+        <p>{{this.recipe_description}}</p>
+        <p><strong>Difficulty:</strong> {{this.recipe_difficulty}}</p>
+        <p><strong>Prep Time:</strong> {{this.recipe_prep_time}} minutes</p>
+        <p><strong>Cook Time:</strong> {{this.recipe_cook_time}} minutes</p>
+        <p><strong>Servings:</strong> {{this.recipe_servings}}</p>
+        <p><strong>Notes:</strong> {{this.recipe_notes}}</p>
+
+        <h3>Ingredients</h3>
+        <ul>
+          {{#each this.ingredients}}
+            <li>{{this.quantity}} {{this.unit}} of {{this.ingredient_name}}</li>
+          {{/each}}
+        </ul>
+
+        <h3>Instructions</h3>
+        <ol>
+          {{#each this.instructions}}
+            <li>{{this}}</li>
+          {{/each}}
+        </ol>
+
+        <div class="image-container">
+          {{#each this.image_urls}}
+            <img src="{{this}}" alt="Recipe Image" class="recipe-image" />
+          {{/each}}
+        </div>
+      </div>
+    {{/each}}
+  </div>
+{{else}}
+  <p>No recipes found. <a href="/createRecipe">Create your first recipe!</a></p>
+{{/if}}
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/resources/js/script.js"></script>
 
-<!--<style>
+<style>
   /* Ensure full height for html and body */
   html, body {
     height: 100%;
@@ -37,7 +57,7 @@
     background: linear-gradient(120deg, #FFB84D, #FF6F61, #FFD700);
     background-size: 300% 300%;
     animation: gradient-animation 8s ease infinite;
-    color: white;
+    color: rgb(12, 12, 12);
     flex: 1;  /* Allow body to take up all available space */
   }
 
@@ -48,35 +68,53 @@
     100% { background-position: 0% 50%; }
   }
 
-  /* Container styling to center content and ensure footer stays at bottom */
-  .container {
-    flex: 1; /* Makes the container take all available space */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px; /* Add some padding to the container */
+  /* Recipe Grid Layout */
+  .recipe-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
   }
 
-  /* Card styling */
-  .card {
+  /* Recipe Card Styling */
+  .recipe-card {
     background-color: rgba(255, 255, 255, 0.9);
     border: none;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
     transition: transform 0.3s, box-shadow 0.3s;
   }
 
-  .card:hover {
+  .recipe-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
   }
 
-  .card-title {
-    color: #FF6F61;
+  /* Title Styling */
+  .recipe-card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
   }
 
-  /* Button styling */
+  /* Image Container and Image Styling */
+  .image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+
+  .recipe-image {
+    max-width: 100%;
+    height: auto;
+    margin: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Button Styling */
   .btn-primary {
     background-color: #FF6F61;
     border: none;
@@ -98,35 +136,25 @@
     margin-top: auto; /* footer stays at bottom */
   }
 
-    /* gradient  to the title - discover */
-    h2.text-center {
-        font-size: 3rem;
-        font-weight: bold;
-        background: linear-gradient(45deg, #ff69b4, #44edc9);
-        background-clip: text;
-        -webkit-background-clip: text;
-        color: transparent;
-        text-align: center;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        animation: shine 3s ease-in-out infinite;
-    }
+  /* Gradient and text shadow for the title */
+  h2.text-center {
+    font-size: 3rem;
+    font-weight: bold;
+    background: linear-gradient(45deg, #ff69b4, #44edc9);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    text-align: center;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    animation: shine 3s ease-in-out infinite;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  }
 
-    /* Animation for the gradient effect */
-    @keyframes shine {
-        0% {
-        background-position: 0% 50%;
-        }
-        50% {
-        background-position: 100% 50%;
-        }
-        100% {
-        background-position: 0% 50%;
-        }
-    }
-
-    /* shadow  to discover */
-    h2.text-center {
-        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-    }
-</style>-->
+  /* Animation for the gradient effect */
+  @keyframes shine {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+</style>
