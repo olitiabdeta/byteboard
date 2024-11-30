@@ -227,26 +227,62 @@ app.get('/createProfile', auth, (req, res) => {
 const fs = require('fs'); // To work with the file system
 const multer = require('multer');
 
-// Set up multer for file upload
-const storage = multer.diskStorage({
+// Ensure the uploads folder exists
+const uploadDir = path.join(__dirname, 'public', 'recipe_uploads');
+const profileDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true }); // Create the directory if it doesn't exist
+}
+// Check if directories exist, create them if not
+if (!fs.existsSync(profileDir)) {
+  fs.mkdirSync(profileDir, { recursive: true });
+}
+
+// // Set up multer for file upload
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, 'public/uploads'); // Specify the folder to store uploaded files
+//   },
+//   filename: (req, file, cb) => {
+//     const uniqueName = `${Date.now()}-${file.originalname}`;
+//     cb(null, uniqueName);
+//   },
+// });
+
+
+// Set up storage for multer to handle both profile pictures and recipe images
+const recipeImageStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'public/uploads'); // Specify the folder to store uploaded files
+    const uploadDir = 'public/recipe_uploads'; // Store recipe images in this folder
+    cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
-    const uniqueName = `${Date.now()}-${file.originalname}`;
+    const uniqueName = `${Date.now()}-${file.originalname}`; // Ensure unique filenames
+    cb(null, uniqueName);
+  },
+});
+const profilePicStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const profileDir = 'uploads'; // Store profile pictures in this folder
+    cb(null, profileDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueName = `${Date.now()}-${file.originalname}`; // Ensure unique filenames
     cb(null, uniqueName);
   },
 });
 
-// const upload = multer({ storage: storage }); // Set up multer with storage configuration
-
 // Example of a route to serve static files like images
-app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/recipe_uploads', express.static(path.join(__dirname, 'public/recipe_uploads')));
+
 
 // Configure multer to store uploaded files in memory
-const upload = multer({ storage: multer.memoryStorage() }); // Use memory storage to access file buffer
+const uploadRecipeImages = multer({ storage: recipeImageStorage });
+const uploadProfilePic = multer({ storage: profilePicStorage });
+//const upload = multer({ storage: multer.memoryStorage() }); // Use memory storage to access file buffer
 
-app.post('/createProfile', auth, upload.single('profilePic'), async (req, res) => {
+app.post('/createProfile', auth, uploadProfilePic.single('profilePic'), async (req, res) => {
   try {
     const { bio, dietaryPref, intolerances } = req.body;
     const profilePicFile = req.file;
@@ -255,10 +291,17 @@ app.post('/createProfile', auth, upload.single('profilePic'), async (req, res) =
     let profilePicPath = null;
 
     // Save the uploaded file locally
+    // if (profilePicFile) {
+    //   profilePicPath = path.join('uploads', profilePicFile.originalname);
+    //   fs.writeFileSync(profilePicPath, profilePicFile.buffer);
+      
+    // }
+
     if (profilePicFile) {
-      profilePicPath = path.join('uploads', profilePicFile.originalname);
-      fs.writeFileSync(profilePicPath, profilePicFile.buffer);
+      profilePicPath = path.join('uploads', profilePicFile.filename); // Profile picture path
     }
+    console.log('Profile Pic Path:', profilePicPath);
+
 
     // input values to arrays for PostgreSQL
     const bioArray = bio ? (Array.isArray(bio) ? `{${bio.join(',')}}` : `{${bio}}`) : null;
@@ -457,15 +500,85 @@ app.get('/myRecipes',auth, async (req, res) => {
   {
     const username = req.session.user.username;
     const recipeQuery = 
-    `SELECT r.recipe_id, 
-    r.recipe_name, r.recipe_description, 
-    r.recipe_prep_time, r.recipe_cook_time, 
-    r.recipe_servings, r.recipe_notes, i.image_url
-    FROM recipes r
-    LEFT JOIN recipes_to_images ri ON r.recipe_id = ri.recipe_id
-    LEFT JOIN images i ON ri.image_id = i.image_id
-    WHERE r.username = $1
-    ORDER BY r.recipe_id DESC;`;
+    // `SELECT r.recipe_id, 
+    // r.recipe_name, r.recipe_description, 
+    // r.recipe_prep_time, r.recipe_cook_time, 
+    // r.recipe_servings, r.recipe_notes, i.image_url
+    // FROM recipes r
+    // LEFT JOIN recipes_to_images ri ON r.recipe_id = ri.recipe_id
+    // LEFT JOIN images i ON ri.image_id = i.image_id
+    // WHERE r.username = $1
+    // ORDER BY r.recipe_id DESC;`;
+
+// `SELECT r.recipe_id, 
+//        r.recipe_name, 
+//        r.recipe_description, 
+//        r.recipe_difficulty,
+//        r.recipe_prep_time, 
+//        r.recipe_cook_time, 
+//        r.recipe_servings, 
+//        r.recipe_notes, 
+//        array_agg(DISTINCT i.image_url) AS image_urls,  
+//        array_agg(ri_instr.instruction_text ORDER BY ri_instr.step_number) AS instructions,  
+//        array_agg(DISTINCT ing.ingredient_name) AS ingredients  -- Collect unique ingredients
+// FROM recipes r
+// LEFT JOIN (
+//    SELECT rti.recipe_id, i.image_url
+//    FROM recipes_to_images rti
+//    JOIN images i ON rti.image_id = i.image_id
+// ) i ON r.recipe_id = i.recipe_id
+// LEFT JOIN (
+//    SELECT ri_instr.recipe_id, ri_instr.instruction_text, ri_instr.step_number
+//    FROM recipe_instructions ri_instr
+// ) ri_instr ON r.recipe_id = ri_instr.recipe_id
+// LEFT JOIN (
+//    SELECT ri_ing.recipe_id, ing.ingredient_name
+//    FROM recipe_ingredients ri_ing
+//    JOIN ingredients ing ON ri_ing.ingredient_id = ing.ingredient_id
+// ) ing ON r.recipe_id = ing.recipe_id
+// WHERE r.username = $1
+// GROUP BY r.recipe_id
+// ORDER BY r.recipe_id DESC;
+// `;
+`SELECT 
+    r.recipe_id,
+    r.recipe_name,
+    r.recipe_description,
+    r.recipe_difficulty,
+    r.recipe_prep_time,
+    r.recipe_cook_time,
+    r.recipe_servings,
+    r.recipe_notes,
+    array_agg(DISTINCT i.image_url) AS image_urls,
+    array_agg(ri_instr.instruction_text ORDER BY ri_instr.step_number) AS instructions,
+    array_agg(
+        DISTINCT 
+        jsonb_build_object(
+            'quantity', ri_ing.quantity,
+            'unit', ri_ing.unit,
+            'ingredient_name', ri_ing.ingredient_name
+        )
+    ) AS ingredients
+FROM recipes r
+LEFT JOIN (
+    SELECT rti.recipe_id, i.image_url
+    FROM recipes_to_images rti
+    JOIN images i ON rti.image_id = i.image_id
+) i ON r.recipe_id = i.recipe_id
+LEFT JOIN (
+    SELECT ri_instr.recipe_id, ri_instr.instruction_text, ri_instr.step_number
+    FROM recipe_instructions ri_instr
+) ri_instr ON r.recipe_id = ri_instr.recipe_id
+LEFT JOIN (
+    SELECT ri_ing.recipe_id, ri_ing.quantity, ri_ing.unit, ing.ingredient_name
+    FROM recipe_ingredients ri_ing
+    JOIN ingredients ing ON ri_ing.ingredient_id = ing.ingredient_id
+) ri_ing ON r.recipe_id = ri_ing.recipe_id
+WHERE r.username = $1
+GROUP BY r.recipe_id
+ORDER BY r.recipe_id DESC;
+`;
+    
 
     const recipes = await db.query(recipeQuery, [username]);
     res.render('pages/myRecipes', {recipes});
@@ -531,7 +644,7 @@ app.get('/createRecipe', (req, res) => {
 });
 
 //Post Create Recipe 
-app.post('/createRecipe', auth, upload.array('recipe_image', 5), async (req, res, next) => {
+app.post('/createRecipe', auth, uploadRecipeImages.array('recipe_image', 5), async (req, res, next) => {
   try 
   {
     const username = req.session.user.username; // Get the username from the session
@@ -546,12 +659,11 @@ app.post('/createRecipe', auth, upload.array('recipe_image', 5), async (req, res
     const instructions = req.body.instructions;
     
     // Handle uploaded images
-    const recipeImages = req.files; // This will contain an array of uploaded files
+    const recipeImages = req.files; 
+    // Prepare image paths (relative paths to store in DB)
+    const recipeImagePaths = recipeImages ? recipeImages.map(file => `/recipe_uploads/${file.filename}`) : [];
 
-    // Prepare image URLs (relative paths to store in DB)
-    const imageUrls = recipeImages.map(file => `/uploads/${file.filename}`);
-
-      //insert new recipe
+    //insert new recipe
     const recipeQuery = 
       `INSERT INTO recipes (
       username,
@@ -596,7 +708,7 @@ app.post('/createRecipe', auth, upload.array('recipe_image', 5), async (req, res
     }
 
     // Insert images into the 'images' table and associate them with the new recipe
-    for (const imageUrl of imageUrls) {
+    for (const imageUrl of recipeImagePaths) {
       const imageQuery = `
         INSERT INTO images (image_url) 
         VALUES ($1) RETURNING image_id;
