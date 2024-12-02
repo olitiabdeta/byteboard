@@ -1,10 +1,15 @@
 <h2 class="text-center" style="font-family: 'Poppins', sans-serif; color: #f0f0f0;">My Recipes</h2>
 
+{{#if recipeId}}
+  <div class="alert alert-success" role="alert">
+    Recipe created successfully! 
+  </div>
+{{/if}}
+
 {{#if recipes.length}}
   <div class="recipe-grid">
     {{#each recipes}}
       <div class="recipe-card">
-        <h2>{{this.recipe_name}}</h2>
         <p>{{this.recipe_description}}</p>
         <p><strong>Difficulty:</strong> {{this.recipe_difficulty}}</p>
         <p><strong>Prep Time:</strong> {{this.recipe_prep_time}} minutes</p>
@@ -38,8 +43,8 @@
   <p>No recipes found. <a href="/createRecipe">Create your first recipe!</a></p>
 {{/if}}
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="/resources/js/script.js"></script>
+
+
 
 <style>
   /* Ensure full height for html and body */
@@ -158,3 +163,14 @@
     100% { background-position: 0% 50%; }
   }
 </style>
+
+<!--<script>
+  (document).ready(function () {
+    console.log("Page loaded successfully!");
+  
+    // Example: Add click event to buttons
+    $('.btn-primary').on('click', function () {
+      alert('You clicked View Recipe!');
+    });
+  });  
+</script>-->

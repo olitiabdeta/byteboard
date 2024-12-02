@@ -540,48 +540,49 @@ app.get('/myRecipes',auth, async (req, res) => {
 // GROUP BY r.recipe_id
 // ORDER BY r.recipe_id DESC;
 // `;
-`SELECT 
-    r.recipe_id,
-    r.recipe_name,
-    r.recipe_description,
-    r.recipe_difficulty,
-    r.recipe_prep_time,
-    r.recipe_cook_time,
-    r.recipe_servings,
-    r.recipe_notes,
-    array_agg(DISTINCT i.image_url) AS image_urls,
-    array_agg(ri_instr.instruction_text ORDER BY ri_instr.step_number) AS instructions,
-    array_agg(
-        DISTINCT 
-        jsonb_build_object(
-            'quantity', ri_ing.quantity,
-            'unit', ri_ing.unit,
-            'ingredient_name', ri_ing.ingredient_name
-        )
-    ) AS ingredients
-FROM recipes r
-LEFT JOIN (
-    SELECT rti.recipe_id, i.image_url
-    FROM recipes_to_images rti
-    JOIN images i ON rti.image_id = i.image_id
-) i ON r.recipe_id = i.recipe_id
-LEFT JOIN (
-    SELECT ri_instr.recipe_id, ri_instr.instruction_text, ri_instr.step_number
-    FROM recipe_instructions ri_instr
-) ri_instr ON r.recipe_id = ri_instr.recipe_id
-LEFT JOIN (
-    SELECT ri_ing.recipe_id, ri_ing.quantity, ri_ing.unit, ing.ingredient_name
-    FROM recipe_ingredients ri_ing
-    JOIN ingredients ing ON ri_ing.ingredient_id = ing.ingredient_id
-) ri_ing ON r.recipe_id = ri_ing.recipe_id
-WHERE r.username = $1
-GROUP BY r.recipe_id
-ORDER BY r.recipe_id DESC;
-`;
-    
+    `SELECT 
+        r.recipe_id,
+        r.recipe_name,
+        r.recipe_description,
+        r.recipe_difficulty,
+        r.recipe_prep_time,
+        r.recipe_cook_time,
+        r.recipe_servings,
+        r.recipe_notes,
+        array_agg(DISTINCT i.image_url) AS image_urls,
+        array_agg(ri_instr.instruction_text ORDER BY ri_instr.step_number) AS instructions,
+        array_agg(
+            DISTINCT 
+            jsonb_build_object(
+                'quantity', ri_ing.quantity,
+                'unit', ri_ing.unit,
+                'ingredient_name', ri_ing.ingredient_name
+            )
+        ) AS ingredients
+    FROM recipes r
+    LEFT JOIN (
+        SELECT rti.recipe_id, i.image_url
+        FROM recipes_to_images rti
+        JOIN images i ON rti.image_id = i.image_id
+    ) i ON r.recipe_id = i.recipe_id
+    LEFT JOIN (
+        SELECT ri_instr.recipe_id, ri_instr.instruction_text, ri_instr.step_number
+        FROM recipe_instructions ri_instr
+    ) ri_instr ON r.recipe_id = ri_instr.recipe_id
+    LEFT JOIN (
+        SELECT ri_ing.recipe_id, ri_ing.quantity, ri_ing.unit, ing.ingredient_name
+        FROM recipe_ingredients ri_ing
+        JOIN ingredients ing ON ri_ing.ingredient_id = ing.ingredient_id
+    ) ri_ing ON r.recipe_id = ri_ing.recipe_id
+    WHERE r.username = $1
+    GROUP BY r.recipe_id
+    ORDER BY r.recipe_id DESC;
+    `;
+        
 
     const recipes = await db.query(recipeQuery, [username]);
-    res.render('pages/myRecipes', {recipes});
+    res.render('pages/myRecipes', {recipes: recipes.rows});
+    console.log('Recipes:', recipes.rows);
   }
   catch(error)
   {
@@ -592,6 +593,7 @@ ORDER BY r.recipe_id DESC;
     });
   }
 });
+
 // //Saved 
 // app.get('/saved', (req, res) => {
 //   res.render('pages/saved');
@@ -647,7 +649,7 @@ app.get('/createRecipe', (req, res) => {
 app.post('/createRecipe', auth, uploadRecipeImages.array('recipe_image', 5), async (req, res, next) => {
   try 
   {
-    const username = req.session.user.username; // Get the username from the session
+    const username = req.session.user.username;
     const recipeName = req.body.recipeName;
     const description = req.body.description;
     const prepTime = req.body.prepTime;
@@ -655,9 +657,22 @@ app.post('/createRecipe', auth, uploadRecipeImages.array('recipe_image', 5), asy
     const cookTime = req.body.cookTime;
     const servings = req.body.servings;
     const notes = req.body.notes;
-    const ingredients = req.body.ingredients;
+    const ingredients = [];
+    const amounts = req.body.amount;
+    const units = req.body.unit;
+    const ingredientNames = req.body.ingredient;
     const instructions = req.body.instructions;
     
+    if (amounts && units && ingredientNames) {
+      for (let i = 0; i < amounts.length; i++) {
+        ingredients.push({
+          amount: amounts[i],
+          unit: units[i],
+          ingredient_name: ingredientNames[i],
+        });
+      }
+    }
+
     // Handle uploaded images
     const recipeImages = req.files; 
     // Prepare image paths (relative paths to store in DB)
@@ -678,19 +693,30 @@ app.post('/createRecipe', auth, uploadRecipeImages.array('recipe_image', 5), asy
       RETURNING recipe_id;`
     ;
     const newRecipe =  [username, recipeName, description, prepTime, difficulty, cookTime, servings, notes];
+    console.log("newRecipe made:", newRecipe);
     const result = await db.query(recipeQuery, newRecipe);
-    const newRecipeId = result[0].recipe_id;
-    
+    console.log("result made (full):", result);
+
+    if (!result || result.length === 0) {
+      throw new Error('Recipe creation failed: No recipe ID returned.');
+    }
+
+    const newRecipeId = result[0]?.recipe_id;
+    if (!newRecipeId) {
+      throw new Error('Recipe creation failed: No recipe ID returned!');
+    }
+    console.log('New Recipe ID:', newRecipeId);
+
     //insert new recipe ingredient(s)
     if (ingredients && Array.isArray(ingredients)) 
     {
       for (const ingredient of ingredients) 
       {
         const ingredientQuery = `
-          INSERT INTO ingredients (recipe_id, ingredient_name)
-          VALUES ($1, $2);
+          INSERT INTO ingredients (recipe_id, amount, unit, ingredient_name)
+          VALUES ($1, $2, $3, $4);
         `;
-        await db.query(ingredientQuery, [newRecipeId, ingredient]);
+        await db.query(ingredientQuery, [newRecipeId, ingredient.amount, ingredient.unit, ingredient.ingredient_name]);
       }
     }
 
@@ -724,28 +750,39 @@ app.post('/createRecipe', auth, uploadRecipeImages.array('recipe_image', 5), asy
       await db.query(assocQuery, [newRecipeId, imageId]);
     }
 
+    console.log('Ingredients:', ingredients);  // Before ingredients insertion
+    console.log('Instructions:', instructions); // Before instructions insertion
+    console.log('Recipe Images:', recipeImagePaths); // Before image insertion
+
     res.render('pages/myRecipes', {
       message: 'Recipe created successfully!',
       recipeId: newRecipeId,
+      recipes: newRecipe,
+      ingredients: ingredients,
+      instructions: instructions,
+      images: recipeImages,
     });
   } //docker-compose logs web
   catch (err) 
   {
-    /*console.error('Invalid Recipe Submission:', error);
-    res.render('pages/createRecipe', 
+    if (err instanceof multer.MulterError) 
     {
-      error: true,
-      message: 'Error creating recipe, try again'
-  });*/
-  if (err instanceof multer.MulterError) {
-    console.error('Multer Error:', err);
-    res.render('pages/createRecipe', {
-      error: true,
-      message: `Upload Error: ${err.message}`
-    });
-  } else {
-    next(err); // Pass other errors to the default error handler
-  }
+      console.error('Multer Error:', err);
+      res.render('pages/createRecipe', {
+        error: true,
+        message: `Upload Error: ${err.message}`
+      });
+    } 
+    else 
+    {
+      //next(err); // Pass other errors to the default error handler
+      console.error('Invalid Recipe Submission:', err);
+      res.render('pages/createRecipe', 
+      {
+        error: true,
+        message: 'Error creating recipe, try again'
+      });
+    }
   }
   
 });

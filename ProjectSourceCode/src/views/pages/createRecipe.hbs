@@ -65,6 +65,7 @@
                         <option value="l">Liters</option>
                         <option value="oz">Ounces</option>
                         <option value="lb">Pounds</option>
+                        <option value="pinch">Pinch</option>
                     </select>
                     <input type="text" name="ingredient[]" class="form-control me-2" placeholder="Ingredient (e.g., Sugar)">
                     <button type="button" class="btn btn-danger btn-sm remove-ingredient">Remove</button>
@@ -229,40 +230,64 @@
     }
 </style>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="/ProjectSourceCode/src/resources/js/selectize.min.js"></script>
+<!--<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/ProjectSourceCode/src/resources/js/selectize.min.js"></script>-->
 <script>
     // Initialize Selectize on the newly added select elements
-document.getElementById('add-ingredient').addEventListener('click', function () {
-    const container = document.getElementById('ingredients-container');
-    const newRow = document.createElement('div');
-    newRow.classList.add('ingredient-row', 'd-flex', 'align-items-center', 'mb-2');
-    newRow.innerHTML = `
-        <input type="text" name="amount[]" class="form-control me-2" placeholder="Amount (e.g., 2)">
-        <select name="unit[]" class="form-control me-2">
-            <option value="">Unit</option>
-            <option value="cup">Cup</option>
-            <option value="tbsp">Tbsp</option>
-            <option value="tsp">Tsp</option>
-            <option value="g">Grams</option>
-            <option value="kg">Kilograms</option>
-            <option value="ml">Milliliters</option>
-            <option value="l">Liters</option>
-            <option value="oz">Ounces</option>
-            <option value="lb">Pounds</option>
-        </select>
-        <input type="text" name="ingredient[]" class="form-control me-2" placeholder="Ingredient (e.g., Sugar)">
-        <button type="button" class="btn btn-danger btn-sm remove-ingredient">Remove</button>
-    `;
-    container.appendChild(newRow);
+    document.getElementById('add-ingredient').addEventListener('click', function () 
+    {
+        const container = document.getElementById('ingredients-container');
+        const newRow = document.createElement('div');
+        newRow.classList.add('ingredient-row', 'd-flex', 'align-items-center', 'mb-2');
+        newRow.innerHTML = `
+            <input type="text" name="amount[]" class="form-control me-2" placeholder="Amount (e.g., 2)">
+            <select name="unit[]" class="form-control me-2">
+                <option value="">Unit</option>
+                <option value="cup">Cup</option>
+                <option value="tbsp">Tbsp</option>
+                <option value="tsp">Tsp</option>
+                <option value="g">Grams</option>
+                <option value="kg">Kilograms</option>
+                <option value="ml">Milliliters</option>
+                <option value="l">Liters</option>
+                <option value="oz">Ounces</option>
+                <option value="lb">Pounds</option>
+            </select>
+            <input type="text" name="ingredient[]" class="form-control me-2" placeholder="Ingredient (e.g., Sugar)">
+            <button type="button" class="btn btn-danger btn-sm remove-ingredient">Remove</button>
+        `;
+        container.appendChild(newRow);
 
-    // Re-initialize Selectize on the new select element
-    $(newRow.querySelector('select')).selectize();
-});
+        // Re-initialize Selectize on the new select element
+       //$(newRow.querySelector('select')).selectize();
+    });
 
-document.getElementById('ingredients-container').addEventListener('click', function (e) {
-    if (e.target && e.target.classList.contains('remove-ingredient')) {
-        e.target.parentElement.remove();
-    }
-});
+    document.getElementById('ingredients-container').addEventListener('click', function (e)
+    {
+        if (e.target && e.target.classList.contains('remove-ingredient')) 
+        {
+            e.target.parentElement.remove();
+        }
+    });
+
+    // JavaScript for dynamic instruction fields
+    document.getElementById('add-instruction').addEventListener('click', function () 
+    {
+        const container = document.getElementById('instructions-container');
+        const newRow = document.createElement('div');
+        newRow.classList.add('instruction-row', 'd-flex', 'align-items-center', 'mb-2');
+        newRow.innerHTML = `
+            <input type="text" name="instructions[]" class="form-control me-2" placeholder="Enter instruction"></input>
+            <button type="button" class="btn btn-danger btn-sm remove-instruction">Remove</button>
+        `;
+        container.appendChild(newRow);
+    });
+
+    document.getElementById('instructions-container').addEventListener('click', function (e) 
+    {
+        if (e.target && e.target.classList.contains('remove-instruction'))
+        {
+            e.target.parentElement.remove();
+        }
+    });
 </script>
