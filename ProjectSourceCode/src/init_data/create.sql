@@ -80,6 +80,9 @@ CREATE TABLE IF NOT EXISTS comments (
 -- Table for ingredients
 CREATE TABLE IF NOT EXISTS ingredients (
   ingredient_id SERIAL PRIMARY KEY NOT NULL,
+  recipe_id INT REFERENCES recipes(recipe_id),
+  amount DECIMAL,
+  unit VARCHAR(50),
   ingredient_name VARCHAR(100) NOT NULL UNIQUE
 );
 
