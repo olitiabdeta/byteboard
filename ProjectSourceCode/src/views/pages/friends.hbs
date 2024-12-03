@@ -1,5 +1,49 @@
 <h2 class="text-center" style="font-family: 'Poppins', sans-serif; color: #f0f0f0;">Friends</h2>
 
+<!--
+{{#if error}}
+    <div class="alert alert-danger">{{message}}</div>
+  {{/if}}
+-->
+
+  <!-- Friends List -->
+  <!--
+  <div class="card mt-4" style="width: 100%; max-width: 600px;">
+    <div class="card-body">
+      <h4 class="card-title">Your Friends</h4>
+      <ul class="list-group">
+        {{#each friends}}
+          <li class="list-group-item" style="display: flex; justify-content: space-between; align-items: center;">
+            <span>
+              <strong>{{first_name}} {{last_name}}</strong> ({{username}})
+            </span>
+          </li>
+        {{else}}
+          <li class="list-group-item">You have no friends added yet. Add some below!</li>
+        {{/each}}
+      </ul>
+    </div>
+  </div>
+  -->
+
+  <!-- Add a Friend Form -->
+  <!--
+  <div class="card mt-4" style="width: 100%; max-width: 600px;">
+    <div class="card-body">
+      <h4 class="card-title">Add a Friend</h4>
+      <form method="POST" action="/friends">
+        <div class="mb-3">
+          <label for="friendUsername" class="form-label" style="color: #333; font-weight: bold;">Friend's Username</label>
+          <input type="text" id="friendUsername" name="friendUsername" class="form-control" placeholder="Enter a username" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Add Friend</button>
+      </form>
+    </div>
+  </div>
+</div>
+-->
+
+
 <style>
   /* Ensure full height for html and body */
   html, body {
