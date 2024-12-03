@@ -125,3 +125,10 @@ CREATE TABLE IF NOT EXISTS profiles (
   -- custom_preferences TEXT[]
   intolerances TEXT[]
 );
+
+CREATE TABLE IF NOT EXISTS friends (
+  user_id VARCHAR(50) NOT NULL REFERENCES users(username) ON DELETE CASCADE,
+  friend_id VARCHAR(50) NOT NULL REFERENCES users(username) ON DELETE CASCADE,
+  status VARCHAR(20) NOT NULL CHECK (status IN ('pending', 'accepted', 'rejected')),
+  PRIMARY KEY (user_id, friend_id)
+);
