@@ -1,13 +1,13 @@
 <h2 class="text-center" style="font-family: 'Poppins', sans-serif; color: #f0f0f0;">Friends</h2>
 
-<!--
+
 {{#if error}}
     <div class="alert alert-danger">{{message}}</div>
   {{/if}}
--->
+
 
   <!-- Friends List -->
-  <!--
+  
   <div class="card mt-4" style="width: 100%; max-width: 600px;">
     <div class="card-body">
       <h4 class="card-title">Your Friends</h4>
@@ -24,10 +24,10 @@
       </ul>
     </div>
   </div>
-  -->
+  
 
-  <!-- Add a Friend Form -->
-  <!--
+   <!--Add a Friend Form -->
+  
   <div class="card mt-4" style="width: 100%; max-width: 600px;">
     <div class="card-body">
       <h4 class="card-title">Add a Friend</h4>
@@ -41,7 +41,11 @@
     </div>
   </div>
 </div>
--->
+
+{{#if error}}
+  <div class="alert alert-danger">{{message}}</div>
+{{/if}}
+
 
 
 <style>
