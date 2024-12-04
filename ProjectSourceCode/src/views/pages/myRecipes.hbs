@@ -1,38 +1,5 @@
 <h2 class="text-center" style="font-family: 'Poppins', sans-serif; color: #f0f0f0;">My Recipes</h2>
 
-<!--{{#if recipeId}}
-  <div class="container my-5">
-    <!-- Page Title -->
-    <h1 class="mb-4">My Recipes</h1>
-
-    <!-- Display Success or Error Message -->
-    {{> message}}
-
-    <!-- Recipes Grid -->
-    <div class="row">
-      {{#each recipes}}
-      <div class="col-md-4 mb-4">
-        <div class="card">
-          <!-- Recipe Image -->
-          <img src="{{#if this.image}}{{this.image}}{{else}}/default-image.jpg{{/if}}" class="card-img-top" alt="Recipe Image">
-
-          <!-- Card Body -->
-          <div class="card-body">
-            <h5 class="card-title">{{this.recipe_name}}</h5>
-            <p class="card-text">
-              {{this.recipe_description}}
-            </p>
-            <p><strong>Prep Time:</strong> {{this.recipe_prep_time}} mins</p>
-            <p><strong>Cook Time:</strong> {{this.recipe_cook_time}} mins</p>
-            <p><strong>Servings:</strong> {{this.recipe_servings}}</p>
-            <a href="/recipe/{{this.recipe_id}}" class="btn btn-primary">View Recipe</a>
-          </div>
-        </div>
-      </div>
-      {{/each}}
-    </div>
-  </div>-->
-<!--{{/if}}-->
 {{#if recipes.length}}
   <div class="recipe-grid">
     {{#each recipes}}
@@ -47,8 +14,8 @@
 
         <h3>Ingredients</h3>
         <ul>
-          {{#each this.ingredients}}
-            <li>{{this.quantity}} {{this.unit}} of {{this.ingredient_name}}</li>
+          {{#each this.ingredient_description}}
+            <li>{{this}}</li>
           {{/each}}
         </ul>
 

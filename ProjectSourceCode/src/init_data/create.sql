@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS comments (
 -- Table for ingredients
 CREATE TABLE IF NOT EXISTS ingredients (
   ingredient_id SERIAL PRIMARY KEY NOT NULL,
-  recipe_id INT REFERENCES recipes(recipe_id),
+  -- recipe_id INT REFERENCES recipes(recipe_id),
   amount DECIMAL(10,2),
   unit VARCHAR(50),
   ingredient_name VARCHAR(100) NOT NULL UNIQUE
@@ -90,8 +90,6 @@ CREATE TABLE IF NOT EXISTS ingredients (
 CREATE TABLE IF NOT EXISTS recipe_ingredients (
   recipe_id INT NOT NULL,
   ingredient_id INT NOT NULL,
-  amount DECIMAL(10,2), --changed to demical(10,2)
-  unit VARCHAR(20), --added
   FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id) ON DELETE CASCADE,
   FOREIGN KEY (ingredient_id) REFERENCES ingredients (ingredient_id) ON DELETE CASCADE,
   PRIMARY KEY (recipe_id, ingredient_id)
