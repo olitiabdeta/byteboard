@@ -528,44 +528,7 @@ app.post('/friends', auth, async (req, res) => {
     const userId = req.session.user.username;
     const { friendUsername } = req.body;
 
-    // Check if the friend exists
-    const friendExistsQuery = 'SELECT username FROM users WHERE username = $1';
-    const friendExists = await db.oneOrNone(friendExistsQuery, [friendUsername]);
-
-    if (!friendExists) {
-      // Fetch the current friends list even if the friend does not exist
-      const friendsQuery = `
-        SELECT 
-          u.username, 
-          u.first_name, 
-          u.last_name, 
-          COALESCE(p.bio, 'No bio available') AS bio,
-          COALESCE(p.profile_pic, 'No Pic') AS profile_pic,
-          COALESCE(p.dietary_preferences, ARRAY[]::TEXT[]) AS dietary_preferences,
-          COALESCE(p.intolerances, ARRAY[]::TEXT[]) AS intolerances
-        FROM friends f
-        INNER JOIN users u ON f.friend_id = u.username
-        LEFT JOIN profiles p ON u.username = p.user_id
-        WHERE f.user_id = $1
-      `;
-      const friends = await db.any(friendsQuery, [userId]);
-
-      return res.render('pages/friends', { 
-        friends,
-        message: 'User not found. Please check the username and try again.', 
-        error: true 
-      });
-    }
-
-    // Add the friendship relation
-    const addFriendQuery = `
-      INSERT INTO friends (user_id, friend_id)
-      VALUES ($1, $2)
-      ON CONFLICT DO NOTHING
-    `;
-    await db.none(addFriendQuery, [userId, friendUsername]);
-
-    // Fetch the updated friends list
+    // Fetch the current friends list before processing anything else
     const friendsQuery = `
       SELECT 
         u.username, 
@@ -582,11 +545,35 @@ app.post('/friends', auth, async (req, res) => {
     `;
     const friends = await db.any(friendsQuery, [userId]);
 
-    res.render('pages/friends', { friends });
+    // Check if the friend exists
+    const friendExistsQuery = 'SELECT username FROM users WHERE username = $1';
+    const friendExists = await db.oneOrNone(friendExistsQuery, [friendUsername]);
+
+    if (!friendExists) {
+      // If the friend does not exist, render the page with the current friends list
+      return res.render('pages/friends', { 
+        friends,
+        message: 'User not found. Please check the username and try again.', 
+        error: true 
+      });
+    }
+
+    // Add the friendship relation
+    const addFriendQuery = `
+      INSERT INTO friends (user_id, friend_id)
+      VALUES ($1, $2)
+      ON CONFLICT DO NOTHING
+    `;
+    await db.none(addFriendQuery, [userId, friendUsername]);
+
+    // Fetch the updated friends list
+    const updatedFriends = await db.any(friendsQuery, [userId]);
+
+    res.render('pages/friends', { friends: updatedFriends });
   } catch (error) {
     console.error('Error adding a friend:', error);
 
-    // Fetch the current friends list even if an error occurred
+    // Even if there's an error, render the page with the current friends list
     const friendsQuery = `
       SELECT 
         u.username, 
