@@ -491,7 +491,6 @@ app.get('/discover', async(req, res) => {
 });
 
 
-//Friends page 
 app.get('/friends', (req, res) => {
   const currentUser = req.session.user.username; 
 
