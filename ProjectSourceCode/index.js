@@ -490,10 +490,92 @@ app.get('/discover', async(req, res) => {
   }
 });
 
-// Friends
+
+//Friends page 
 app.get('/friends', (req, res) => {
-  res.render('pages/friends');
+  const currentUser = req.session.user.username; 
+
+  const userFriends = `
+    SELECT u.username, u.first_name, u.last_name
+    FROM users u
+    JOIN friends f ON (f.user_id = u.username OR f.friend_id = u.username)
+    WHERE (f.user_id = $1 OR f.friend_id = $1) AND u.username != $1
+  `;
+
+  db.query(userFriends, [currentUser])
+    .then(result => {
+      const message = req.session.message;  
+      delete req.session.message;  
+
+      res.render('pages/friends', { friends: result, message });
+    })
+    .catch(err => {
+      console.error('Cannot display friends:', err);
+      res.render('pages/friends', { message: 'Cannot display friends.' });
+    });
 });
+
+
+//post friends 
+app.post('/friends', (req, res) => {
+  const { friendUsername } = req.body; 
+  const currentUser = req.session.user.username;
+
+  const searchFriends = `
+    SELECT username, first_name, last_name
+    FROM users
+    WHERE username = $1
+  `;
+  
+  db.query(searchFriends, [friendUsername])
+    .then(result => {
+      if (!result[0]) {
+        req.session.message = 'Cannot find user';
+        return res.redirect('/friends');
+      }
+
+      const alreadyExist = `
+        SELECT 1
+        FROM friends
+        WHERE (user_id = $1 AND friend_id = $2) OR (user_id = $2 AND friend_id = $1)
+      `;
+
+      db.query(alreadyExist, [currentUser, friendUsername])
+        .then(existingFriend => {
+          if (existingFriend[0]) {
+            req.session.message = 'You are already friends';
+            return res.redirect('/friends');
+          }
+
+          const insertFriend = `
+            INSERT INTO friends (user_id, friend_id)
+            VALUES ($1, $2), ($2, $1)
+          `;
+          
+          db.query(insertFriend, [currentUser, friendUsername])
+            .then(() => {
+              console.log(`Friendship inserted: ${currentUser} and ${friendUsername}`);
+              res.redirect('/friends');  
+            })
+            .catch(err => {
+              console.error('Error adding friend:', err);
+              req.session.message = 'Error adding friend';
+              return res.redirect('/friends');
+            });
+        })
+        .catch(err => {
+          console.error('Error checking friendship:', err);
+          req.session.message = 'Error checking friendship';
+          return res.redirect('/friends');
+        });
+    })
+    .catch(err => {
+      console.error('Error searching for user:', err);
+      req.session.message = 'Error searching for user';
+      return res.redirect('/friends');
+    });
+});
+
 
 // My Recipes (only recipes posted by user)
 app.get('/myRecipes',auth, async (req, res) => {
