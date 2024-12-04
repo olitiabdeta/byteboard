@@ -632,6 +632,45 @@ app.get('/searchRecipes', async (req, res) => {
 //   res.render('pages/searchResults')
 // });
 
+//searchResults
+app.get('/search', (req, res) => {
+  res.render('pages/searchResults')
+});
+
+
+app.get('/api/search', async (req, res) => {
+  const query = req.query.query;
+  
+  console.log('query:', query);
+  if (!query) 
+  {
+    return res.status(400).json({ error: 'Query parameter is required' });
+  }
+
+  try 
+  {
+    const searchResponse = await axios({
+      url: `https://api.spoonacular.com/recipes/complexSearch`,
+      method: 'GET',
+      headers: 
+      {
+        'Accept-Encoding': 'application/json',
+      },
+      params: 
+      {
+        apiKey: process.env.API_KEY,
+        query: query,
+      },
+    });
+    res.json(response.data);
+  } 
+  catch (error) 
+  {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to fetch data from Spoonacular API' });
+  }
+});
+
 
 
 // Get Create Recipe
