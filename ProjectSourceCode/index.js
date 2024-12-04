@@ -583,32 +583,32 @@ app.get('/myRecipes',auth, async (req, res) => {
     const username = req.session.user.username;
     const recipeQuery = 
     `SELECT 
-    r.recipe_id,
-    r.recipe_name,
-    r.recipe_description,
-    r.recipe_difficulty,
-    r.recipe_prep_time,
-    r.recipe_cook_time,
-    r.recipe_servings,
-    r.recipe_notes,
-    array_agg(DISTINCT i.image_url) AS image_urls,
-    array_agg(ri_instr.instruction_text ORDER BY ri_instr.step_number) AS instructions,
-    array_agg(DISTINCT CONCAT(ing.amount, ' ', ing.unit, ' ', ing.ingredient_name)) AS ingredient_description
-FROM recipes r
-LEFT JOIN (
-    SELECT rti.recipe_id, i.image_url
-    FROM recipes_to_images rti
-    JOIN images i ON rti.image_id = i.image_id
-) i ON r.recipe_id = i.recipe_id
-LEFT JOIN (
-    SELECT ri_instr.recipe_id, ri_instr.instruction_text, ri_instr.step_number
-    FROM recipe_instructions ri_instr
-) ri_instr ON r.recipe_id = ri_instr.recipe_id
-LEFT JOIN recipe_ingredients ri_ing ON r.recipe_id = ri_ing.recipe_id
-LEFT JOIN ingredients ing ON ri_ing.ingredient_id = ing.ingredient_id
-WHERE r.username = $1
-GROUP BY r.recipe_id
-ORDER BY r.recipe_id DESC;
+      r.recipe_id,
+      r.recipe_name,
+      r.recipe_description,
+      r.recipe_difficulty,
+      r.recipe_prep_time,
+      r.recipe_cook_time,
+      r.recipe_servings,
+      r.recipe_notes,
+      array_agg(DISTINCT i.image_url) AS image_urls,
+      array_agg(ri_instr.instruction_text ORDER BY ri_instr.step_number) AS instructions,
+      array_agg(DISTINCT CONCAT(ing.amount, ' ', ing.unit, ' ', ing.ingredient_name)) AS ingredient_description
+    FROM recipes r
+    LEFT JOIN (
+        SELECT rti.recipe_id, i.image_url
+        FROM recipes_to_images rti
+        JOIN images i ON rti.image_id = i.image_id
+    ) i ON r.recipe_id = i.recipe_id
+    LEFT JOIN (
+        SELECT ri_instr.recipe_id, ri_instr.instruction_text, ri_instr.step_number
+        FROM recipe_instructions ri_instr
+    ) ri_instr ON r.recipe_id = ri_instr.recipe_id
+    LEFT JOIN recipe_ingredients ri_ing ON r.recipe_id = ri_ing.recipe_id
+    LEFT JOIN ingredients ing ON ri_ing.ingredient_id = ing.ingredient_id
+    WHERE r.username = $1
+    GROUP BY r.recipe_id
+    ORDER BY r.recipe_id DESC;
     `;
     
     
