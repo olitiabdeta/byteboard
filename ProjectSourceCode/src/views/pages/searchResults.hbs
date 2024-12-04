@@ -16,23 +16,7 @@
 </div> -->
 
 
-{{!-- <h1 class="text-center">Search</h1>
-
-<div class="search-container">
-  <form action="/searchRecipes" method="GET">
-    <input 
-      type="text" 
-      name="query" 
-      placeholder="Search a recipe" 
-      class="search-input" 
-      required 
-    />
-    <button type="submit" class="search-button">Search</button>
-  </form>
-</div> --}}
-
-
-<h1 class="text-center">Search Recipes</h1>
+{{!-- <h1 class="text-center">Search Recipes</h1>
 
 <!-- Search form -->
 <div class="search-container">
@@ -120,4 +104,187 @@
   background-color: #FF8C71;
 }
 
+</style> --}}
+
+
+
+
+<div class="container mt-5">
+    <h1 class="text-center">Recipe Search</h1>
+    <form id="search-form" class="mb-4">
+      <div class="form-group">
+        <input type="text" class="form-control" id="search-query" placeholder="Enter recipe name or ingredients" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Search</button>
+    </form>
+
+    <div id="recipes-list" class="row"></div>
+  </div>
+
+<style>
+    /* Add gradient animation to the background */
+    body {
+        background: linear-gradient(45deg,  #FFB84D, #FF6F61, #FFD700);
+        background-size: 400% 400%;
+        animation: gradientBackground 10s ease infinite;
+        min-height: 100vh;
+        margin: 0;
+    }
+
+    /* Keyframes for background gradient animation */
+    @keyframes gradientBackground {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    /* Styling for the page container */
+    .container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+        max-width: 800px;
+        margin: 50px auto;
+        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        color: #4a4a4a;
+        font-size: 28px;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    h5 {
+        color: #555;
+        font-size: 16px;
+        font-weight: 400;
+        margin-bottom: 30px;
+    }
+
+    .alert {
+        margin-bottom: 20px;
+        padding: 15px;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-size: 14px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    input[type="text"], input[type="file"], select, .form-check-label {
+        font-size: 14px;
+        padding: 10px;
+        width: 100%;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        margin-top: 8px;
+    }
+
+    .form-check-label {
+        font-size: 14px;
+        color: #333;
+    }
+
+    button[type="submit"] {
+        background-color: #FF6F61;
+        color: white;
+        padding: 12px 30px;
+        font-size: 16px;
+        border-radius: 30px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #FF6F61;
+    }
+    .ingredient-row {
+        display: flex;
+        gap: 10px;
+    }
+
+    .ingredient-row input, .ingredient-row select {
+        flex: 1;
+    }
+
+    #add-ingredient {
+        background-color: #FF6F61;
+        color: white;
+    }
+
+    #add-instruction {
+        background-color: #FF6F61;
+        color: white;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border: none;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
 </style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+      $('#search-form').on('submit', function(e) {
+        e.preventDefault();
+        let query = $('#search-query').val();
+        searchRecipes(query);
+      });
+    });
+
+    function searchRecipes(query) {
+      $.ajax({
+        url: `/api/complexSearch?query=${query}`,  // Call the backend API route
+        method: 'GET',
+        success: function(data) {
+          displayRecipes(data.results);
+        },
+        error: function() {
+          alert('Error fetching data.');
+        }
+      });
+    }
+
+    function displayRecipes(recipes) {
+      $('#recipes-list').empty();
+      if (recipes.length > 0) {
+        recipes.forEach(function(recipe) {
+          $('#recipes-list').append(`
+            <div class="col-md-4 mb-4">
+              <div class="card">
+                <img src="${recipe.image}" class="card-img-top" alt="${recipe.title}">
+                <div class="card-body">
+                  <h5 class="card-title">${recipe.title}</h5>
+                  <a href="https://spoonacular.com/recipes/${recipe.id}" class="btn btn-primary" target="_blank">View Recipe</a>
+                </div>
+              </div>
+            </div>
+          `);
+        });
+      } else {
+        $('#recipes-list').append('<p>No recipes found.</p>');
+      }
+    }
+  </script>
