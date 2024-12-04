@@ -557,38 +557,38 @@ app.get('/search', (req, res) => {
 });
 
 
+app.get('/api/search', async (req, res) => {
+  const query = req.query.query;
+  
+  console.log('query:', query);
+  if (!query) 
+  {
+    return res.status(400).json({ error: 'Query parameter is required' });
+  }
 
-// app.get('/search', async (req, res) => {
-//   try {
-//     const query = req.query.query; // Get the search term from the query string
-
-//     if (!query) {
-//       return res.render('pages/searchResults', {
-//         recipes: [],
-//         message: 'Please enter a search term.',
-//       });
-//     }
-
-//     // Query the database for recipes that match the search term
-//     const searchQuery = `
-//       SELECT * FROM recipes 
-//       WHERE recipe_name ILIKE $1 OR recipe_description ILIKE $1
-//     `;
-//     const values = [`%${query}%`];
-//     const result = await db.query(searchQuery, values);
-
-//     res.render('pages/searchResults', {
-//       recipes: result.rows,
-//       message: result.rows.length ? null : 'No recipes found.',
-//     });
-//   } catch (error) {
-//     console.error('Error during search:', error);
-//     res.render('pages/searchResults', {
-//       recipes: [],
-//       message: 'Error fetching search results. Please try again later.',
-//     });
-//   }
-// });
+  try 
+  {
+    const searchResponse = await axios({
+      url: `https://api.spoonacular.com/recipes/complexSearch`,
+      method: 'GET',
+      headers: 
+      {
+        'Accept-Encoding': 'application/json',
+      },
+      params: 
+      {
+        apiKey: process.env.API_KEY,
+        query: query,
+      },
+    });
+    res.json(response.data);
+  } 
+  catch (error) 
+  {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to fetch data from Spoonacular API' });
+  }
+});
 
 
 
