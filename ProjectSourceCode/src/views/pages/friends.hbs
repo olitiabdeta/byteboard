@@ -6,25 +6,41 @@
   {{/if}}
 
 
-  <!-- Friends List -->
-  
-  <div class="card mt-4" style="width: 100%; max-width: 600px;">
-    <div class="card-body">
-      <h4 class="card-title">Your Friends</h4>
-      <ul class="list-group">
-        {{#each friends}}
-          <li class="list-group-item" style="display: flex; justify-content: space-between; align-items: center;">
-            <span>
-              <strong>{{first_name}} {{last_name}}</strong> ({{username}})
-            </span>
-          </li>
-        {{else}}
-          <li class="list-group-item">You have no friends added yet. Add some below!</li>
-        {{/each}}
-      </ul>
-    </div>
+<!-- Friends List -->
+<div class="card mt-4" style="width: 100%; max-width: 600px;">
+  <div class="card-body">
+    <h4 class="card-title">Your Friends</h4>
+    <ul class="list-group">
+      {{#each friends}}
+        <li class="list-group-item" style="display: flex; justify-content: space-between; align-items: center;">
+          <span>
+            <strong>{{first_name}} {{last_name}}</strong> ({{username}})
+          </span>
+          <form method="POST" action="/unfriend" style="margin: 0;">
+            <input type="hidden" name="friendUsername" value="{{username}}">
+            <button type="submit" class="btn btn-danger btn-sm">Unfriend</button>
+          </form>
+        </li>
+      {{else}}
+        <li class="list-group-item">You have no friends added yet. Add some below!</li>
+      {{/each}}
+    </ul>
   </div>
-  
+</div>
+
+<!--warning before unfollowing-->
+
+<script>
+  document.querySelectorAll('.btn-danger').forEach(button => {
+    button.addEventListener('click', function (event) {
+      if (!confirm('Are you sure you want to stop being friends with this person?')) {
+        event.preventDefault();
+      }
+    });
+  });
+</script>
+
+
 
    <!--Add a Friend Form -->
   

@@ -575,6 +575,28 @@ app.post('/friends', (req, res) => {
     });
 });
 
+app.post('/unfriend', (req, res) => {
+  const { friendUsername } = req.body;
+  const currentUser = req.session.user.username;
+
+  const deleteFriend = `
+    DELETE FROM friends
+    WHERE (user_id = $1 AND friend_id = $2) OR (user_id = $2 AND friend_id = $1)
+  `;
+
+  db.query(deleteFriend, [currentUser, friendUsername])
+    .then(() => {
+      console.log(`Friendship removed between ${currentUser} and ${friendUsername}`);
+      res.redirect('/friends');
+    })
+    .catch(err => {
+      console.error('Error unfriending:', err);
+      req.session.message = 'Error removing friend.';
+      res.redirect('/friends');
+    });
+});
+
+
 
 // My Recipes (only recipes posted by user)
 app.get('/myRecipes',auth, async (req, res) => {
