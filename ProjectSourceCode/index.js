@@ -490,7 +490,7 @@ app.get('/discover', async(req, res) => {
   }
 });
 
-
+// Friends Page
 app.get('/friends', (req, res) => {
   const currentUser = req.session.user.username; 
 
@@ -681,30 +681,30 @@ ORDER BY r.recipe_id DESC;
 
 
 
-app.get('/searchRecipes', async (req, res) => {
-  const searchQuery = req.query.query;
+// app.get('/searchRecipes', async (req, res) => {
+//   const searchQuery = req.query.query;
 
-  try {
-    // Query the database for recipes based on the search query
-    const result = await db.query(
-      `SELECT * FROM recipes WHERE recipe_name ILIKE $1 OR recipe_description ILIKE $1`,
-      [`%${searchQuery}%`]
-    );
+//   try {
+//     // Query the database for recipes based on the search query
+//     const result = await db.query(
+//       `SELECT * FROM recipes WHERE recipe_name ILIKE $1 OR recipe_description ILIKE $1`,
+//       [`%${searchQuery}%`]
+//     );
 
-    const recipes = result.rows;
+//     const recipes = result.rows;
 
-    if (recipes.length > 0) {
-      // Render the search results page with the recipes found
-      res.render('searchResults', { recipes });
-    } else {
-      // If no recipes found, show a message
-      res.render('searchResults', { recipes: [], message: 'No recipes found matching your query.' });
-    }
-  } catch (err) {
-    console.error('Error searching recipes:', err);
-    res.status(500).send('An error occurred while searching for recipes.');
-  }
-});
+//     if (recipes.length > 0) {
+//       // Render the search results page with the recipes found
+//       res.render('searchResults', { recipes });
+//     } else {
+//       // If no recipes found, show a message
+//       res.render('searchResults', { recipes: [], message: 'No recipes found matching your query.' });
+//     }
+//   } catch (err) {
+//     console.error('Error searching recipes:', err);
+//     res.status(500).send('An error occurred while searching for recipes.');
+//   }
+// });
 
 
 
@@ -712,7 +712,6 @@ app.get('/searchRecipes', async (req, res) => {
 // app.get('/search', (req, res) => {
 //   res.render('pages/searchResults')
 // });
-
 //searchResults
 app.get('/search', (req, res) => {
   res.render('pages/searchResults')
@@ -751,7 +750,6 @@ app.get('/api/search', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch data from Spoonacular API' });
   }
 });
-
 
 
 // Get Create Recipe
