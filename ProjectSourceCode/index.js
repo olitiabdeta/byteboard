@@ -64,7 +64,7 @@ db.connect()
 // Register `hbs` as our view engine using its bound `engine()` function.
 app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
- // app.set('views', path.join(__dirname, 'views'));
+ //app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.json()); // specify the usage of JSON for parsing request body.
 
 // initialize session variables
@@ -89,7 +89,7 @@ app.use(
 // *****************************************************
 
 
-// redirect to login when website is loaded
+//redirect to login when website is loaded
 app.get('/', (req, res) => {
   res.redirect('/home'); 
 });
@@ -101,12 +101,12 @@ app.use((req, res, next) => {
   next();
 });
 
-// GET login page 
+//GET login page 
 app.get('/login', (req, res) => {
   res.render('pages/login');
 });
 
-// POST login
+//POST login
 app.post('/login', async (req,res) =>{
   try
   {
@@ -120,7 +120,7 @@ app.post('/login', async (req,res) =>{
     {
       const user = userResult;
 
-      // compare the entered password with the hashed password from the database
+      //compare the entered password with the hashed password from the database
       const match = await bcrypt.compare(password, user.password);
 
       if(match)
@@ -134,7 +134,7 @@ app.post('/login', async (req,res) =>{
         return res.render('pages/login', {message: "Incorrect username or password.", error: true});
       }
     }
-    // if user is not found, redirect to register page
+    //if user is not found, redirect to register page
     else
     {
       return res.redirect('/register');
@@ -148,14 +148,14 @@ app.post('/login', async (req,res) =>{
 });
 
 
-// GET Register page
+//GET Register page
 app.get('/register', (req, res) => {
   res.render('pages/register');
 });
 
-// POST Register
+//POST Register
 app.post('/register', async (req, res) => {
-  // hash the password using bcrypt library
+  //hash the password using bcrypt library
   try
   {
     const username = req.body.username;
@@ -166,7 +166,7 @@ app.post('/register', async (req, res) => {
     const last_name = req.body.lastname;
     
     // To-DO: Insert username and hashed password into the 'users' table
-    // let something = await db.any('INSERT INTO users (username, password, email, first_name, last_name) VALUES($1, $2, $3, $4, $5)', [username, hash, email, first_name, last_name]);
+    //let something = await db.any('INSERT INTO users (username, password, email, first_name, last_name) VALUES($1, $2, $3, $4, $5)', [username, hash, email, first_name, last_name]);
     
     const registeredUserQuery = `SELECT * FROM users WHERE username = $1 OR email = $2`;
     const registeredUser = await db.oneOrNone(registeredUserQuery, [username, email]);
@@ -193,7 +193,7 @@ app.post('/register', async (req, res) => {
   {
     console.error("Error inserting user:", error);
 
-    // if insertion failsm reirect back to the register page
+    //if insertion failsm reirect back to the register page
     res.render('pages/register', 
     {
       message: 'An error occurred during registration. Please try again.',
@@ -403,16 +403,16 @@ app.get('/profile', auth, async (req, res) => {
 
 // Home page
 app.get('/home', (req, res) => {
-  // display username if logged in, display guest if not
+  //display username if logged in, display guest if not
   const username = req.session?.user?.username || 'Guest';
   res.render('pages/home', {username})
 });
 
-// Discover page
+//discover page
 app.get('/discover', async(req, res) => {
   try
   {
-    // fetching a list of recipes
+    //fetching a list of recipes
     const searchResponse = await axios({
       url: `https://api.spoonacular.com/recipes/complexSearch`,
       method: 'GET',
@@ -423,16 +423,16 @@ app.get('/discover', async(req, res) => {
       params: 
       {
         apiKey: process.env.API_KEY,
-        diet: req.session.user.dietaryPref, // example query
+        diet: req.session.user.dietaryPref, //example query
         intolerances: req.session.user.intolerances,
-        number: 50, // number of recipes to fetch
+        number: 50, //number of recipes to fetch
       },
     });
 
-    // extract recipe IDs from the search results
+    //extract recipe IDs from the search results
     const recipeIds = searchResponse.data.results.map(recipe => recipe.id);
 
-    // fetching detailed information for each recipe using its ID
+    //fetching detailed information for each recipe using its ID
     const detailedRecipes = await Promise.all(
       recipeIds.map(async id => {
         try
@@ -449,22 +449,22 @@ app.get('/discover', async(req, res) => {
               apiKey: process.env.API_KEY,
             },
           });
-          return detailedResponse.data; // return the full recipe details
+          return detailedResponse.data; //return the full recipe details
         }
         catch(error)
         {
           console.error('Error fetching detals for recipe ID ${id}:', error.message);
-          return null; // handle errors gracefully be skipping the recipe
+          return null; //handle errors gracefully be skipping the recipe
         }
       })
     );
 
-    // filter out null responses
+    //filter out null responses
     const results = detailedRecipes.filter(recipe => recipe != null).map(recipe => ({
       name: recipe.title,
       description: recipe.summary || 'No description available',
       prepTime: recipe.preparationMinutes || '0',
-      // TODO: no difficulty in API
+      //TODO: no difficulty in API
       cookTime: recipe.cookingMinutes || '0',
       servings: recipe.servings || 'N/A',
       ingredients: recipe.extendedIngredients.map(ing => ing.original) || [], // list of ingredients
@@ -477,7 +477,7 @@ app.get('/discover', async(req, res) => {
       recipeURL: recipe.spoonacularSourceUrl
     }));
 
-    // render page with detailed recipes
+    //render page with detailed recipes
     res.render('pages/discover', { results });
   }
   catch(error)
@@ -490,132 +490,115 @@ app.get('/discover', async(req, res) => {
   }
 });
 
-// Friends Page
-app.get('/friends', (req, res) => {
-  const currentUser = req.session.user.username; 
+//Friends
+app.get('/friends', auth, async (req, res) => {
+  try {
+    const userId = req.session.user.username;
 
-  const userFriends = `
-    SELECT u.username, u.first_name, u.last_name
-    FROM users u
-    JOIN friends f ON (f.user_id = u.username OR f.friend_id = u.username)
-    WHERE (f.user_id = $1 OR f.friend_id = $1) AND u.username != $1
-  `;
+    const query = `
+      SELECT DISTINCT
+        u.username, 
+        u.first_name, 
+        u.last_name, 
+        COALESCE(p.bio, 'No bio available') AS bio,
+        COALESCE(p.profile_pic, 'No Pic') AS profile_pic,
+        COALESCE(p.dietary_preferences, ARRAY[]::TEXT[]) AS dietary_preferences,
+        COALESCE(p.intolerances, ARRAY[]::TEXT[]) AS intolerances
+      FROM friends f
+      INNER JOIN users u ON f.friend_id = u.username
+      LEFT JOIN profiles p ON u.username = p.user_id
+      WHERE f.user_id = $1
+    `;
 
-  db.query(userFriends, [currentUser])
-    .then(result => {
-      const message = req.session.message;  
-      delete req.session.message;  
+    const friends = await db.any(query, [userId]);
 
-      res.render('pages/friends', { friends: result, message });
-    })
-    .catch(err => {
-      console.error('Cannot display friends:', err);
-      res.render('pages/friends', { message: 'Cannot display friends.' });
+    res.render('pages/friends', { friends });
+  } catch (error) {
+    console.error('Error fetching friends:', error);
+    res.render('pages/friends', {
+      message: 'An error occurred while fetching your friends.',
+      error: true,
     });
+  }
 });
 
 
-//post friends 
-app.post('/friends', (req, res) => {
-  const { friendUsername } = req.body; 
-  const currentUser = req.session.user.username;
+app.post('/friends', auth, async (req, res) => {
+  try {
+    const userId = req.session.user.username;
+    const { friendUsername } = req.body;
 
-  const searchFriends = `
-    SELECT username, first_name, last_name
-    FROM users
-    WHERE username = $1
-  `;
-  
-  db.query(searchFriends, [friendUsername])
-    .then(result => {
-      if (!result[0]) {
-        req.session.message = 'Cannot find user';
-        return res.redirect('/friends');
-      }
+    // Check if the friend exists
+    const friendExistsQuery = `SELECT username FROM users WHERE username = $1`;
+    const friendExists = await db.oneOrNone(friendExistsQuery, [friendUsername]);
 
-      const alreadyExist = `
-        SELECT 1
-        FROM friends
-        WHERE (user_id = $1 AND friend_id = $2) OR (user_id = $2 AND friend_id = $1)
-      `;
+    if (!friendExists) {
+      return res.render('pages/friends', { 
+        message: 'User not found. Please check the username and try again.', 
+        error: true 
+      });
+    }
 
-      db.query(alreadyExist, [currentUser, friendUsername])
-        .then(existingFriend => {
-          if (existingFriend[0]) {
-            req.session.message = 'You are already friends';
-            return res.redirect('/friends');
-          }
+    // Add the friendship relation
+    const addFriendQuery = `
+      INSERT INTO friends (user_id, friend_id)
+      VALUES ($1, $2)
+      ON CONFLICT DO NOTHING
+    `;
+    await db.none(addFriendQuery, [userId, friendUsername]);
 
-          const insertFriend = `
-            INSERT INTO friends (user_id, friend_id)
-            VALUES ($1, $2), ($2, $1)
-          `;
-          
-          db.query(insertFriend, [currentUser, friendUsername])
-            .then(() => {
-              console.log(`Friendship inserted: ${currentUser} and ${friendUsername}`);
-              res.redirect('/friends');  
-            })
-            .catch(err => {
-              console.error('Error adding friend:', err);
-              req.session.message = 'Error adding friend';
-              return res.redirect('/friends');
-            });
-        })
-        .catch(err => {
-          console.error('Error checking friendship:', err);
-          req.session.message = 'Error checking friendship';
-          return res.redirect('/friends');
-        });
-    })
-    .catch(err => {
-      console.error('Error searching for user:', err);
-      req.session.message = 'Error searching for user';
-      return res.redirect('/friends');
+    // Fetch updated friends list
+    const friendsQuery = `
+      SELECT DISTINCT 
+        u.username, 
+        u.first_name, 
+        u.last_name, 
+        p.bio, 
+        p.profile_pic, 
+        p.dietary_preferences, 
+        p.intolerances
+      FROM friends f
+      INNER JOIN users u ON f.friend_id = u.username
+      LEFT JOIN profiles p ON u.username = p.user_id
+      WHERE f.user_id = $1
+    `;
+    const friends = await db.any(friendsQuery, [userId]);
+
+    res.render('pages/friends', { friends });
+  } catch (error) {
+    console.error('Error adding a friend:', error);
+    res.render('pages/friends', {
+      message: 'An error occurred while adding the friend. Please try again.',
+      error: true,
     });
+  }
 });
 
-app.post('/unfriend', (req, res) => {
-  const { friendUsername } = req.body;
-  const currentUser = req.session.user.username;
-
-  const deleteFriend = `
-    DELETE FROM friends
-    WHERE (user_id = $1 AND friend_id = $2) OR (user_id = $2 AND friend_id = $1)
-  `;
-
-  db.query(deleteFriend, [currentUser, friendUsername])
-    .then(() => {
-      console.log(`Friendship removed between ${currentUser} and ${friendUsername}`);
-      res.redirect('/friends');
-    })
-    .catch(err => {
-      console.error('Error unfriending:', err);
-      req.session.message = 'Error removing friend.';
-      res.redirect('/friends');
-    });
-});
-
-
-
-// My Recipes (only recipes posted by user)
+//My Recipes
 app.get('/myRecipes',auth, async (req, res) => {
   try
   {
     const username = req.session.user.username;
     const recipeQuery = 
     `SELECT 
-      r.recipe_id,
-      r.recipe_name,
-      r.recipe_description,
-      r.recipe_difficulty,
-      r.recipe_prep_time,
-      r.recipe_cook_time,
-      r.recipe_servings,
-      r.recipe_notes,
-      array_agg(DISTINCT i.image_url) AS image_urls,
-      array_agg(ri_instr.instruction_text ORDER BY ri_instr.step_number) AS instructions,
-      array_agg(DISTINCT CONCAT(ing.amount, ' ', ing.unit, ' ', ing.ingredient_name)) AS ingredient_description
+        r.recipe_id,
+        r.recipe_name,
+        r.recipe_description,
+        r.recipe_difficulty,
+        r.recipe_prep_time,
+        r.recipe_cook_time,
+        r.recipe_servings,
+        r.recipe_notes,
+        array_agg(DISTINCT i.image_url) AS image_urls,
+        array_agg(ri_instr.instruction_text ORDER BY ri_instr.step_number) AS instructions,
+        array_agg(
+            DISTINCT 
+            jsonb_build_object(
+                'amount', ri_ing.amount,
+                'unit', ri_ing.unit,
+                'ingredient_name', ri_ing.ingredient_name
+            )
+        ) AS ingredients
     FROM recipes r
     LEFT JOIN (
         SELECT rti.recipe_id, i.image_url
@@ -626,18 +609,39 @@ app.get('/myRecipes',auth, async (req, res) => {
         SELECT ri_instr.recipe_id, ri_instr.instruction_text, ri_instr.step_number
         FROM recipe_instructions ri_instr
     ) ri_instr ON r.recipe_id = ri_instr.recipe_id
-    LEFT JOIN recipe_ingredients ri_ing ON r.recipe_id = ri_ing.recipe_id
-    LEFT JOIN ingredients ing ON ri_ing.ingredient_id = ing.ingredient_id
+    LEFT JOIN (
+        SELECT ri_ing.recipe_id, ri_ing.amount, ri_ing.unit, ing.ingredient_name
+        FROM recipe_ingredients ri_ing
+        JOIN ingredients ing ON ri_ing.ingredient_id = ing.ingredient_id
+    ) ri_ing ON r.recipe_id = ri_ing.recipe_id
     WHERE r.username = $1
     GROUP BY r.recipe_id
     ORDER BY r.recipe_id DESC;
     `;
-    
-    
+    const recipeQuery2 = `SELECT r.recipe_id, r.recipe_name, r.recipe_description, r.recipe_difficulty, 
+    r.recipe_prep_time, r.recipe_cook_time, r.recipe_servings, r.recipe_notes, 
+    array_agg(DISTINCT i.image_url) AS image_urls,
+    `;
+        
+
     const recipes = await db.query(recipeQuery, [username]);
     res.render('pages/myRecipes', {recipes: recipes});
     console.log('Recipes:', recipes);
 
+    /*const username = req.session.user.username; // Ensure this is defined
+    console.log('Fetching recipes for user:', username);
+
+    const recipeQuery = `SELECT * FROM recipes WHERE username = $1;`;
+    const recipesResult = await db.query(recipeQuery, [username]);
+
+    // Log the entire response to ensure the structure is as expected
+    console.log('Recipes Query Result:', recipesResult);
+
+    const recipes = recipesResult.rows;
+    res.render('pages/myRecipes', {
+        recipes: recipes,
+        message: req.query.success ? 'Recipe created successfully!' : null,
+    });*/
   }
   catch(error)
   {
@@ -649,129 +653,50 @@ app.get('/myRecipes',auth, async (req, res) => {
   }
 });
 
-
-// View Recipes (all the recipes posted by each user)
-app.get('/viewRecipes', async (req, res) => {
-  try {
-    const recipeQuery = 
-    `SELECT 
-    r.recipe_id,
-    r.recipe_name,
-    r.recipe_description,
-    r.recipe_difficulty,
-    r.recipe_prep_time,
-    r.recipe_cook_time,
-    r.recipe_servings,
-    r.recipe_notes,
-    array_agg(DISTINCT i.image_url) AS image_urls,
-    array_agg(ri_instr.instruction_text ORDER BY ri_instr.step_number) AS instructions,
-    array_agg(DISTINCT CONCAT(ing.amount, ' ', ing.unit, ' ', ing.ingredient_name)) AS ingredient_description
-FROM recipes r
-LEFT JOIN (
-    SELECT rti.recipe_id, i.image_url
-    FROM recipes_to_images rti
-    JOIN images i ON rti.image_id = i.image_id
-) i ON r.recipe_id = i.recipe_id
-LEFT JOIN (
-    SELECT ri_instr.recipe_id, ri_instr.instruction_text, ri_instr.step_number
-    FROM recipe_instructions ri_instr
-) ri_instr ON r.recipe_id = ri_instr.recipe_id
-LEFT JOIN recipe_ingredients ri_ing ON r.recipe_id = ri_ing.recipe_id
-LEFT JOIN ingredients ing ON ri_ing.ingredient_id = ing.ingredient_id
-GROUP BY r.recipe_id
-ORDER BY r.recipe_id DESC;
-    `;
-    
-    
-    const recipes = await db.query(recipeQuery);
-    res.render('pages/viewRecipes', {recipes: recipes});
-    console.log('Recipes:', recipes);
-
-  }
-  catch(error)
-  {
-    console.error('Error fetching recipes: ', error);
-    res.status(500).render('pages/viewRecipes', {
-      error: true,
-      message: 'Error fetching recipes, lease try again later.',
-    });
-  }
-});
-
- 
-
-
-
-
-// app.get('/searchRecipes', async (req, res) => {
-//   const searchQuery = req.query.query;
-
-//   try {
-//     // Query the database for recipes based on the search query
-//     const result = await db.query(
-//       `SELECT * FROM recipes WHERE recipe_name ILIKE $1 OR recipe_description ILIKE $1`,
-//       [`%${searchQuery}%`]
-//     );
-
-//     const recipes = result.rows;
-
-//     if (recipes.length > 0) {
-//       // Render the search results page with the recipes found
-//       res.render('searchResults', { recipes });
-//     } else {
-//       // If no recipes found, show a message
-//       res.render('searchResults', { recipes: [], message: 'No recipes found matching your query.' });
-//     }
-//   } catch (err) {
-//     console.error('Error searching recipes:', err);
-//     res.status(500).send('An error occurred while searching for recipes.');
-//   }
+// //Saved 
+// app.get('/saved', (req, res) => {
+//   res.render('pages/saved');
 // });
 
-
-
-// //searchResults
-// app.get('/search', (req, res) => {
-//   res.render('pages/searchResults')
-// });
 //searchResults
 app.get('/search', (req, res) => {
   res.render('pages/searchResults')
 });
 
 
-app.get('/api/search', async (req, res) => {
-  const query = req.query.query;
-  
-  console.log('query:', query);
-  if (!query) 
-  {
-    return res.status(400).json({ error: 'Query parameter is required' });
-  }
 
-  try 
-  {
-    const searchResponse = await axios({
-      url: `https://api.spoonacular.com/recipes/complexSearch`,
-      method: 'GET',
-      headers: 
-      {
-        'Accept-Encoding': 'application/json',
-      },
-      params: 
-      {
-        apiKey: process.env.API_KEY,
-        query: query,
-      },
-    });
-    res.json(response.data);
-  } 
-  catch (error) 
-  {
-    console.error(error);
-    res.status(500).json({ error: 'Failed to fetch data from Spoonacular API' });
-  }
-});
+// app.get('/search', async (req, res) => {
+//   try {
+//     const query = req.query.query; // Get the search term from the query string
+
+//     if (!query) {
+//       return res.render('pages/searchResults', {
+//         recipes: [],
+//         message: 'Please enter a search term.',
+//       });
+//     }
+
+//     // Query the database for recipes that match the search term
+//     const searchQuery = `
+//       SELECT * FROM recipes 
+//       WHERE recipe_name ILIKE $1 OR recipe_description ILIKE $1
+//     `;
+//     const values = [`%${query}%`];
+//     const result = await db.query(searchQuery, values);
+
+//     res.render('pages/searchResults', {
+//       recipes: result.rows,
+//       message: result.rows.length ? null : 'No recipes found.',
+//     });
+//   } catch (error) {
+//     console.error('Error during search:', error);
+//     res.render('pages/searchResults', {
+//       recipes: [],
+//       message: 'Error fetching search results. Please try again later.',
+//     });
+//   }
+// });
+
 
 
 // Get Create Recipe
@@ -779,7 +704,7 @@ app.get('/createRecipe', (req, res) => {
   res.render('pages/createRecipe');
 });
 
-// Post Create Recipe 
+//Post Create Recipe 
 app.post('/createRecipe', auth, uploadRecipeImages.array('recipe_image', 5), async (req, res, next) => {
   try 
   {
@@ -800,7 +725,6 @@ app.post('/createRecipe', auth, uploadRecipeImages.array('recipe_image', 5), asy
     if (amounts && units && ingredientNames) {
       for (let i = 0; i < amounts.length; i++) {
         ingredients.push({
-          id: i,
           amount: amounts[i],
           unit: units[i],
           ingredient_name: ingredientNames[i],
@@ -848,24 +772,12 @@ app.post('/createRecipe', auth, uploadRecipeImages.array('recipe_image', 5), asy
       for (const ingredient of ingredients) 
       {
         const ingredientQuery = `
-          INSERT INTO ingredients (amount, unit, ingredient_name)
-          VALUES ($1, $2, $3) 
-          RETURNING ingredient_id; 
+          INSERT INTO ingredients (recipe_id, amount, unit, ingredient_name)
+          VALUES ($1, $2, $3, $4);
         `;
-        const ingredientQueryResult =  await db.query(ingredientQuery, [ingredient.amount, ingredient.unit, ingredient.ingredient_name]);
-        
-        const recipeIngredientQuery = `INSERT INTO recipe_ingredients (recipe_id, ingredient_id)
-        VALUES ($1, $2);`;
-        const ingredientId = ingredientQueryResult[0]?.ingredient_id;
-        if (!ingredientId) {
-          throw new Error('Failed to retrieve ingredient ID');
-        }
-        await db.query(recipeIngredientQuery, [newRecipeId, ingredientId]);
+        await db.query(ingredientQuery, [newRecipeId, ingredient.amount, ingredient.unit, ingredient.ingredient_name]);
       }
     }
-
-    
-
 
     //insert instruction(s)
     if (instructions && Array.isArray(instructions)) {
