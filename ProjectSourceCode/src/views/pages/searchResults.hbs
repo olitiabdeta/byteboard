@@ -1,4 +1,4 @@
- <h1 class="text-center">Search</h1> 
+ {{!-- <h1 class="text-center">Search</h1>  --}}
 <!--<div classs="topnav">
     <style>
         input {
@@ -14,3 +14,110 @@
         <button type="submit"></button>
     </form>
 </div> -->
+
+
+{{!-- <h1 class="text-center">Search</h1>
+
+<div class="search-container">
+  <form action="/searchRecipes" method="GET">
+    <input 
+      type="text" 
+      name="query" 
+      placeholder="Search a recipe" 
+      class="search-input" 
+      required 
+    />
+    <button type="submit" class="search-button">Search</button>
+  </form>
+</div> --}}
+
+
+<h1 class="text-center">Search Recipes</h1>
+
+<!-- Search form -->
+<div class="search-container">
+  <form action="/searchRecipes" method="GET">
+    <input 
+      type="text" 
+      name="query" 
+      placeholder="Search for a recipe" 
+      class="search-input" 
+      required 
+    />
+    <button type="submit" class="search-button">Search</button>
+  </form>
+</div>
+
+{{#if recipes.length}}
+  <h2 class="text-center">Search Results</h2>
+  <div class="recipe-grid">
+    {{#each recipes}}
+      <div class="recipe-card">
+        <h5 class="card-title"><strong>{{this.recipe_name}}</strong></h5>
+        <p>{{this.recipe_description}}</p>
+        <p><strong>Difficulty:</strong> {{this.recipe_difficulty}}</p>
+        <p><strong>Prep Time:</strong> {{this.recipe_prep_time}} minutes</p>
+        <p><strong>Cook Time:</strong> {{this.recipe_cook_time}} minutes</p>
+        <p><strong>Servings:</strong> {{this.recipe_servings}}</p>
+        <p><strong>Notes:</strong> {{this.recipe_notes}}</p>
+
+        <h3>Ingredients</h3>
+        <ul>
+          {{#each this.ingredient_description}}
+            <li>{{this}}</li>
+          {{/each}}
+        </ul>
+
+        <h3>Instructions</h3>
+        <ol>
+          {{#each this.instructions}}
+            <li>{{this}}</li>
+          {{/each}}
+        </ol>
+
+        <div class="image-container">
+          {{#each this.image_urls}}
+            <img src="{{this}}" alt="Recipe Image" class="recipe-image" />
+          {{/each}}
+        </div>
+      </div>
+    {{/each}}
+  </div>
+{{else}}
+  <p>{{message}}</p>
+{{/if}}
+
+
+<style>
+    /* Search container styling */
+.search-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+/* Input field styling */
+.search-input {
+  padding: 10px;
+  width: 300px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+/* Button styling */
+.search-button {
+  padding: 10px 20px;
+  background-color: #FF6F61;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.search-button:hover {
+  background-color: #FF8C71;
+}
+
+</style>
