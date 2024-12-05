@@ -1,5 +1,7 @@
 <h2 class="text-center" style="font-family: 'Poppins', sans-serif;">Friends</h2>
-
+{{#if message}}
+    <div class="alert alert-danger">{{message}}</div>
+  {{/if}}
 {{#if friends.length}}
   <div class="friends-list mt-4">
     {{#each friends}}
@@ -14,6 +16,7 @@
         <div class="friend-card-body">
           <h5 class="friend-card-title">{{first_name}} {{last_name}}</h5>
           <p class="friend-card-username">@{{username}}</p>
+          
           {{#if bio}}
             <p class="friend-card-bio"><strong>Bio:</strong> {{bio}}</p>
           {{/if}}
@@ -30,7 +33,7 @@
                 {{this}}{{#unless @last}}, {{/unless}}
               {{/each}}
             </p>
-          {{/if}}
+          {{/if}} 
         </div>
       </div>
     {{/each}}
