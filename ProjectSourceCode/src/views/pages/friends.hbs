@@ -1,51 +1,43 @@
 <h2 class="text-center" style="font-family: 'Poppins', sans-serif;">Friends</h2>
 
-<!-- Display error or success messages -->
-{{#if error}}
-  <div class="alert alert-danger">{{message}}</div>
-{{/if}}
-{{#if success}}
-  <div class="alert alert-success">{{message}}</div>
-{{/if}}
-
-<!-- Display Friends List -->
-<div class="card mt-4" style="width: 100%; max-width: 600px;">
-  <div class="card-body">
-    <h4 class="card-title">Your Friends</h4>
-    <ul class="list-group">
-      {{#each friends}}
-        <li class="list-group-item">
-          <div>
-            {{#if profile_pic}}
-              <img src="{{profile_pic}}" alt="Profile Picture" style="max-width: 100px; border-radius: 50%;">
-            {{else}}
-              <span>No Pic</span>
-            {{/if}}
-          </div>
-          <div>
-            <strong>{{first_name}} {{last_name}}</strong>
-            <p><strong>Username:</strong> {{username}}</p>
-            <p><strong>Bio:</strong> {{bio}}</p>
-            {{#if dietary_preferences.length}}
-              <p><strong>Dietary Preferences:</strong> 
-                {{#each dietary_preferences}}
-                  {{this}}{{#unless @last}}, {{/unless}}
-                {{/each}}
-              </p>
-            {{/if}}
-            {{#if intolerances.length}}
-              <p><strong>Intolerances:</strong> 
-                {{#each intolerances}}
-                  {{this}}{{#unless @last}}, {{/unless}}
-                {{/each}}
-              </p>
-            {{/if}}
-          </div>
-        </li>
-      {{/each}}
-    </ul>
+{{#if friends.length}}
+  <div class="friends-list mt-4">
+    {{#each friends}}
+      <div class="friend-card">
+        <div class="friend-card-header">
+          {{#if profile_pic}}
+            <img src="{{profile_pic}}" alt="{{username}}'s Profile Picture" class="friend-card-img">
+          {{else}}
+            <div class="friend-card-placeholder">No Image</div>
+          {{/if}}
+        </div>
+        <div class="friend-card-body">
+          <h5 class="friend-card-title">{{first_name}} {{last_name}}</h5>
+          <p class="friend-card-username">@{{username}}</p>
+          {{#if bio}}
+            <p class="friend-card-bio"><strong>Bio:</strong> {{bio}}</p>
+          {{/if}}
+          {{#if dietary_preferences.length}}
+            <p class="friend-card-diet"><strong>Dietary Preferences:</strong> 
+              {{#each dietary_preferences}}
+                {{this}}{{#unless @last}}, {{/unless}}
+              {{/each}}
+            </p>
+          {{/if}}
+          {{#if intolerances.length}}
+            <p class="friend-card-intolerances"><strong>Intolerances:</strong> 
+              {{#each intolerances}}
+                {{this}}{{#unless @last}}, {{/unless}}
+              {{/each}}
+            </p>
+          {{/if}}
+        </div>
+      </div>
+    {{/each}}
   </div>
-</div>
+{{else}}
+  <div class="alert alert-info">You have no friends added yet. Add some below!</div>
+{{/if}}
 
 <!-- Add Friend Form -->
 <div class="card mt-4" style="width: 100%; max-width: 600px;">

@@ -528,37 +528,18 @@ app.post('/friends', auth, async (req, res) => {
     const userId = req.session.user.username;
     const { friendUsername } = req.body;
 
-    // Fetch the current friends list
-    const friendsQuery = `
-      SELECT DISTINCT
-        u.username, 
-        u.first_name, 
-        u.last_name, 
-        COALESCE(p.bio, 'No bio available') AS bio,
-        COALESCE(p.profile_pic, 'No Pic') AS profile_pic,
-        COALESCE(p.dietary_preferences, ARRAY[]::TEXT[]) AS dietary_preferences,
-        COALESCE(p.intolerances, ARRAY[]::TEXT[]) AS intolerances
-      FROM friends f
-      INNER JOIN users u ON f.friend_id = u.username
-      LEFT JOIN profiles p ON u.username = p.user_id
-      WHERE f.user_id = $1
-    `;
-    const friends = await db.any(friendsQuery, [userId]);
-
-    // Check if the username exists
+    // Check if the friend exists
     const friendExistsQuery = `SELECT username FROM users WHERE username = $1`;
     const friendExists = await db.oneOrNone(friendExistsQuery, [friendUsername]);
 
     if (!friendExists) {
-      // Render the page with the current friends list and an error message
-      return res.render('pages/friends', {
-        friends,
-        message: 'User not found. Please check the username and try again.',
-        error: true,
+      return res.render('pages/friends', { 
+        message: 'User not found. Please check the username and try again.', 
+        error: true 
       });
     }
 
-    // Add the friend relationship
+    // Add the friendship relation
     const addFriendQuery = `
       INSERT INTO friends (user_id, friend_id)
       VALUES ($1, $2)
@@ -566,32 +547,27 @@ app.post('/friends', auth, async (req, res) => {
     `;
     await db.none(addFriendQuery, [userId, friendUsername]);
 
-    // Fetch the updated friends list after adding the friend
-    const updatedFriends = await db.any(friendsQuery, [userId]);
-
-    res.render('pages/friends', { friends: updatedFriends });
-  } catch (error) {
-    console.error('Error adding a friend:', error);
-
-    // Fetch the friends list to ensure it is displayed even if there's an error
+    // Fetch updated friends list
     const friendsQuery = `
-      SELECT DISTINCT
+      SELECT DISTINCT 
         u.username, 
         u.first_name, 
         u.last_name, 
-        COALESCE(p.bio, 'No bio available') AS bio,
-        COALESCE(p.profile_pic, 'No Pic') AS profile_pic,
-        COALESCE(p.dietary_preferences, ARRAY[]::TEXT[]) AS dietary_preferences,
-        COALESCE(p.intolerances, ARRAY[]::TEXT[]) AS intolerances
+        p.bio, 
+        p.profile_pic, 
+        p.dietary_preferences, 
+        p.intolerances
       FROM friends f
       INNER JOIN users u ON f.friend_id = u.username
       LEFT JOIN profiles p ON u.username = p.user_id
       WHERE f.user_id = $1
     `;
-    const friends = await db.any(friendsQuery, [req.session.user.username]);
+    const friends = await db.any(friendsQuery, [userId]);
 
+    res.render('pages/friends', { friends });
+  } catch (error) {
+    console.error('Error adding a friend:', error);
     res.render('pages/friends', {
-      friends,
       message: 'An error occurred while adding the friend. Please try again.',
       error: true,
     });
