@@ -1,5 +1,5 @@
 <div class="container mt-5">
-    <h1 class="text-center">Recipe Search</h1>
+    <h2 class="text-center">Recipe Search</h2>
     <form id="search-form" class="mb-4">
       <div class="form-group">
         <input type="text" class="form-control" id="search-query" placeholder="Enter recipe name or ingredients" required>
@@ -156,7 +156,7 @@
 
     function searchRecipes(query) {
       $.ajax({
-        url: `/api/complexSearch?query=${query}`,  // Call the backend API route
+        url: `/api/search?query=${query}`,  // Call the backend API route
         method: 'GET',
         success: function(data) {
           displayRecipes(data.results);

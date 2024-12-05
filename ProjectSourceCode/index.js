@@ -737,7 +737,7 @@ app.get('/api/search', async (req, res) => {
         query: query,
       },
     });
-    res.json(response.data);
+    res.json(searchResponse.data);
   } 
   catch (error) 
   {
