@@ -574,31 +574,24 @@ app.post('/friends', auth, async (req, res) => {
   }
 });
 
-//My Recipes
+// My Recipes (only recipes posted by user)
 app.get('/myRecipes',auth, async (req, res) => {
   try
   {
     const username = req.session.user.username;
     const recipeQuery = 
     `SELECT 
-        r.recipe_id,
-        r.recipe_name,
-        r.recipe_description,
-        r.recipe_difficulty,
-        r.recipe_prep_time,
-        r.recipe_cook_time,
-        r.recipe_servings,
-        r.recipe_notes,
-        array_agg(DISTINCT i.image_url) AS image_urls,
-        array_agg(ri_instr.instruction_text ORDER BY ri_instr.step_number) AS instructions,
-        array_agg(
-            DISTINCT 
-            jsonb_build_object(
-                'amount', ri_ing.amount,
-                'unit', ri_ing.unit,
-                'ingredient_name', ri_ing.ingredient_name
-            )
-        ) AS ingredients
+      r.recipe_id,
+      r.recipe_name,
+      r.recipe_description,
+      r.recipe_difficulty,
+      r.recipe_prep_time,
+      r.recipe_cook_time,
+      r.recipe_servings,
+      r.recipe_notes,
+      array_agg(DISTINCT i.image_url) AS image_urls,
+      array_agg(ri_instr.instruction_text ORDER BY ri_instr.step_number) AS instructions,
+      array_agg(DISTINCT CONCAT(ing.amount, ' ', ing.unit, ' ', ing.ingredient_name)) AS ingredient_description
     FROM recipes r
     LEFT JOIN (
         SELECT rti.recipe_id, i.image_url
@@ -609,39 +602,18 @@ app.get('/myRecipes',auth, async (req, res) => {
         SELECT ri_instr.recipe_id, ri_instr.instruction_text, ri_instr.step_number
         FROM recipe_instructions ri_instr
     ) ri_instr ON r.recipe_id = ri_instr.recipe_id
-    LEFT JOIN (
-        SELECT ri_ing.recipe_id, ri_ing.amount, ri_ing.unit, ing.ingredient_name
-        FROM recipe_ingredients ri_ing
-        JOIN ingredients ing ON ri_ing.ingredient_id = ing.ingredient_id
-    ) ri_ing ON r.recipe_id = ri_ing.recipe_id
+    LEFT JOIN recipe_ingredients ri_ing ON r.recipe_id = ri_ing.recipe_id
+    LEFT JOIN ingredients ing ON ri_ing.ingredient_id = ing.ingredient_id
     WHERE r.username = $1
     GROUP BY r.recipe_id
     ORDER BY r.recipe_id DESC;
     `;
-    const recipeQuery2 = `SELECT r.recipe_id, r.recipe_name, r.recipe_description, r.recipe_difficulty, 
-    r.recipe_prep_time, r.recipe_cook_time, r.recipe_servings, r.recipe_notes, 
-    array_agg(DISTINCT i.image_url) AS image_urls,
-    `;
-        
+
 
     const recipes = await db.query(recipeQuery, [username]);
     res.render('pages/myRecipes', {recipes: recipes});
     console.log('Recipes:', recipes);
 
-    /*const username = req.session.user.username; // Ensure this is defined
-    console.log('Fetching recipes for user:', username);
-
-    const recipeQuery = `SELECT * FROM recipes WHERE username = $1;`;
-    const recipesResult = await db.query(recipeQuery, [username]);
-
-    // Log the entire response to ensure the structure is as expected
-    console.log('Recipes Query Result:', recipesResult);
-
-    const recipes = recipesResult.rows;
-    res.render('pages/myRecipes', {
-        recipes: recipes,
-        message: req.query.success ? 'Recipe created successfully!' : null,
-    });*/
   }
   catch(error)
   {
@@ -653,14 +625,97 @@ app.get('/myRecipes',auth, async (req, res) => {
   }
 });
 
-// //Saved 
-// app.get('/saved', (req, res) => {
-//   res.render('pages/saved');
-// });
 
+// View Recipes (all the recipes posted by each user)
+app.get('/viewRecipes', async (req, res) => {
+  try {
+    const recipeQuery = 
+    `SELECT 
+    r.recipe_id,
+    r.recipe_name,
+    r.recipe_description,
+    r.recipe_difficulty,
+    r.recipe_prep_time,
+    r.recipe_cook_time,
+    r.recipe_servings,
+    r.recipe_notes,
+    array_agg(DISTINCT i.image_url) AS image_urls,
+    array_agg(ri_instr.instruction_text ORDER BY ri_instr.step_number) AS instructions,
+    array_agg(DISTINCT CONCAT(ing.amount, ' ', ing.unit, ' ', ing.ingredient_name)) AS ingredient_description
+FROM recipes r
+LEFT JOIN (
+    SELECT rti.recipe_id, i.image_url
+    FROM recipes_to_images rti
+    JOIN images i ON rti.image_id = i.image_id
+) i ON r.recipe_id = i.recipe_id
+LEFT JOIN (
+    SELECT ri_instr.recipe_id, ri_instr.instruction_text, ri_instr.step_number
+    FROM recipe_instructions ri_instr
+) ri_instr ON r.recipe_id = ri_instr.recipe_id
+LEFT JOIN recipe_ingredients ri_ing ON r.recipe_id = ri_ing.recipe_id
+LEFT JOIN ingredients ing ON ri_ing.ingredient_id = ing.ingredient_id
+GROUP BY r.recipe_id
+ORDER BY r.recipe_id DESC;
+    `;
+
+
+    const recipes = await db.query(recipeQuery);
+    res.render('pages/viewRecipes', {recipes: recipes});
+    console.log('Recipes:', recipes);
+
+  }
+  catch(error)
+  {
+    console.error('Error fetching recipes: ', error);
+    res.status(500).render('pages/viewRecipes', {
+      error: true,
+      message: 'Error fetching recipes, lease try again later.',
+    });
+  }
+});
+
+
+// //searchResults
+// app.get('/search', (req, res) => {
+//   res.render('pages/searchResults')
+// });
 //searchResults
 app.get('/search', (req, res) => {
   res.render('pages/searchResults')
+});
+
+
+app.get('/api/search', async (req, res) => {
+  const query = req.query.query;
+
+  console.log('query:', query);
+  if (!query) 
+  {
+    return res.status(400).json({ error: 'Query parameter is required' });
+  }
+
+  try 
+  {
+    const searchResponse = await axios({
+      url: `https://api.spoonacular.com/recipes/complexSearch`,
+      method: 'GET',
+      headers: 
+      {
+        'Accept-Encoding': 'application/json',
+      },
+      params: 
+      {
+        apiKey: process.env.API_KEY,
+        query: query,
+      },
+    });
+    res.json(response.data);
+  } 
+  catch (error) 
+  {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to fetch data from Spoonacular API' });
+  }
 });
 
 
@@ -704,7 +759,7 @@ app.get('/createRecipe', (req, res) => {
   res.render('pages/createRecipe');
 });
 
-//Post Create Recipe 
+// Post Create Recipe 
 app.post('/createRecipe', auth, uploadRecipeImages.array('recipe_image', 5), async (req, res, next) => {
   try 
   {
@@ -721,10 +776,11 @@ app.post('/createRecipe', auth, uploadRecipeImages.array('recipe_image', 5), asy
     const units = req.body.unit;
     const ingredientNames = req.body.ingredient;
     const instructions = req.body.instructions;
-    
+
     if (amounts && units && ingredientNames) {
       for (let i = 0; i < amounts.length; i++) {
         ingredients.push({
+          id: i,
           amount: amounts[i],
           unit: units[i],
           ingredient_name: ingredientNames[i],
@@ -772,12 +828,24 @@ app.post('/createRecipe', auth, uploadRecipeImages.array('recipe_image', 5), asy
       for (const ingredient of ingredients) 
       {
         const ingredientQuery = `
-          INSERT INTO ingredients (recipe_id, amount, unit, ingredient_name)
-          VALUES ($1, $2, $3, $4);
+          INSERT INTO ingredients (amount, unit, ingredient_name)
+          VALUES ($1, $2, $3) 
+          RETURNING ingredient_id; 
         `;
-        await db.query(ingredientQuery, [newRecipeId, ingredient.amount, ingredient.unit, ingredient.ingredient_name]);
+        const ingredientQueryResult =  await db.query(ingredientQuery, [ingredient.amount, ingredient.unit, ingredient.ingredient_name]);
+
+        const recipeIngredientQuery = `INSERT INTO recipe_ingredients (recipe_id, ingredient_id)
+        VALUES ($1, $2);`;
+        const ingredientId = ingredientQueryResult[0]?.ingredient_id;
+        if (!ingredientId) {
+          throw new Error('Failed to retrieve ingredient ID');
+        }
+        await db.query(recipeIngredientQuery, [newRecipeId, ingredientId]);
       }
     }
+
+
+
 
     //insert instruction(s)
     if (instructions && Array.isArray(instructions)) {
@@ -845,10 +913,8 @@ app.post('/createRecipe', auth, uploadRecipeImages.array('recipe_image', 5), asy
       });
     }
   }
-  
+
 });
-
-
 
 
 
