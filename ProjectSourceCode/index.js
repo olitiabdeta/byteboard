@@ -109,6 +109,8 @@ app.use((req, res, next) => {
 
 //GET login page 
 app.get('/login', (req, res) => {
+  const message = req.session.message;  
+  delete req.session.message;
   res.render('pages/login');
 });
 
@@ -148,8 +150,11 @@ app.post('/login', async (req,res) =>{
   }
   catch(error)
   {
-    console.error("Login error:", error);
-    return res.status(500).render('pages/login', { message: "An error occurred during login. Please try again.", error: true });
+    // console.error("Login error:", error);
+    // return res.status(500).render('pages/login', { message: "An error occurred during login. Please try again.", error: true });
+    console.error('Incorrect username or password.', error);
+    req.session.message = 'Incorrect username or password.';
+    return res.redirect('/login');
   }
 });
 
