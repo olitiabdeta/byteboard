@@ -13,14 +13,14 @@
         <p><strong>Servings:</strong> {{this.recipe_servings}}</p>
         <p><strong>Notes:</strong> {{this.recipe_notes}}</p>
 
-        <h3>Ingredients</h3>
+        <p><strong>Ingredients:</strong></p>
         <ul>
           {{#each this.ingredient_description}}
             <li>{{this}}</li>
           {{/each}}
         </ul>
 
-        <h3>Instructions</h3>
+        <p><strong>Instructions:</strong></p>
         <ol>
           {{#each this.instructions}}
             <li>{{this}}</li>

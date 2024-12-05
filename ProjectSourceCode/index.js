@@ -598,10 +598,7 @@ app.get('/myRecipes',auth, async (req, res) => {
         FROM recipes_to_images rti
         JOIN images i ON rti.image_id = i.image_id
     ) i ON r.recipe_id = i.recipe_id
-    LEFT JOIN (
-        SELECT ri_instr.recipe_id, ri_instr.instruction_text, ri_instr.step_number
-        FROM recipe_instructions ri_instr
-    ) ri_instr ON r.recipe_id = ri_instr.recipe_id
+    LEFT JOIN recipe_instructions ri_instr ON r.recipe_id = ri_instr.recipe_id
     LEFT JOIN recipe_ingredients ri_ing ON r.recipe_id = ri_ing.recipe_id
     LEFT JOIN ingredients ing ON ri_ing.ingredient_id = ing.ingredient_id
     WHERE r.username = $1
@@ -845,6 +842,8 @@ app.post('/createRecipe', auth, uploadRecipeImages.array('recipe_image', 5), asy
 
     //insert instruction(s)
     if (instructions && Array.isArray(instructions)) {
+      const uniqueInstructions = [...new Set(instructions)];
+      console.log('Unique Instructions:', uniqueInstructions);
       let stepNumber = 1; // Instructions should have an order
       for (const instruction of instructions) {
         const instructionQuery = `
@@ -854,6 +853,7 @@ app.post('/createRecipe', auth, uploadRecipeImages.array('recipe_image', 5), asy
         await db.query(instructionQuery, [newRecipeId, stepNumber, instruction]);
         stepNumber++;
       }
+      
     }
 
     // Insert images into the 'images' table and associate them with the new recipe
@@ -909,9 +909,8 @@ app.post('/createRecipe', auth, uploadRecipeImages.array('recipe_image', 5), asy
       });
     }
   }
-
+  
 });
-
 
 // Logout route
 app.get('/logout', (req, res) => {
