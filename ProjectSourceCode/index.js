@@ -493,6 +493,8 @@ app.get('/discover', async(req, res) => {
 //Friends
 app.get('/friends', auth, async (req, res) => {
   try {
+    const message = req.session.message;  
+    delete req.session.message;  
     const userId = req.session.user.username;
 
     const query = `
@@ -500,10 +502,10 @@ app.get('/friends', auth, async (req, res) => {
         u.username, 
         u.first_name, 
         u.last_name, 
-        COALESCE(p.bio, 'No bio available') AS bio,
-        COALESCE(p.profile_pic, 'No Pic') AS profile_pic,
-        COALESCE(p.dietary_preferences, ARRAY[]::TEXT[]) AS dietary_preferences,
-        COALESCE(p.intolerances, ARRAY[]::TEXT[]) AS intolerances
+       p.profile_pic,
+       p.bio,
+  p.dietary_preferences,
+  p.intolerances
       FROM friends f
       INNER JOIN users u ON f.friend_id = u.username
       LEFT JOIN profiles p ON u.username = p.user_id
@@ -512,13 +514,11 @@ app.get('/friends', auth, async (req, res) => {
 
     const friends = await db.any(query, [userId]);
 
-    res.render('pages/friends', { friends });
+    res.render('pages/friends', { friends,message });
   } catch (error) {
     console.error('Error fetching friends:', error);
-    res.render('pages/friends', {
-      message: 'An error occurred while fetching your friends.',
-      error: true,
-    });
+    req.session.message = 'Error fetching friends';
+   return res.redirect('/friends')
   }
 });
 
@@ -533,10 +533,8 @@ app.post('/friends', auth, async (req, res) => {
     const friendExists = await db.oneOrNone(friendExistsQuery, [friendUsername]);
 
     if (!friendExists) {
-      return res.render('pages/friends', { 
-        message: 'User not found. Please check the username and try again.', 
-        error: true 
-      });
+      req.session.message = 'Cannot find user';
+      return res.redirect('/friends')
     }
 
     // Add the friendship relation
@@ -553,10 +551,10 @@ app.post('/friends', auth, async (req, res) => {
         u.username, 
         u.first_name, 
         u.last_name, 
-        p.bio, 
-        p.profile_pic, 
-        p.dietary_preferences, 
-        p.intolerances
+        p.profile_pic,
+        p.bio,
+  p.dietary_preferences,
+  p.intolerances
       FROM friends f
       INNER JOIN users u ON f.friend_id = u.username
       LEFT JOIN profiles p ON u.username = p.user_id
@@ -564,13 +562,11 @@ app.post('/friends', auth, async (req, res) => {
     `;
     const friends = await db.any(friendsQuery, [userId]);
 
-    res.render('pages/friends', { friends });
+    res.render('pages/friends', { friends ,message: req.session.message});
   } catch (error) {
     console.error('Error adding a friend:', error);
-    res.render('pages/friends', {
-      message: 'An error occurred while adding the friend. Please try again.',
-      error: true,
-    });
+    req.session.message = 'Error adding friends';
+    return res.redirect('/friends')
   }
 });
 
