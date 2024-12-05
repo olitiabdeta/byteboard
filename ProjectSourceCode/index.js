@@ -675,6 +675,37 @@ ORDER BY r.recipe_id DESC;
 });
 
 
+
+
+
+
+// app.get('/searchRecipes', async (req, res) => {
+//   const searchQuery = req.query.query;
+
+//   try {
+//     // Query the database for recipes based on the search query
+//     const result = await db.query(
+//       `SELECT * FROM recipes WHERE recipe_name ILIKE $1 OR recipe_description ILIKE $1`,
+//       [`%${searchQuery}%`]
+//     );
+
+//     const recipes = result.rows;
+
+//     if (recipes.length > 0) {
+//       // Render the search results page with the recipes found
+//       res.render('searchResults', { recipes });
+//     } else {
+//       // If no recipes found, show a message
+//       res.render('searchResults', { recipes: [], message: 'No recipes found matching your query.' });
+//     }
+//   } catch (err) {
+//     console.error('Error searching recipes:', err);
+//     res.status(500).send('An error occurred while searching for recipes.');
+//   }
+// });
+
+
+
 // //searchResults
 // app.get('/search', (req, res) => {
 //   res.render('pages/searchResults')
@@ -717,41 +748,6 @@ app.get('/api/search', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch data from Spoonacular API' });
   }
 });
-
-
-
-// app.get('/search', async (req, res) => {
-//   try {
-//     const query = req.query.query; // Get the search term from the query string
-
-//     if (!query) {
-//       return res.render('pages/searchResults', {
-//         recipes: [],
-//         message: 'Please enter a search term.',
-//       });
-//     }
-
-//     // Query the database for recipes that match the search term
-//     const searchQuery = `
-//       SELECT * FROM recipes 
-//       WHERE recipe_name ILIKE $1 OR recipe_description ILIKE $1
-//     `;
-//     const values = [`%${query}%`];
-//     const result = await db.query(searchQuery, values);
-
-//     res.render('pages/searchResults', {
-//       recipes: result.rows,
-//       message: result.rows.length ? null : 'No recipes found.',
-//     });
-//   } catch (error) {
-//     console.error('Error during search:', error);
-//     res.render('pages/searchResults', {
-//       recipes: [],
-//       message: 'Error fetching search results. Please try again later.',
-//     });
-//   }
-// });
-
 
 
 // Get Create Recipe
@@ -915,7 +911,6 @@ app.post('/createRecipe', auth, uploadRecipeImages.array('recipe_image', 5), asy
   }
 
 });
-
 
 
 // Logout route
