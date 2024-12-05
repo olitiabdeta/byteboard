@@ -1,3 +1,4 @@
+<div class="content-wrapper">
 <h2 class="text-center" style="font-family: 'Poppins', sans-serif; color: #f0f0f0;">Friends</h2>
 {{#if message}}
     <div class="alert alert-danger">{{message}}</div>
@@ -55,6 +56,7 @@
     </form>
   </div>
 </div>
+</div>
 
 
 
@@ -75,6 +77,7 @@ html, body {
   background-size: 300% 300%;
   animation: gradient-animation 8s ease infinite;
   color: rgb(12, 12, 12);
+  padding: 20px; /* Adds space around the content */
 }
 
 /* Gradient animation */
@@ -83,7 +86,6 @@ html, body {
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
-
 
 /* Friends List Layout */
 .friends-list {
