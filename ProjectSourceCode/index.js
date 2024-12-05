@@ -18,6 +18,12 @@ app.use(express.static(path.join(__dirname, 'src', 'resources')));
 app.use(express.static(__dirname + '/'));
 
 
+// *****************************************************
+// <!-- Lab 11: Testing -->
+// *****************************************************
+app.get('/welcome', (req, res) => {
+  res.json({status: 'success', message: 'Welcome!'});
+});
 
 // *****************************************************
 // <!-- Section 2 : Connect to DB -->
@@ -127,23 +133,23 @@ app.post('/login', async (req,res) =>{
       {
         req.session.user = user;
         req.session.save();
-        return res.redirect('/home');
+        return res.status(200).redirect('/home');
       }
       else
       {
-        return res.render('pages/login', {message: "Incorrect username or password.", error: true});
+        return res.status(401).render('pages/login', { message: "Incorrect username or password.", error: true });
       }
     }
     //if user is not found, redirect to register page
     else
     {
-      return res.redirect('/register');
+      return res.status(404).redirect('/register');
     }
   }
   catch(error)
   {
     console.error("Login error:", error);
-    res.render('pages/login', {message: "An error occured during login. Please try again.", error: true});
+    return res.status(500).render('pages/login', { message: "An error occurred during login. Please try again.", error: true });
   }
 });
 
@@ -176,10 +182,8 @@ app.post('/register', async (req, res) => {
     // console.log(registeredUser);
     if(registeredUser)
     {
-      return res.render('pages/register', 
-      {
-        message: 'An account with this username or email already exists. Please log in.',
-        error: true
+      return res.status(400).json({
+        error: 'An account with this username or email already exists. Please log in.'
       });
     }
 
@@ -192,12 +196,8 @@ app.post('/register', async (req, res) => {
   catch(error)
   {
     console.error("Error inserting user:", error);
-
-    //if insertion failsm reirect back to the register page
-    res.render('pages/register', 
-    {
-      message: 'An error occurred during registration. Please try again.',
-      error: true
+    return res.status(500).json({
+      error: 'An error occurred during registration. Please try again.'
     });
   }
 });
@@ -866,17 +866,14 @@ app.get('/logout', (req, res) => {
 
 
 
-
-
 // *****************************************************
 // <!-- Section 5 : Start Server-->
 // *****************************************************
 // starting the server and keeping the connection open to listen for more requests
 const port = process.env.PORT || 3000;
 
-app.listen(port, () => {
+module.exports = app.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
 });
-
-// app.listen(3000);
+//app.listen(3000);
 // console.log('Server is listening on port 3000');
