@@ -619,53 +619,53 @@ app.get('/myRecipes',auth, async (req, res) => {
 });
 
 
-// View Recipes (all the recipes posted by each user)
-app.get('/viewRecipes', async (req, res) => {
-  try {
-    const recipeQuery = 
-    `SELECT 
-    r.recipe_id,
-    r.recipe_name,
-    r.recipe_description,
-    r.recipe_difficulty,
-    r.recipe_prep_time,
-    r.recipe_cook_time,
-    r.recipe_servings,
-    r.recipe_notes,
-    array_agg(DISTINCT i.image_url) AS image_urls,
-    array_agg(ri_instr.instruction_text ORDER BY ri_instr.step_number) AS instructions,
-    array_agg(DISTINCT CONCAT(ing.amount, ' ', ing.unit, ' ', ing.ingredient_name)) AS ingredient_description
-FROM recipes r
-LEFT JOIN (
-    SELECT rti.recipe_id, i.image_url
-    FROM recipes_to_images rti
-    JOIN images i ON rti.image_id = i.image_id
-) i ON r.recipe_id = i.recipe_id
-LEFT JOIN (
-    SELECT ri_instr.recipe_id, ri_instr.instruction_text, ri_instr.step_number
-    FROM recipe_instructions ri_instr
-) ri_instr ON r.recipe_id = ri_instr.recipe_id
-LEFT JOIN recipe_ingredients ri_ing ON r.recipe_id = ri_ing.recipe_id
-LEFT JOIN ingredients ing ON ri_ing.ingredient_id = ing.ingredient_id
-GROUP BY r.recipe_id
-ORDER BY r.recipe_id DESC;
-    `;
+// // View Recipes (all the recipes posted by each user)
+// app.get('/viewRecipes', async (req, res) => {
+//   try {
+//     const recipeQuery = 
+//     `SELECT 
+//     r.recipe_id,
+//     r.recipe_name,
+//     r.recipe_description,
+//     r.recipe_difficulty,
+//     r.recipe_prep_time,
+//     r.recipe_cook_time,
+//     r.recipe_servings,
+//     r.recipe_notes,
+//     array_agg(DISTINCT i.image_url) AS image_urls,
+//     array_agg(ri_instr.instruction_text ORDER BY ri_instr.step_number) AS instructions,
+//     array_agg(DISTINCT CONCAT(ing.amount, ' ', ing.unit, ' ', ing.ingredient_name)) AS ingredient_description
+// FROM recipes r
+// LEFT JOIN (
+//     SELECT rti.recipe_id, i.image_url
+//     FROM recipes_to_images rti
+//     JOIN images i ON rti.image_id = i.image_id
+// ) i ON r.recipe_id = i.recipe_id
+// LEFT JOIN (
+//     SELECT ri_instr.recipe_id, ri_instr.instruction_text, ri_instr.step_number
+//     FROM recipe_instructions ri_instr
+// ) ri_instr ON r.recipe_id = ri_instr.recipe_id
+// LEFT JOIN recipe_ingredients ri_ing ON r.recipe_id = ri_ing.recipe_id
+// LEFT JOIN ingredients ing ON ri_ing.ingredient_id = ing.ingredient_id
+// GROUP BY r.recipe_id
+// ORDER BY r.recipe_id DESC;
+//     `;
 
 
-    const recipes = await db.query(recipeQuery);
-    res.render('pages/viewRecipes', {recipes: recipes});
-    console.log('Recipes:', recipes);
+//     const recipes = await db.query(recipeQuery);
+//     res.render('pages/viewRecipes', {recipes: recipes});
+//     console.log('Recipes:', recipes);
 
-  }
-  catch(error)
-  {
-    console.error('Error fetching recipes: ', error);
-    res.status(500).render('pages/viewRecipes', {
-      error: true,
-      message: 'Error fetching recipes, lease try again later.',
-    });
-  }
-});
+//   }
+//   catch(error)
+//   {
+//     console.error('Error fetching recipes: ', error);
+//     res.status(500).render('pages/viewRecipes', {
+//       error: true,
+//       message: 'Error fetching recipes, lease try again later.',
+//     });
+//   }
+// });
 
 
 
