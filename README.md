@@ -58,3 +58,7 @@ To run this application locally, you’ll need:
 
 ## 🌐 Deployed Application
 [Live Site!](https://byteboard-egej.onrender.com/)
+
+
+## 🎞️ Presentation Slides
+[ByteBoard Presentation](https://docs.google.com/presentation/d/1NGNSagay-nb08d-UAkhMTtiqPhU6AQhF7p-yP5_jzNE/edit?usp=sharing)
