@@ -1,4 +1,4 @@
-# ByteBoard - Recipe Sharing Platform 
+# ByteBoard - Recipe Sharing Platform 🧑‍🍳
 
 Welcome to our Recipe Sharing Platform! This project is a collaborative effort to create a platform where people can share their favorite recipes along with pictures, recommended ingredients, tips, and allow others to interact with other users.
 
@@ -52,6 +52,9 @@ To run this application locally, you’ll need:
    ```bash
    git clone https://github.com/olitiabdeta/byteboard.git
    cd ProjectSourceCode
+
+2. Access the application at: `http://localhost:3000`
+
 
 ## 🌐 Deployed Application
 [Live Site!](https://byteboard-egej.onrender.com/)
