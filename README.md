@@ -1,6 +1,6 @@
 # ByteBoard - Recipe Sharing Platform 
 
-Welcome to our Recipe Sharing Platform! This project is a collaborative effort to create a platform where people can share their favorite recipes along with pictures, recommended ingredients, tips, and allow others to comment.
+Welcome to our Recipe Sharing Platform! This project is a collaborative effort to create a platform where people can share their favorite recipes along with pictures, recommended ingredients, tips, and allow others to interact with other users.
 
 ## 🚀 Project Overview
 
