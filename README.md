@@ -15,7 +15,7 @@ This platform is designed to:
 - **Add Recipes**: Users can submit recipes with titles, descriptions, images, and recommended ingredients.  
 - **View Recipes**: Browse a collection of recipes shared by others.    
 - **Search & Filter**: Easily find recipes based on keywords or tags.  
-- **Friend Functionality**: Add and manage friends to see their recipe collections.  
+- **Friend Functionality**: Add and manage friends to see their recipes.  
 - **Profile Management**: Create, view, and edit user profiles.  
 
 
