@@ -1,45 +1,57 @@
-# byteboard
-Recipe Sharing Platform
-
+# ByteBoard - Recipe Sharing Platform 
 
 Welcome to our Recipe Sharing Platform! This project is a collaborative effort to create a platform where people can share their favorite recipes along with pictures, recommended ingredients, tips, and allow others to comment.
 
-
-🚀 Project Overview
-
+## 🚀 Project Overview
 
 This platform is designed to:
 
+- Share recipes with images 📸  
+- Provide recipe recommendations based on preferences🍴  
+- Allow users to connect with friends 💬  
 
-Share recipes with images 📸
-Provide recommendations and tips 🍴
-Allow users to add comments and interact with posts 💬
+## 📚 Features
 
-
-📚 Features
-
-
-Add Recipes: Users can submit recipes with titles, descriptions, images, and recommended ingredients.
-View Recipes: Browse a collection of recipes shared by others.
-Comments: Users can comment on recipes to share their feedback or ask questions.
-Search & Filter: Easily find recipes based on keywords or tags.
+- **Add Recipes**: Users can submit recipes with titles, descriptions, images, and recommended ingredients.  
+- **View Recipes**: Browse a collection of recipes shared by others.    
+- **Search & Filter**: Easily find recipes based on keywords or tags.  
+- **Friend Functionality**: Add and manage friends to see their recipe collections.  
+- **Profile Management**: Create, view, and edit user profiles.  
 
 
-📏 How to Use
+## 👥 Contributors
+
+- **Trisha Nookala**  
+- **Kaylee Dehncke**  
+- **Oliti Abdeta**  
+- **Kaitlyn Rapp**  
+- **Sharon Xiang**  
+- **Sumeyye Ustunel**  
 
 
-Register: Find yoursef a suitable username and create your account.
-Adding a Recipe: Click on the "Add Recipe" button, fill out the form with a title, description, image, and recommended ingredients.
-Viewing a Recipe: Browse or search recipes using the search bar or filters.
-Adding Comments: Open a recipe, scroll to the comments section, and share your thoughts!
+## 🛠️ Tech Stack
+
+- **Frontend**: HTML, CSS, JavaScript, Handlebars
+- **Backend**: Node.js, Express.js  
+- **Database**: PostgreSQL  
+- **Version Control**: Git and GitHub  
+- **Deployment**: Render  
+- **Containerization**: Docker  
 
 
-🛠️ Tech Stack
+## 💻 Prerequisites
+
+To run this application locally, you’ll need:
+ 
+- **Docker** (for containerized environments).     
 
 
-Frontend: HTML, CSS, JavaScript (or React/Handlebars)
-Backend: Node.js and Express (or Django/Flask, depending on your choice)
-Database: MongoDB, Firebase, or SQL-based solutions
-Version Control: Git and GitHub
+## ⚙️ Instructions to Run the Application Locally
 
+1. Clone the repository:  
+   ```bash
+   git clone https://github.com/olitiabdeta/byteboard.git
+   cd ProjectSourceCode
 
+## 🌐 Deployed Application
+[Live Site!](https://byteboard-egej.onrender.com/)
